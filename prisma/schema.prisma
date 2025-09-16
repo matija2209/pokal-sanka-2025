@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  teamId    String?
+  createdAt DateTime @default(now())
+
+  team      Team?       @relation(fields: [teamId], references: [id])
+  drinkLogs DrinkLog[]
+
+  @@map("users")
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  color     String
+  createdAt DateTime @default(now())
+
+  users User[]
+
+  @@map("teams")
+}
+
+model DrinkLog {
+  id        String   @id @default(cuid())
+  userId    String
+  drinkType String
+  points    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("drink_logs")
+}
