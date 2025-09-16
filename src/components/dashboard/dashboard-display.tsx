@@ -172,14 +172,14 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity }: 
                     <div className="flex items-center gap-6 text-xl text-gray-300">
                       <span>{player.drinkLogs.length} pijač</span>
                       <span>•</span>
-                      <span>{player.drinkLogs.filter(d => d.drinkType === 'REGULAR').length} 🍺</span>
-                      <span>{player.drinkLogs.filter(d => d.drinkType === 'SHOT').length} 🥃</span>
+                      <span>{player.drinkLogs.filter((d: any) => d.drinkType === 'REGULAR').length} 🍺</span>
+                      <span>{player.drinkLogs.filter((d: any) => d.drinkType === 'SHOT').length} 🥃</span>
                     </div>
                   </div>
                   
                   <div className="text-right">
                     <div className="tv-score text-green-400">
-                      {player.drinkLogs.reduce((sum, log) => sum + log.points, 0)}
+                      {player.drinkLogs.reduce((sum: number, log: any) => sum + log.points, 0)}
                     </div>
                     <div className="text-lg text-gray-300">točk</div>
                   </div>

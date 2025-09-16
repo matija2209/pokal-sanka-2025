@@ -134,7 +134,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500">Members:</span>
                       <div className="flex -space-x-2">
-                        {team.users.slice(0, 5).map(user => (
+                        {team.users.slice(0, 5).map((user: any) => (
                           <Avatar key={user.id} className="h-6 w-6 border-2 border-white">
                             <AvatarFallback className="text-xs">
                               {user.name.charAt(0).toUpperCase()}
