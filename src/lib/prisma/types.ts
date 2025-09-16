@@ -44,6 +44,14 @@ export type DrinkLogWithUserAndTeam = Prisma.DrinkLogGetPayload<{
   }
 }>
 
+// Team with calculated statistics
+export type TeamWithStats = Team & {
+  memberCount: number
+  totalScore: number
+  totalDrinks: number
+  averageScore: number
+}
+
 // Input types for creation (using native Prisma types)
 export type CreateUserInput = Prisma.UserCreateInput
 export type CreateTeamInput = Prisma.TeamCreateInput

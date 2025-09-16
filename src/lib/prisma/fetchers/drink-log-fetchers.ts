@@ -121,6 +121,27 @@ export async function getRecentDrinkLogs(limit: number): Promise<DrinkLogWithUse
   }
 }
 
+export async function getRecentDrinkLogsWithTeam(limit: number): Promise<DrinkLogWithUserAndTeam[]> {
+  try {
+    return await prisma.drinkLog.findMany({
+      include: {
+        user: {
+          include: {
+            team: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: limit
+    })
+  } catch (error) {
+    console.error('Error fetching recent drink logs with team:', error)
+    return []
+  }
+}
+
 export async function getDrinkLogsToday(): Promise<DrinkLogWithUser[]> {
   try {
     const today = new Date()

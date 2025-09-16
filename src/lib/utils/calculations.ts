@@ -1,4 +1,4 @@
-import { DrinkLog, UserWithTeamAndDrinks, TeamWithUsersAndDrinks } from '../prisma/types'
+import { DrinkLog, UserWithTeamAndDrinks, TeamWithUsersAndDrinks, TeamWithStats, Team } from '../prisma/types'
 
 // Score calculations
 export function calculateUserScore(drinkLogs: DrinkLog[]): number {
@@ -65,4 +65,24 @@ export function getUserRanking(userId: string, allUsers: UserWithTeamAndDrinks[]
   const sortedUsers = sortUsersByScore(allUsers)
   const userIndex = sortedUsers.findIndex(user => user.id === userId)
   return userIndex + 1 // Convert to 1-based ranking
+}
+
+// Dashboard-specific functions
+export function getTeamsWithStats(allUsers: UserWithTeamAndDrinks[], allTeams: Team[]): TeamWithStats[] {
+  const teamsWithStats: TeamWithStats[] = allTeams.map(team => {
+    const teamMembers = allUsers.filter(user => user.teamId === team.id)
+    const totalScore = teamMembers.reduce((total, member) => total + calculateUserScore(member.drinkLogs), 0)
+    const totalDrinks = teamMembers.reduce((total, member) => total + member.drinkLogs.length, 0)
+    const averageScore = teamMembers.length > 0 ? totalScore / teamMembers.length : 0
+
+    return {
+      ...team,
+      memberCount: teamMembers.length,
+      totalScore,
+      totalDrinks,
+      averageScore
+    }
+  })
+
+  return teamsWithStats.sort((a, b) => b.totalScore - a.totalScore)
 }
