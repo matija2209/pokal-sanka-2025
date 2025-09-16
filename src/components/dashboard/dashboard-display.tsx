@@ -232,7 +232,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity }: 
                       </Badge>
                     </div>
                     <div className="text-lg text-gray-400">
-                      pred {formatDistanceToNow(new Date(activity.createdAt), { locale: require('date-fns/locale/sl') }).replace('približno ', '')}
+                      pred {formatDistanceToNow(new Date(activity.createdAt)).replace('about ', '').replace('minutes', 'min').replace('minute', 'min').replace('hours', 'h').replace('hour', 'h')}
                     </div>
                   </div>
                   

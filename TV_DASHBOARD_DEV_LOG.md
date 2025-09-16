@@ -186,6 +186,57 @@ Added a dedicated `/dashboard` route optimized for large screen TV displays duri
 - **CSS Custom Properties**: Dynamic theming support
 - **Viewport Meta**: Proper mobile/TV viewport handling
 
+## 🇸🇮 Slovenian Localization Update
+*Added: September 16, 2025*
+
+### Full Slovenian Translation
+- **Interface Language**: Complete translation to Slovenian for local tournament use
+- **Main Headers**:
+  - `LESTVICA EKIP` (Team Rankings)
+  - `NAJBOLJI IGRALCI` (Top Players)
+  - `ZADNJA AKTIVNOST` (Recent Activity)
+- **Drink Types**:
+  - `Pivo` (Beer/Regular drinks) 🍺
+  - `Žganje` (Shots) 🥃
+- **Statistics Labels**:
+  - `članov` (members)
+  - `pijač` (drinks)
+  - `točk` (points)
+- **Navigation**: Slovenian labels for view rotation indicator
+
+### ⏰ Live Countdown Timer Enhancement
+- **Real-time Countdown**: Shows remaining seconds until next view (15s → 1s)
+- **Visual Timer**: Large, prominent countdown display in bottom corner
+- **Next View Indicator**: Shows upcoming section name in Slovenian
+- **Smooth Updates**: Updates every second with precise timing
+- **Enhanced UX**: 
+  ```typescript
+  // Countdown state management
+  const [countdown, setCountdown] = useState(15)
+  
+  // Combined timer for clock and countdown
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+      setCountdown(prev => prev > 1 ? prev - 1 : 15)
+    }, 1000)
+  }, [])
+  ```
+
+### Improved Auto-Rotation Display
+- **Precise Timing**: 15-second intervals with visual countdown
+- **Slovenian Labels**: 
+  - Ekipe → Igralci → Aktivnost → repeat
+  - "Naslednji: [Next View Name]" indicator
+- **Better UX**: Users can see exactly when the view will change
+- **Professional Appearance**: Enhanced bottom indicator with countdown timer
+
+### Technical Improvements
+- **State Synchronization**: Countdown timer syncs with auto-rotation
+- **Performance**: Efficient single timer for both clock and countdown
+- **Error Handling**: Robust countdown reset mechanism
+- **User Experience**: Clear visual feedback for rotation timing
+
 ## 🎉 Dashboard Complete!
 
 The TV Dashboard is now fully functional and ready for tournament use. Key highlights:
@@ -196,6 +247,8 @@ The TV Dashboard is now fully functional and ready for tournament use. Key highl
 ✅ **Tournament Ready**: Professional appearance for large screen display  
 ✅ **Responsive Layout**: Adapts to different screen sizes  
 ✅ **Visual Effects**: Engaging animations and trophy celebrations  
+✅ **🇸🇮 Slovenian Localization**: Complete translation for local tournament use  
+✅ **⏰ Live Countdown Timer**: Real-time countdown showing seconds until next view  
 
 **Ready for the big screen!** 📺🏆
 
@@ -204,4 +257,4 @@ The TV Dashboard is now fully functional and ready for tournament use. Key highl
 - **TV Dashboard**: http://localhost:3002/dashboard  
 - **Database Admin**: http://localhost:5555
 
-Perfect for tournament displays, event screens, and crowd engagement! 🍻🎯
+Perfect for Slovenian tournament displays, event screens, and crowd engagement! 🍻🎯🇸🇮

@@ -86,7 +86,7 @@ export async function updateUserTeamAction(
       }
     }
 
-    const user = await updateUserTeam(userId, teamId || null)
+    const user = await updateUserTeam(userId, teamId && teamId !== 'no-team' ? teamId : null)
 
     if (!user) {
       return {
@@ -274,6 +274,7 @@ export async function logDrinkAction(
 
     revalidatePath('/players')
     revalidatePath('/teams')
+    revalidatePath('/quick-log')
 
     return {
       success: true,

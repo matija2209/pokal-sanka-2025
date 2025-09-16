@@ -4,6 +4,7 @@ import { redirect, notFound } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout'
 import { TeamStats } from '@/components/teams'
 import { sortTeamsByScore } from '@/lib/utils/calculations'
+import type { User } from '@/lib/prisma/types'
 
 interface TeamDetailPageProps {
   params: Promise<{ id: string }>
@@ -30,7 +31,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   // Convert to full team data for calculations
   const fullTeam = {
     ...team,
-    users: team.users.map(user => ({
+    users: team.users.map((user: User) => ({
       ...user,
       drinkLogs: [] // We'll need to fetch this separately if needed
     }))

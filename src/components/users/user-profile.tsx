@@ -55,12 +55,12 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
             <input type="hidden" name="userId" value={currentUser.id} />
             
             <div>
-              <Select name="teamId" defaultValue={currentUser.teamId || ''}>
+              <Select name="teamId" defaultValue={currentUser.teamId || 'no-team'}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a team" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No Team</SelectItem>
+                  <SelectItem value="no-team">No Team</SelectItem>
                   {availableTeams.map(team => (
                     <SelectItem key={team.id} value={team.id}>
                       <div className="flex items-center gap-2">
