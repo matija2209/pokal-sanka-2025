@@ -1,38 +1,44 @@
 import { cookies } from 'next/headers'
+import { getUserWithTeamById } from '@/lib/prisma/fetchers'
+import type { UserWithTeam } from '@/lib/prisma/types'
 
-const CURRENT_USER_COOKIE = 'current-user-id'
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 days
+const USER_COOKIE_NAME = 'turnir-sanka-user-id'
 
-export async function getCurrentUserId(): Promise<string | null> {
+export async function getCurrentUser(): Promise<UserWithTeam | null> {
   try {
     const cookieStore = await cookies()
-    const userCookie = cookieStore.get(CURRENT_USER_COOKIE)
-    return userCookie?.value || null
+    const userCookie = cookieStore.get(USER_COOKIE_NAME)
+    
+    if (!userCookie?.value) {
+      return null
+    }
+    
+    const user = await getUserWithTeamById(userCookie.value)
+    return user
   } catch (error) {
-    console.error('Error getting current user ID:', error)
+    console.error('Error getting current user:', error)
     return null
   }
 }
 
-export async function setCurrentUserId(userId: string): Promise<void> {
+export async function setUserCookie(userId: string): Promise<void> {
   try {
     const cookieStore = await cookies()
-    cookieStore.set(CURRENT_USER_COOKIE, userId, {
+    cookieStore.set(USER_COOKIE_NAME, userId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: COOKIE_MAX_AGE
+      sameSite: 'lax'
     })
   } catch (error) {
-    console.error('Error setting current user ID:', error)
+    console.error('Error setting user cookie:', error)
   }
 }
 
-export async function clearCurrentUserId(): Promise<void> {
+export async function clearUserCookie(): Promise<void> {
   try {
     const cookieStore = await cookies()
-    cookieStore.delete(CURRENT_USER_COOKIE)
+    cookieStore.delete(USER_COOKIE_NAME)
   } catch (error) {
-    console.error('Error clearing current user ID:', error)
+    console.error('Error clearing user cookie:', error)
   }
 }
