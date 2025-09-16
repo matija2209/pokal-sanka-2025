@@ -1,7 +1,2 @@
-interface RecentDrinksProps {
-  // Props will be defined later
-}
-
-export default function RecentDrinks(props: RecentDrinksProps) {
-  return <div>Recent Drinks</div>
-}
+// Re-export the RecentActivity component as RecentDrinks for backwards compatibility
+export { default } from './recent-activity'

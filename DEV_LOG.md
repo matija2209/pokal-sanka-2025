@@ -328,11 +328,270 @@ const TEAM_COLORS = [
 
 ---
 
-## Next Steps (Phase 3)
-- [ ] Server actions implementation using fetchers
-- [ ] Cookie session management integration
-- [ ] Form components with useActionState
-- [ ] Page routing and navigation logic
-- [ ] Component prop interfaces and implementations
+## Phase 3: Cookie Management & Server Actions with useActionState
+**Date:** Phase 3 Implementation  
+**Status:** ✅ Complete
 
-**Ready for Phase 3 - Server Actions & Components!**
+### Cookie Management System Enhancement
+
+#### 🍪 **Enhanced Cookie Management** (`src/lib/utils/cookies.ts`)
+```typescript
+const USER_COOKIE_NAME = 'turnir-sanka-user-id'
+
+export async function getCurrentUser(): Promise<UserWithTeam | null> {
+  // Gets cookie value and fetches full user with team data
+  // Returns null if no cookie or user not found
+}
+
+export async function setUserCookie(userId: string): Promise<void> {
+  // Sets persistent HttpOnly cookie with proper security settings
+}
+
+export async function clearUserCookie(): Promise<void> {
+  // Safely removes user session cookie
+}
+```
+
+**Key Features:**
+- **Server-Only Functions**: All cookie operations are async server-side only
+- **Full User Data**: `getCurrentUser()` returns complete user+team information
+- **Security**: HttpOnly, secure in production, sameSite: 'lax'
+- **No Expiration**: Persistent cookies for tournament duration
+
+### Action State Management
+
+#### 📋 **Action State Types** (`src/lib/types/action-states.ts`)
+```typescript
+export interface BaseActionState {
+  success: boolean
+  message: string
+  type: 'idle' | 'create' | 'update' | 'delete' | 'error'
+  errors?: Record<string, string[]>
+}
+
+// Specialized states for each domain
+export interface UserActionState extends BaseActionState {
+  data?: { userId?: string, redirectUrl?: string }
+}
+
+export interface TeamActionState extends BaseActionState {
+  data?: { teamId?: string, redirectUrl?: string }
+}
+
+export interface DrinkLogActionState extends BaseActionState {
+  data?: { drinkLogId?: string, points?: number }
+}
+```
+
+**Design Principles:**
+- **Consistent Structure**: All actions follow same state pattern
+- **Type Safety**: TypeScript interfaces for all form states
+- **Redirect Support**: Built-in navigation after successful operations
+- **Error Handling**: Field-level and general error support
+
+### Server Actions Implementation
+
+#### ⚡ **Complete Server Actions** (`src/app/actions.ts`)
+
+**User Actions (2 functions):**
+- `createUserAction()`: Creates user, sets cookie, redirects to team selection
+- `updateUserTeamAction()`: Updates user's team assignment with validation
+
+**Team Actions (2 functions):**
+- `createTeamAction()`: Creates team with auto-generated color, joins user
+- `joinTeamAction()`: Joins existing team with proper validation
+
+**Drink Log Actions (1 function):**
+- `logDrinkAction()`: Logs drink with point calculation (Regular=1, Shot=2)
+
+**Implementation Pattern:**
+```typescript
+export async function actionName(
+  prevState: ActionStateType,
+  formData: FormData
+): Promise<ActionStateType> {
+  try {
+    // Extract and validate form data
+    // Perform database operations using fetchers
+    // Use revalidatePath() for cache updates
+    // Return success state with data/redirect
+  } catch (error) {
+    // Always return error state, never throw
+    return { success: false, message: 'Error message', type: 'error' }
+  }
+}
+```
+
+### Form Components Architecture
+
+#### 👤 **User Components**
+
+**CreateUserForm** (`src/components/users/create-user-form.tsx`):
+```typescript
+// Features:
+- useActionState(createUserAction, initialUserActionState)
+- Automatic redirect on success via useEffect
+- Real-time validation with field errors
+- Loading states during submission
+- shadcn/ui Card + Input components
+```
+
+**UserProfile** (`src/components/users/user-profile.tsx`):
+```typescript
+// Features:
+- Displays current user info and team
+- Team switching dropdown with all available teams
+- Visual team colors in selection
+- Success/error message handling
+```
+
+#### 🏆 **Team Components**
+
+**TeamSelectionForm** (`src/components/teams/team-selection-form.tsx`):
+```typescript
+// Dual-form component with:
+- Join Existing Team: Select dropdown with team colors
+- Create New Team: Text input with auto-generated colors
+- Two separate useActionState hooks for each form
+- Conditional rendering based on available teams
+- Visual separator between options
+```
+
+#### 🍻 **Drink Components**
+
+**DrinkLogForm** (`src/components/drinks/drink-log-form.tsx`):
+```typescript
+// Features:
+- User selection dropdown (defaults to current user)
+- Team color indicators in user list
+- Dual submit buttons: Regular (+1) and Shot (+2)
+- Single form with different drinkType values
+- Success messages show points earned
+```
+
+### Page Implementation with Server Data Fetching
+
+#### 🏠 **Root Page** (`src/app/page.tsx`)
+```typescript
+export default async function HomePage() {
+  const currentUser = await getCurrentUser()
+  
+  // Smart routing based on user state:
+  if (currentUser?.teamId) redirect('/players')      // Has team → dashboard
+  if (currentUser && !currentUser.teamId) redirect('/select-team') // No team → team selection
+  // No user → show registration form
+}
+```
+
+#### 👥 **Team Selection** (`src/app/select-team/page.tsx`)
+```typescript
+// Server data fetching:
+- getCurrentUser() for authentication
+- getAllTeams() for available teams
+- Proper redirect logic for all user states
+```
+
+#### 🎯 **Players Dashboard** (`src/app/players/page.tsx`)
+```typescript
+// Complete dashboard implementation:
+- getAllUsersWithTeamAndDrinks() for leaderboard data
+- Real-time score calculations using utility functions
+- Grid layout: Drink logging form + Leaderboard
+- Visual user ranking with team colors
+- Current user highlighting in leaderboard
+```
+
+#### 👤 **Profile Page** (`src/app/profile/page.tsx`)
+```typescript
+// Profile management:
+- getCurrentUser() and getAllTeams() for data
+- UserProfile component with team switching
+- Clean layout with user account management
+```
+
+### 📊 **Phase 3 Implementation Summary**
+
+**Server Infrastructure:**
+- ✅ 5 server actions with consistent error handling
+- ✅ Enhanced cookie system with full user data
+- ✅ Type-safe action states with redirect support
+- ✅ Proper data revalidation with `revalidatePath()`
+
+**Client Components:**
+- ✅ 4 form components using useActionState pattern
+- ✅ Real-time loading states and error handling
+- ✅ Automatic navigation on successful operations
+- ✅ Complete shadcn/ui integration
+
+**Page Routing:**
+- ✅ 4 pages with server-side data fetching
+- ✅ Smart redirect logic based on user state
+- ✅ Complete user flow from registration to dashboard
+- ✅ Authentication-like behavior without auth system
+
+**User Experience:**
+- ✅ Seamless form submissions with instant feedback
+- ✅ Visual team identification with colors
+- ✅ Real-time leaderboard with score calculations
+- ✅ Responsive design with Tailwind CSS
+
+### 🔧 **Technical Implementation Details**
+
+**Form Handling Pattern:**
+```typescript
+'use client'
+import { useActionState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+const [state, formAction, isPending] = useActionState(serverAction, initialState)
+
+useEffect(() => {
+  if (state.success && state.data?.redirectUrl) {
+    router.push(state.data.redirectUrl)
+  }
+}, [state.success, state.data?.redirectUrl, router])
+```
+
+**Server Data Pattern:**
+```typescript
+// All pages follow this pattern:
+export default async function PageName() {
+  const currentUser = await getCurrentUser()
+  
+  // Authentication & routing logic
+  if (!currentUser) redirect('/')
+  
+  // Fetch additional data
+  const additionalData = await someDbFetcher()
+  
+  // Render with server data as props
+  return <ClientComponent serverData={additionalData} />
+}
+```
+
+### 🔍 **Phase 3 Verification**
+- ✅ All TypeScript files compile without errors (`npx tsc --noEmit`)
+- ✅ Server actions return consistent state objects
+- ✅ Cookie management works across page loads
+- ✅ Form validations and error states display properly
+- ✅ User flow navigation works end-to-end
+- ✅ Database operations use Phase 2 fetchers correctly
+
+### 📈 **Phase 3 Statistics**
+- **Server Actions:** 5 complete actions
+- **Form Components:** 4 client components with useActionState
+- **Pages Implemented:** 4 with server data fetching
+- **Cookie Functions:** 3 server-side session management functions
+- **Action State Types:** 4 TypeScript interfaces for type safety
+
+---
+
+## Next Steps (Phase 4)
+- [ ] Complete page implementations and styling
+- [ ] Navigation components and routing
+- [ ] Advanced leaderboard features
+- [ ] Real-time data updates
+- [ ] Team management and statistics
+- [ ] Enhanced user interface and user experience
+
+**Ready for Phase 4 - Advanced Features & Polish!**
