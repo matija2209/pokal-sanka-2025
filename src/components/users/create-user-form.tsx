@@ -10,10 +10,10 @@ import { createUserAction } from '@/app/actions'
 import { initialUserActionState } from '@/lib/types/action-states'
 
 interface CreateUserFormProps {
-  // No props needed - this is for initial user creation
+  onBack?: () => void
 }
 
-export default function CreateUserForm({}: CreateUserFormProps) {
+export default function CreateUserForm({ onBack }: CreateUserFormProps) {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(createUserAction, initialUserActionState)
 
@@ -26,7 +26,7 @@ export default function CreateUserForm({}: CreateUserFormProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Dobrodošli v Turnir Šanka!</CardTitle>
+        <CardTitle>Dobrodošli v Pokal Šanka — Matija 2025 Edition!</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
@@ -56,6 +56,19 @@ export default function CreateUserForm({}: CreateUserFormProps) {
             {isPending ? "Ustvarjam račun..." : "Ustvari račun"}
           </Button>
         </form>
+
+        {onBack && (
+          <div className="pt-4 border-t mt-4">
+            <Button 
+              type="button" 
+              variant="ghost" 
+              onClick={onBack}
+              className="w-full"
+            >
+              ← Nazaj na izbiro možnosti
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

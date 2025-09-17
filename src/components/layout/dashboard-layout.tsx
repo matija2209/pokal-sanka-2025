@@ -27,7 +27,7 @@ export default function DashboardLayout({ children, currentUser }: DashboardLayo
         onRefresh={handleRefresh}
         isRefreshing={isRefreshing}
       />
-      <main className="py-8">
+      <main className="py-4 md:py-8">
         {children}
       </main>
     </div>

@@ -4,6 +4,19 @@ import { redirect } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout'
 import { UserProfile, UserStats, UserHistory, UserAchievements } from '@/components/users'
 import { getUserRanking } from '@/lib/utils/calculations'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Moj Profil | Pokal Šanka - Matija Edition',
+  description: 'Vaš osebni profil v Pokal Šanka turnirju. Poglejte svoje statistike, dosežke, zgodovino pijače in upravljajte svojo ekipo.',
+  keywords: ['profil', 'statistike', 'dosežki', 'zgodovina', 'ekipa', 'uporabnik'],
+  robots: 'noindex, nofollow',
+  openGraph: {
+    title: 'Moj Profil - Pokal Šanka',
+    description: 'Osebni profil, statistike in dosežki v turnirju.',
+    locale: 'sl_SI'
+  }
+}
 
 export default async function ProfilePage() {
   const currentUser = await getCurrentUser()

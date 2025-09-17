@@ -5,6 +5,19 @@ import { DashboardLayout } from '@/components/layout'
 import { DrinkLogForm, RecentActivity } from '@/components/drinks'
 import { Leaderboard } from '@/components/users'
 import { sortUsersByScore } from '@/lib/utils/calculations'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Igralci | Pokal Šanka - Matija Edition',
+  description: 'Glavna nadzorna plošča turnirja. Beležite pijačo, spremljajte lestvico in tekmujte s prijatelji v Pokal Šanka turnirju.',
+  keywords: ['igralci', 'lestvica', 'turnir', 'pitje', 'točke', 'tekmovanje'],
+  robots: 'noindex, nofollow',
+  openGraph: {
+    title: 'Igralci - Pokal Šanka',
+    description: 'Glavna nadzorna plošča turnirja za beleženje pijače in spremljanje lestvice.',
+    locale: 'sl_SI'
+  }
+}
 
 export default async function PlayersPage() {
   const currentUser = await getCurrentUser()

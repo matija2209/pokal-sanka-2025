@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createUser, updateUserTeam } from '@/lib/prisma/fetchers/user-fetchers'
+import { createUser, updateUserTeam, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
 import { createTeam, getAllTeams } from '@/lib/prisma/fetchers/team-fetchers'
 import { createDrinkLog } from '@/lib/prisma/fetchers/drink-log-fetchers'
 import { setUserCookie } from '@/lib/utils/cookies'
@@ -62,6 +62,61 @@ export async function createUserAction(
     }
   } catch (error) {
     console.error('Error creating user:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+export async function selectExistingUserAction(
+  prevState: UserActionState,
+  formData: FormData
+): Promise<UserActionState> {
+  try {
+    const userId = formData.get('userId') as string
+
+    if (!userId) {
+      return {
+        success: false,
+        message: 'User ID is required',
+        type: 'error'
+      }
+    }
+
+    const user = await getUserWithTeamById(userId)
+
+    if (!user) {
+      return {
+        success: false,
+        message: 'User not found',
+        type: 'error'
+      }
+    }
+
+    // Set user cookie
+    await setUserCookie(user.id)
+
+    // Revalidate paths
+    revalidatePath('/')
+    revalidatePath('/select-team')
+    revalidatePath('/players')
+
+    // Redirect based on team status
+    const redirectUrl = user.teamId ? '/players' : '/select-team'
+
+    return {
+      success: true,
+      message: `Welcome back, ${user.name}!`,
+      type: 'update',
+      data: {
+        userId: user.id,
+        redirectUrl
+      }
+    }
+  } catch (error) {
+    console.error('Error selecting existing user:', error)
     return {
       success: false,
       message: 'An unexpected error occurred',

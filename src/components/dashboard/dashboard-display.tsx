@@ -72,7 +72,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity }: 
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="tv-title mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500">
-          🏆 TURNIR ŠANKA 🍻
+          🏆 Pokal Šanka — Matija 2025 Edition🍻
         </h1>
         <div className="flex items-center justify-center gap-8 text-2xl">
           <div className="flex items-center gap-2">

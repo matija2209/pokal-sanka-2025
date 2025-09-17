@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Calendar, TrendingUp, Award, Clock } from 'lucide-react'
 import { formatDistanceToNow, format, startOfDay, isToday, isYesterday } from 'date-fns'
+import { sl } from 'date-fns/locale'
 import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
 
 interface UserHistoryProps {
@@ -22,13 +23,13 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
   }
 
   const getDrinkLabel = (drinkType: string) => {
-    return drinkType === 'REGULAR' ? 'Regular' : 'Shot'
+    return drinkType === 'REGULAR' ? 'Pivo' : 'Žganje'
   }
 
   const formatDateGroup = (date: Date) => {
-    if (isToday(date)) return 'Today'
-    if (isYesterday(date)) return 'Yesterday'
-    return format(date, 'MMMM dd, yyyy')
+    if (isToday(date)) return 'Danes'
+    if (isYesterday(date)) return 'Včeraj'
+    return format(date, 'dd. MMMM yyyy', { locale: sl })
   }
 
   const groupDrinksByDate = () => {
@@ -55,9 +56,9 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calendar className="h-5 w-5" />
-          Drink History
+          Zgodovina pijač
           <Badge variant="outline" className="ml-auto">
-            {drinkHistory.length} total drinks
+            {drinkHistory.length} pijač skupaj
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -65,8 +66,8 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
         {drinkHistory.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <Calendar className="h-12 w-12 mx-auto mb-4 opacity-30" />
-            <p>No drink history yet</p>
-            <p className="text-sm">Start logging drinks to see your history!</p>
+            <p>Še ni zgodovine pijač</p>
+            <p className="text-sm">Začnite beležiti pijače, da vidite svojo zgodovino!</p>
           </div>
         ) : (
           <div className="space-y-6 max-h-96 overflow-y-auto">
@@ -77,10 +78,10 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
                     {formatDateGroup(dayGroup.date)}
                   </h3>
                   <Badge variant="outline" className="text-xs">
-                    {dayGroup.drinks.length} drinks
+                    {dayGroup.drinks.length} pijač
                   </Badge>
                   <div className="text-xs text-gray-500 ml-auto">
-                    +{dayGroup.drinks.reduce((sum, drink) => sum + drink.points, 0)} points
+                    +{dayGroup.drinks.reduce((sum, drink) => sum + drink.points, 0)} točk
                   </div>
                 </div>
                 
@@ -106,7 +107,7 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
                           <Clock className="h-3 w-3" />
                           <span>{format(new Date(log.createdAt), 'HH:mm')}</span>
                           <span>•</span>
-                          <span>{formatDistanceToNow(new Date(log.createdAt))} ago</span>
+                          <span>pred {formatDistanceToNow(new Date(log.createdAt), { locale: sl })}</span>
                         </div>
                       </div>
                       
@@ -123,7 +124,7 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
             
             {user.drinkLogs.length > limit && (
               <div className="mt-4 pt-4 border-t text-center text-sm text-gray-500">
-                Showing {limit} of {user.drinkLogs.length} total drinks
+                Prikazano {limit} od {user.drinkLogs.length} pijač skupaj
               </div>
             )}
           </div>

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Turnir Šanka 2025",
-  description: "Tekmovanje v pitju piva - Turnir Šanka 2025",
+  title: "Pokal Šanka — Matija 2025 Edition2025",
+  description: "Tekmovanje v pitju piva - Pokal Šanka — Matija 2025 Edition2025",
 };
 
 export default function RootLayout({

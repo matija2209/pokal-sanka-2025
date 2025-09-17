@@ -42,12 +42,12 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
   const getAchievements = () => {
     const achievements = []
     
-    if (rank === 1) achievements.push({ icon: '🏆', label: 'Leader', color: 'bg-yellow-500' })
+    if (rank === 1) achievements.push({ icon: '🏆', label: 'Vodja', color: 'bg-yellow-500' })
     if (rank && rank <= 3) achievements.push({ icon: '🥉', label: 'Top 3', color: 'bg-orange-500' })
-    if (streak >= 3) achievements.push({ icon: '🔥', label: `${streak} Day Streak`, color: 'bg-red-500' })
-    if (shotDrinks >= 5) achievements.push({ icon: '🥃', label: 'Shot Master', color: 'bg-purple-500' })
-    if (score >= 50) achievements.push({ icon: '💯', label: 'High Scorer', color: 'bg-green-500' })
-    if (recentScore >= 10) achievements.push({ icon: '⚡', label: 'Active', color: 'bg-blue-500' })
+    if (streak >= 3) achievements.push({ icon: '🔥', label: `${streak} dni zapored`, color: 'bg-red-500' })
+    if (shotDrinks >= 5) achievements.push({ icon: '🥃', label: 'Mojster žganja', color: 'bg-purple-500' })
+    if (score >= 50) achievements.push({ icon: '💯', label: 'Visoke točke', color: 'bg-green-500' })
+    if (recentScore >= 10) achievements.push({ icon: '⚡', label: 'Aktiven', color: 'bg-blue-500' })
     
     return achievements
   }
@@ -61,36 +61,36 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Your Statistics
+            Vaše statistike
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{score}</div>
-              <div className="text-sm text-gray-500">Total Points</div>
+              <div className="text-sm text-gray-500">Skupaj točk</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{regularDrinks}</div>
-              <div className="text-sm text-gray-500">Regular Drinks</div>
+              <div className="text-sm text-gray-500">Pivo</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">{shotDrinks}</div>
-              <div className="text-sm text-gray-500">Shots</div>
+              <div className="text-sm text-gray-500">Žganje</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">{recentScore}</div>
-              <div className="text-sm text-gray-500">This Week</div>
+              <div className="text-sm text-gray-500">Ta teden</div>
             </div>
           </div>
 
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Progress to Leader</span>
+              <span className="text-sm font-medium">Napredek do vodilnega</span>
               <span className="text-sm text-gray-500">{progressPercentage.toFixed(0)}%</span>
             </div>
             <Progress value={progressPercentage} className="h-2" />
@@ -103,7 +103,7 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
                 variant={rank <= 3 ? "default" : "secondary"}
                 className={rank === 1 ? "bg-yellow-500" : rank === 2 ? "bg-gray-400" : rank === 3 ? "bg-orange-500" : ""}
               >
-                Rank #{rank} of {allUsers.length}
+                Mesto #{rank} od {allUsers.length}
               </Badge>
             </div>
           )}
@@ -116,7 +116,7 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5" />
-              Achievements
+              Dosežki
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -138,16 +138,16 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Current Streak
+              Trenutni niz
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center">
               <div className="text-3xl font-bold text-orange-500 mb-2">
-                🔥 {streak} {streak === 1 ? 'Day' : 'Days'}
+                🔥 {streak} {streak === 1 ? 'dan' : 'dni'}
               </div>
               <p className="text-sm text-gray-600">
-                Keep drinking to maintain your streak!
+                Nadaljujte s pitjem, da ohranite svoj niz!
               </p>
             </div>
           </CardContent>

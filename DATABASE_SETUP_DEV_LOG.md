@@ -2,7 +2,7 @@
 *Completed: September 16, 2025*
 
 ## Overview
-Final step to make the Turnir Šanka application fully operational by creating the actual database tables from the Prisma schema and verifying the database connection.
+Final step to make the Pokal Šanka — Matija 2025 Editionapplication fully operational by creating the actual database tables from the Prisma schema and verifying the database connection.
 
 ## ✅ Completed Database Setup
 
@@ -181,6 +181,6 @@ Based on the Prisma schema (`prisma/schema.prisma`), the following tables were c
 
 ## 🎉 Final Result
 
-The **Turnir Šanka (Tournament Drink)** application is now fully operational and ready for production use. All database tables have been successfully created, the application is running smoothly, and all features are working as designed.
+The **Pokal Šanka — Matija 2025 Edition(Tournament Drink)** application is now fully operational and ready for production use. All database tables have been successfully created, the application is running smoothly, and all features are working as designed.
 
 **Ready to compete! 🍻🏆**
