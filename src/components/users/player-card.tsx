@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import { calculateUserScore } from '@/lib/utils/calculations'
+import UserAvatar from './user-avatar'
 import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
 
 interface PlayerCardProps {
@@ -13,8 +14,6 @@ interface PlayerCardProps {
 export default function PlayerCard({ user, currentUserId, onSelectPlayer }: PlayerCardProps) {
   const isCurrentUser = user.id === currentUserId
   const userScore = calculateUserScore(user.drinkLogs)
-  const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-
   const teamColor = user.team?.color || '#6B7280'
   
   return (
@@ -28,12 +27,7 @@ export default function PlayerCard({ user, currentUserId, onSelectPlayer }: Play
       <CardContent className="p-4">
         <div className="flex flex-col items-center text-center space-y-3">
           {/* Avatar */}
-          <div 
-            className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg"
-            style={{ backgroundColor: teamColor }}
-          >
-            {initials}
-          </div>
+          <UserAvatar user={user} size="md" />
           
           {/* User Name */}
           <div>

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Trophy, Medal, Award, TrendingUp } from 'lucide-react'
 import { calculateUserScore, getUserRanking } from '@/lib/utils/calculations'
+import UserAvatar from './user-avatar'
 import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
 
 interface LeaderboardProps {
@@ -88,12 +89,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                     {getRankIcon(position)}
                     
                     <div className="flex items-center gap-3">
-                      {user.team && (
-                        <div 
-                          className="w-4 h-4 rounded-full border-2 border-white shadow-sm" 
-                          style={{ backgroundColor: user.team.color }}
-                        />
-                      )}
+                      <UserAvatar user={user} size="sm" />
                       
                       <div>
                         <div className="flex items-center gap-2">

@@ -4,8 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { createUser, updateUserTeam, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
 import { createTeam, getAllTeams } from '@/lib/prisma/fetchers/team-fetchers'
 import { createDrinkLog } from '@/lib/prisma/fetchers/drink-log-fetchers'
-import { setUserCookie } from '@/lib/utils/cookies'
+import { setUserCookie, getCurrentUser } from '@/lib/utils/cookies'
 import { getNextAvailableColor } from '@/lib/utils/colors'
+import { uploadImage } from '@/lib/utils/image-upload'
+import { generateCommentaryForDrink } from '@/lib/services/commentary-generator'
+import { prisma } from '@/lib/prisma/client'
 import { DRINK_TYPES } from '@/lib/prisma/types'
 import type { 
   UserActionState, 
@@ -327,9 +330,15 @@ export async function logDrinkAction(
       }
     }
 
+    // Generate commentary for this drink (async, don't await to avoid blocking)
+    generateCommentaryForDrink(userId, drinkType, points).catch(error => {
+      console.error('Commentary generation failed:', error)
+    })
+
     revalidatePath('/players')
     revalidatePath('/teams')
     revalidatePath('/quick-log')
+    revalidatePath('/dashboard')
 
     return {
       success: true,
@@ -342,6 +351,224 @@ export async function logDrinkAction(
     }
   } catch (error) {
     console.error('Error logging drink:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+// Profile Image Actions
+export async function updateUserProfileAction(
+  prevState: UserActionState,
+  formData: FormData
+): Promise<UserActionState> {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        message: 'Not authenticated',
+        type: 'error'
+      }
+    }
+
+    const name = formData.get('name') as string
+    const teamId = formData.get('teamId') as string
+    const profileImage = formData.get('profile-image') as File
+
+    console.log('Profile image upload:', {
+      hasFile: !!profileImage,
+      fileName: profileImage?.name,
+      fileSize: profileImage?.size,
+      fileType: profileImage?.type
+    })
+
+    if (!name || name.trim().length < 2) {
+      return {
+        success: false,
+        message: 'Name must be at least 2 characters long',
+        type: 'error',
+        errors: { name: ['Name must be at least 2 characters long'] }
+      }
+    }
+
+    let updateData: any = { name: name.trim() }
+    
+    if (teamId && teamId !== 'none') {
+      updateData.teamId = teamId
+    }
+
+    // Handle profile image upload
+    if (profileImage && profileImage.size > 0) {
+      try {
+        const imageUrl = await uploadImage(profileImage, 'users', currentUser.id)
+        updateData.profile_image_url = imageUrl
+      } catch (error) {
+        return {
+          success: false,
+          message: `Image upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          type: 'error'
+        }
+      }
+    }
+
+    await prisma.user.update({
+      where: { id: currentUser.id },
+      data: updateData
+    })
+
+    revalidatePath('/profile')
+    revalidatePath('/players')
+    revalidatePath('/quick-log')
+    revalidatePath('/dashboard')
+    revalidatePath('/')
+
+    return {
+      success: true,
+      message: 'Profile updated successfully!',
+      type: 'update'
+    }
+  } catch (error) {
+    console.error('Error updating user profile:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+export async function updateTeamLogoAction(
+  prevState: TeamActionState,
+  formData: FormData
+): Promise<TeamActionState> {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser?.teamId) {
+      return {
+        success: false,
+        message: 'No team assigned',
+        type: 'error'
+      }
+    }
+
+    const logoImage = formData.get('team-logo') as File
+    
+    console.log('Team logo upload:', {
+      hasFile: !!logoImage,
+      fileName: logoImage?.name,
+      fileSize: logoImage?.size,
+      fileType: logoImage?.type
+    })
+    
+    if (!logoImage || logoImage.size === 0) {
+      return {
+        success: false,
+        message: 'No logo file provided',
+        type: 'error'
+      }
+    }
+
+    try {
+      const imageUrl = await uploadImage(logoImage, 'teams', currentUser.teamId)
+      
+      await prisma.team.update({
+        where: { id: currentUser.teamId },
+        data: { logo_image_url: imageUrl }
+      })
+
+      revalidatePath('/profile')
+      revalidatePath('/players')
+      revalidatePath('/dashboard')
+      revalidatePath('/quick-log')
+      revalidatePath('/')
+
+      return {
+        success: true,
+        message: 'Team logo updated successfully!',
+        type: 'update'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: `Logo upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        type: 'error'
+      }
+    }
+  } catch (error) {
+    console.error('Error updating team logo:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+// Post Actions
+export async function createPostAction(
+  prevState: DrinkLogActionState,
+  formData: FormData
+): Promise<DrinkLogActionState> {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        message: 'Not authenticated',
+        type: 'error'
+      }
+    }
+    
+    const message = formData.get('message') as string
+    const imageFile = formData.get('post-image') as File | null
+    
+    if (!message || !message.trim()) {
+      return {
+        success: false,
+        message: 'Message is required',
+        type: 'error'
+      }
+    }
+    
+    let imageUrl: string | null = null
+    
+    if (imageFile && imageFile.size > 0) {
+      try {
+        imageUrl = await uploadImage(imageFile, 'posts', currentUser.id)
+      } catch (error) {
+        return {
+          success: false,
+          message: `Image upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          type: 'error'
+        }
+      }
+    }
+    
+    const post = await prisma.post.create({
+      data: {
+        userId: currentUser.id,
+        message: message.trim(),
+        image_url: imageUrl
+      }
+    })
+    
+    revalidatePath('/profile')
+    revalidatePath('/dashboard')
+
+    return {
+      success: true,
+      message: 'Post created successfully!',
+      type: 'create',
+      data: {
+        drinkLogId: post.id,
+        points: 0
+      }
+    }
+  } catch (error) {
+    console.error('Error creating post:', error)
     return {
       success: false,
       message: 'An unexpected error occurred',

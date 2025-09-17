@@ -3,6 +3,8 @@ import { getAllTeams, getAllUsersWithTeamAndDrinks, getUserWithTeamAndDrinksById
 import { redirect } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout'
 import { UserProfile, UserStats, UserHistory, UserAchievements } from '@/components/users'
+import { TeamLogoForm } from '@/components/teams'
+import { CreatePostForm, TimelineDisplay } from '@/components/timeline'
 import { getUserRanking } from '@/lib/utils/calculations'
 import type { Metadata } from 'next'
 
@@ -46,6 +48,9 @@ export default async function ProfilePage() {
               currentUser={currentUser}
               availableTeams={availableTeams}
             />
+
+            {/* Team Logo Upload */}
+            <TeamLogoForm currentUser={currentUser} />
             
             {/* User Achievements */}
             {currentUserWithDrinks && (
@@ -68,6 +73,15 @@ export default async function ProfilePage() {
               />
             )}
             
+            {/* Create Post */}
+            <CreatePostForm />
+
+            {/* Timeline */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold">Nedavne objave</h2>
+              <TimelineDisplay limit={10} />
+            </div>
+
             {/* Drink History */}
             {currentUserWithDrinks && (
               <UserHistory 

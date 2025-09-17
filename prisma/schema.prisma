@@ -8,22 +8,25 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  teamId    String?
-  createdAt DateTime @default(now())
+  id               String   @id @default(cuid())
+  name             String
+  teamId           String?
+  profile_image_url String?
+  createdAt        DateTime @default(now())
 
   team      Team?       @relation(fields: [teamId], references: [id])
   drinkLogs DrinkLog[]
+  posts     Post[]
 
   @@map("users")
 }
 
 model Team {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  color     String
-  createdAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  name           String   @unique
+  color          String
+  logo_image_url String?
+  createdAt      DateTime @default(now())
 
   users User[]
 
@@ -40,4 +43,29 @@ model DrinkLog {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("drink_logs")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  userId    String
+  message   String
+  image_url String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("posts")
+}
+
+model Commentary {
+  id           String    @id @default(cuid())
+  type         String    // 'milestone', 'streak', 'achievement', 'hype', 'team_event'
+  message      String    // Generated message text
+  priority     Int       @default(1) // 1-5 (5 = highest priority)
+  metadata     Json?     // Additional data (userId, teamId, stats, context)
+  isDisplayed  Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  displayedAt  DateTime?
+
+  @@map("commentaries")
 }

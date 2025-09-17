@@ -1,4 +1,4 @@
-import { getAllUsersWithTeamAndDrinks, getAllTeams, getRecentDrinkLogsWithTeam } from '@/lib/prisma/fetchers'
+import { getAllUsersWithTeamAndDrinks, getAllTeams, getRecentDrinkLogsWithTeam, getUnreadCommentaries } from '@/lib/prisma/fetchers'
 import { sortUsersByScore, getTeamsWithStats } from '@/lib/utils/calculations'
 import { DashboardDisplay } from '@/components/dashboard'
 import type { Metadata } from 'next'
@@ -24,10 +24,11 @@ export const metadata: Metadata = {
 }
 
 export default async function DashboardPage() {
-  const [allUsers, allTeams, recentDrinks] = await Promise.all([
+  const [allUsers, allTeams, recentDrinks, unreadCommentaries] = await Promise.all([
     getAllUsersWithTeamAndDrinks(),
     getAllTeams(),
-    getRecentDrinkLogsWithTeam(20)
+    getRecentDrinkLogsWithTeam(20),
+    getUnreadCommentaries(10)
   ])
 
   const sortedUsers = sortUsersByScore(allUsers)
@@ -39,6 +40,7 @@ export default async function DashboardPage() {
         teams={teamsWithStats}
         topPlayers={sortedUsers.slice(0, 5)}
         recentActivity={recentDrinks}
+        commentaries={unreadCommentaries}
       />
     </div>
   )
