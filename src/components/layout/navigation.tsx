@@ -23,9 +23,9 @@ export default function Navigation({ currentUser, onRefresh, isRefreshing }: Nav
   const pathname = usePathname()
   
   const navItems = [
-    { href: '/players', icon: Users, label: 'Players', active: pathname === '/players' },
-    { href: '/teams', icon: Trophy, label: 'Teams', active: pathname === '/teams' },
-    { href: '/profile', icon: User, label: 'Profile', active: pathname === '/profile' },
+    { href: '/players', icon: Users, label: 'Igralci', active: pathname === '/players' },
+    { href: '/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/teams' },
+    { href: '/profile', icon: User, label: 'Profil', active: pathname === '/profile' },
   ]
 
   return (

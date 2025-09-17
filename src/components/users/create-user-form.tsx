@@ -26,17 +26,17 @@ export default function CreateUserForm({}: CreateUserFormProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Welcome to Turnir Šanka!</CardTitle>
+        <CardTitle>Dobrodošli v Turnir Šanka!</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
           <div>
-            <Label htmlFor="name">Your Name</Label>
+            <Label htmlFor="name">Vaše ime</Label>
             <Input 
               id="name" 
               name="name" 
               required 
-              placeholder="Enter your name"
+              placeholder="Vnesite vaše ime"
               disabled={isPending}
             />
             {state.errors?.name && (
@@ -53,7 +53,7 @@ export default function CreateUserForm({}: CreateUserFormProps) {
           )}
           
           <Button type="submit" disabled={isPending} className="w-full">
-            {isPending ? "Creating Account..." : "Create Account"}
+            {isPending ? "Ustvarjam račun..." : "Ustvari račun"}
           </Button>
         </form>
       </CardContent>

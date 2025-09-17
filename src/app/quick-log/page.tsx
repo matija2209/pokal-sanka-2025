@@ -23,8 +23,8 @@ export default async function QuickLogPage() {
     <DashboardLayout currentUser={currentUser}>
       <div className="container mx-auto px-4 py-6">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Quick Drink Logging</h1>
-          <p className="text-gray-600">Select a player to quickly log their drink</p>
+          <h1 className="text-3xl font-bold mb-2">Hitro beleže­nje pijače</h1>
+          <p className="text-gray-600">Izberite igralca za hitro beleženje njegove pijače</p>
         </div>
         
         <PlayerGrid 

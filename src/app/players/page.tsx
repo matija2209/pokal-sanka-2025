@@ -34,8 +34,8 @@ export default async function PlayersPage() {
     <DashboardLayout currentUser={currentUser}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Player Dashboard</h1>
-          <p className="text-gray-600">Track your drinks and compete with other players!</p>
+          <h1 className="text-3xl font-bold mb-2">Nadzorna plošča igralcev</h1>
+          <p className="text-gray-600">Sledite svojemu pitju in tekmujte z drugimi igralci!</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

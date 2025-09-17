@@ -19,8 +19,8 @@ export default async function SelectTeamPage() {
   return (
     <div className="container mx-auto p-8 max-w-2xl">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Choose Your Team</h1>
-        <p className="text-gray-600">Join an existing team or create a new one to start competing!</p>
+        <h1 className="text-3xl font-bold mb-2">Izberite svojo ekipo</h1>
+        <p className="text-gray-600">Pridružite se obstoječi ekipi ali ustvarite novo, da začnete tekmovati!</p>
       </div>
       
       <TeamSelectionForm 

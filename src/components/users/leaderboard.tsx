@@ -47,13 +47,13 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
-            Leaderboard
+            Lestvica
           </CardTitle>
           {teamFilter && (
             <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as 'all' | 'team')}>
               <TabsList>
-                <TabsTrigger value="all">All Players</TabsTrigger>
-                <TabsTrigger value="team">My Team</TabsTrigger>
+                <TabsTrigger value="all">Vsi igralci</TabsTrigger>
+                <TabsTrigger value="team">Moja ekipa</TabsTrigger>
               </TabsList>
             </Tabs>
           )}
@@ -63,7 +63,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
         <div className="space-y-3">
           {filteredUsers.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              No players found
+              Ni najdenih igralcev
             </div>
           ) : (
             filteredUsers.map((user, index) => {
@@ -101,7 +101,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                             isCurrentUser ? 'text-blue-700' : 'text-gray-900'
                           }`}>
                             {user.name}
-                            {isCurrentUser && ' (You)'}
+                            {isCurrentUser && ' (Vi)'}
                           </span>
                           {position <= 3 && getPositionBadge(position)}
                         </div>
@@ -135,7 +135,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                       {score}
                     </div>
                     <div className="text-sm text-gray-500">
-                      {score === 1 ? 'point' : 'points'}
+                      {score === 1 ? 'točka' : score === 2 ? 'točki' : score <= 4 ? 'točke' : 'točk'}
                     </div>
                   </div>
                 </div>
@@ -147,8 +147,8 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
         {filteredUsers.length > 0 && (
           <div className="mt-6 pt-4 border-t text-center text-sm text-gray-500">
             {viewMode === 'all' 
-              ? `Showing all ${filteredUsers.length} players`
-              : `Showing ${filteredUsers.length} team members`
+              ? `Prikaz vseh ${filteredUsers.length} igralcev`
+              : `Prikaz ${filteredUsers.length} članov ekipe`
             }
           </div>
         )}

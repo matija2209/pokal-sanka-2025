@@ -21,8 +21,8 @@ export default async function TeamsPage() {
     <DashboardLayout currentUser={currentUser}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Team Leaderboard</h1>
-          <p className="text-gray-600">See how all teams are performing in the tournament!</p>
+          <h1 className="text-3xl font-bold mb-2">Lestvica ekip</h1>
+          <p className="text-gray-600">Poglejte, kako se vse ekipe odrežajo v turnirju!</p>
         </div>
         
         <div className="max-w-4xl mx-auto">

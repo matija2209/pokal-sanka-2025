@@ -21,16 +21,16 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Your Profile</CardTitle>
+          <CardTitle>Vaš profil</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <p className="text-sm text-gray-500">Name</p>
+            <p className="text-sm text-gray-500">Ime</p>
             <p className="font-medium">{currentUser.name}</p>
           </div>
           
           <div>
-            <p className="text-sm text-gray-500">Current Team</p>
+            <p className="text-sm text-gray-500">Trenutna ekipa</p>
             {currentUser.team ? (
               <div className="flex items-center gap-2">
                 <div 
@@ -40,7 +40,7 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
                 <span className="font-medium">{currentUser.team.name}</span>
               </div>
             ) : (
-              <Badge variant="outline">No Team</Badge>
+              <Badge variant="outline">Brez ekipe</Badge>
             )}
           </div>
         </CardContent>
@@ -48,7 +48,7 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
 
       <Card>
         <CardHeader>
-          <CardTitle>Switch Team</CardTitle>
+          <CardTitle>Zamenjaj ekipo</CardTitle>
         </CardHeader>
         <CardContent>
           <form action={formAction} className="space-y-4">
@@ -57,10 +57,10 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
             <div>
               <Select name="teamId" defaultValue={currentUser.teamId || 'no-team'}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a team" />
+                  <SelectValue placeholder="Izberite ekipo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="no-team">No Team</SelectItem>
+                  <SelectItem value="no-team">Brez ekipe</SelectItem>
                   {availableTeams.map(team => (
                     <SelectItem key={team.id} value={team.id}>
                       <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
             )}
             
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Updating..." : "Update Team"}
+              {isPending ? "Posodabljam..." : "Posodobi ekipo"}
             </Button>
           </form>
         </CardContent>

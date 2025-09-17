@@ -41,7 +41,7 @@ export default function DrinkSelectionDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center">
-            Log Drink for {selectedUser.name}
+            Beleži pijačo za {selectedUser.name}
           </DialogTitle>
           <div className="text-center text-sm text-gray-600">
             {selectedUser.team ? (
@@ -53,7 +53,7 @@ export default function DrinkSelectionDialog({
                 <span>{selectedUser.team.name}</span>
               </div>
             ) : (
-              <span>No Team</span>
+              <span>Brez ekipe</span>
             )}
           </div>
         </DialogHeader>
@@ -71,8 +71,8 @@ export default function DrinkSelectionDialog({
               className="h-16 text-lg font-semibold"
             >
               <span className="flex flex-col items-center gap-1">
-                <span>🍺 Regular</span>
-                <span className="text-sm font-normal">+1 point</span>
+                <span>🍺 Navadno pivo</span>
+                <span className="text-sm font-normal">+1 točka</span>
               </span>
             </Button>
             
@@ -85,15 +85,15 @@ export default function DrinkSelectionDialog({
               className="h-16 text-lg font-semibold"
             >
               <span className="flex flex-col items-center gap-1">
-                <span>🥃 Shot</span>
-                <span className="text-sm font-normal">+2 points</span>
+                <span>🥃 Žganica</span>
+                <span className="text-sm font-normal">+2 točki</span>
               </span>
             </Button>
           </div>
           
           {isPending && (
             <div className="text-center text-sm text-gray-600">
-              Logging drink...
+              Beležim pijačo...
             </div>
           )}
         </form>

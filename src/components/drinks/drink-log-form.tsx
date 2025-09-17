@@ -27,15 +27,15 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Log a Drink</CardTitle>
+        <CardTitle>Beleži pijačo</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
           <div>
-            <Label>Player</Label>
+            <Label>Igralec</Label>
             <Select name="userId" defaultValue={currentUserId} disabled={isPending}>
               <SelectTrigger>
-                <SelectValue placeholder="Select player" />
+                <SelectValue placeholder="Izberite igralca" />
               </SelectTrigger>
               <SelectContent>
                 {allUsers.map(user => (
@@ -75,7 +75,7 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
               disabled={isPending}
               className="flex-1"
             >
-              {isPending ? "Logging..." : "Regular (+1)"}
+              {isPending ? "Beležim..." : "Navadno (+1)"}
             </Button>
             
             <Button 
@@ -86,7 +86,7 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
               disabled={isPending}
               className="flex-1"
             >
-              {isPending ? "Logging..." : "Shot (+2)"}
+              {isPending ? "Beležim..." : "Žganica (+2)"}
             </Button>
           </div>
         </form>

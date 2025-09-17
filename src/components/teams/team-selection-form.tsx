@@ -45,17 +45,17 @@ export default function TeamSelectionForm({
       {availableTeams.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Join Existing Team</CardTitle>
+            <CardTitle>Pridružite se obstoječi ekipi</CardTitle>
           </CardHeader>
           <CardContent>
             <form action={joinFormAction} className="space-y-4">
               <input type="hidden" name="userId" value={currentUserId} />
               
               <div>
-                <Label>Select Team</Label>
+                <Label>Izberite ekipo</Label>
                 <Select name="teamId" required disabled={isJoinPending}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose a team to join" />
+                    <SelectValue placeholder="Izberite ekipo za pridružitev" />
                   </SelectTrigger>
                   <SelectContent>
                     {availableTeams.map(team => (
@@ -82,7 +82,7 @@ export default function TeamSelectionForm({
               )}
               
               <Button type="submit" disabled={isJoinPending}>
-                {isJoinPending ? "Joining Team..." : "Join Team"}
+                {isJoinPending ? "Pridružujem se ekipi..." : "Pridruži se ekipi"}
               </Button>
             </form>
           </CardContent>
@@ -95,7 +95,7 @@ export default function TeamSelectionForm({
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or
+            Ali
           </span>
         </div>
       </div>
@@ -103,18 +103,18 @@ export default function TeamSelectionForm({
       {/* Create New Team */}
       <Card>
         <CardHeader>
-          <CardTitle>Create New Team</CardTitle>
+          <CardTitle>Ustvarite novo ekipo</CardTitle>
         </CardHeader>
         <CardContent>
           <form action={createFormAction} className="space-y-4">
             <input type="hidden" name="userId" value={currentUserId} />
             
             <div>
-              <Label htmlFor="teamName">Team Name</Label>
+              <Label htmlFor="teamName">Ime ekipe</Label>
               <Input 
                 id="teamName"
                 name="teamName" 
-                placeholder="Enter team name" 
+                placeholder="Vnesite ime ekipe" 
                 required 
                 disabled={isCreatePending}
               />
@@ -132,11 +132,11 @@ export default function TeamSelectionForm({
             )}
             
             <Button type="submit" disabled={isCreatePending}>
-              {isCreatePending ? "Creating Team..." : "Create & Join Team"}
+              {isCreatePending ? "Ustvarjam ekipo..." : "Ustvari in pridruži se ekipi"}
             </Button>
             
             <p className="text-sm text-gray-500">
-              A random color will be assigned to your team
+              Vaši ekipi bo dodeljena naključna barva
             </p>
           </form>
         </CardContent>
