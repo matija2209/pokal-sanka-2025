@@ -3,6 +3,20 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
+import { Luckiest_Guy, Roboto } from 'next/font/google'
+ 
+const lucky = Luckiest_Guy({
+  weight: ["400"],
+  subsets: ["latin"],
+  variable: '--font-lucky',
+})
+
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  variable: '--font-roboto',
+})
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,9 +38,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sl">
+    <html lang="sl" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${roboto.variable} ${lucky.variable} antialiased`}
       >
         {children}
         <Toaster />

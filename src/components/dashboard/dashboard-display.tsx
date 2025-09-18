@@ -30,11 +30,11 @@ interface SlideHeaderProps {
 function SlideHeader({ title, icon }: SlideHeaderProps) {
   return (
     <div className="text-center mb-8">
-      <h1 className="mb-6 flex items-center justify-center gap-6 text-6xl font-extrabold tracking-wider uppercase bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
+      <h1 className="font-lucky mb-6 flex items-center justify-center gap-6 text-6xl font-extrabold tracking-wider uppercase bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
         <Image src="/logo.jpg" alt="Pokal Šanka" width={60} height={60} className="rounded-lg shadow-lg" />
         <div className="flex items-center gap-4">
-          {icon}
-          <span className="font-black">{title}</span>
+          {/* {icon} */}
+          <span className="font-lucky font-black">{title}</span>
         </div>
       </h1>
     </div>
@@ -126,7 +126,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   }
 
   return (
-    <div className="min-h-screen p-8 relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 overflow-hidden">
+    <div className="min-h-screen p-8 relative  overflow-hidden">
       {/* Neon background effects */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-20 left-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
@@ -200,7 +200,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
           <div className="max-w-6xl mx-auto">
             <div className="grid gap-4">
             {topPlayers.map((player, index) => (
-              <Card key={player.id}>
+              <Card key={player.id} className='bg-transparent border-red-50'>
                 <CardContent className="flex items-center gap-4">
                   <div className="flex items-center justify-center w-12 h-12">
                     {getRankIcon(index + 1)}
@@ -348,7 +348,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                           pred {formatDistanceToNow(new Date(commentary.createdAt)).replace('about ', '').replace('minutes', 'min').replace('minute', 'min').replace('hours', 'h').replace('hour', 'h')}
                         </div>
                       </div>
-                      <h3 className="text-2xl font-bold">{commentary.message}</h3>
+                      <h3 className="text-2xl font-bold font-roboto">{commentary.message}</h3>
                     </div>
                     
                     <div className="text-right">

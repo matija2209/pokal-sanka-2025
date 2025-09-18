@@ -4,9 +4,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: Outfit, sans-serif;
+  --font-sans: var(--font-roboto), Outfit, sans-serif;
   --font-mono: Fira Code, monospace;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-lucky: var(--font-lucky);
+  --font-roboto: var(--font-roboto);
   --radius: 0.5rem;
   --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
   --tracking-tight: calc(var(--tracking-normal) - 0.025em);
@@ -184,7 +186,29 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     letter-spacing: var(--tracking-normal);
+  }
+  
+  /* Headings use Luckiest Guy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-lucky);
+    font-weight: 400;
+  }
+  
+  /* Body text uses Roboto */
+  p, span, div, a, button, input, textarea, label {
+    font-family: var(--font-roboto);
+  }
+}
+
+/* Custom font utility classes */
+@layer utilities {
+  .font-lucky {
+    font-family: var(--font-lucky);
+  }
+  
+  .font-roboto {
+    font-family: var(--font-roboto);
   }
 }

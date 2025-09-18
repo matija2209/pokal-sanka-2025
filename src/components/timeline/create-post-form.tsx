@@ -66,6 +66,11 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
             required
           />
           
+          <MobileImageInput
+            name="post-image"
+            label="Slika"
+          />
+          
           {state.message && !state.success && (
             <p className="text-red-500 text-sm mt-2">{state.message}</p>
           )}
@@ -74,11 +79,6 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
             <p className="text-green-500 text-sm mt-2">{state.message}</p>
           )}
         </form>
-        <MobileImageInput
-          name="post-image"
-          label="Slika"
-          className="border-0 p-0 text-sm font-medium text-gray-600 hover:text-blue-600 cursor-pointer"
-        />
 </div>
       </CardContent>
       
