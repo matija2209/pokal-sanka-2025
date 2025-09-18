@@ -1,11 +1,12 @@
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllTeams, getAllUsersWithTeamAndDrinks, getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers'
+import { getAllTeams, getAllUsersWithTeamAndDrinks, getUserWithTeamAndDrinksById, getRecentDrinkLogs } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout'
-import { UserProfile, UserStats, UserHistory, UserAchievements } from '@/components/users'
+import { UserProfile, UserStats, UserHistory, UserAchievements, Leaderboard } from '@/components/users'
 import { TeamLogoForm } from '@/components/teams'
+import { RecentActivity } from '@/components/drinks'
 import { CreatePostForm, TimelineDisplay } from '@/components/timeline'
-import { getUserRanking } from '@/lib/utils/calculations'
+import { getUserRanking, sortUsersByScore } from '@/lib/utils/calculations'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -27,10 +28,15 @@ export default async function ProfilePage() {
     redirect('/')
   }
   
-  const availableTeams = await getAllTeams()
-  const allUsers = await getAllUsersWithTeamAndDrinks()
-  const currentUserWithDrinks = await getUserWithTeamAndDrinksById(currentUser.id)
+  const [availableTeams, allUsers, currentUserWithDrinks, recentDrinks] = await Promise.all([
+    getAllTeams(),
+    getAllUsersWithTeamAndDrinks(),
+    getUserWithTeamAndDrinksById(currentUser.id),
+    getRecentDrinkLogs(20)
+  ])
+  
   const userRank = getUserRanking(currentUser.id, allUsers)
+  const sortedUsers = sortUsersByScore(allUsers)
   
   return (
     <DashboardLayout currentUser={currentUser}>
@@ -74,13 +80,26 @@ export default async function ProfilePage() {
             )}
             
             {/* Create Post */}
-            <CreatePostForm />
+            <CreatePostForm currentUser={currentUser} />
 
             {/* Timeline */}
             <div className="space-y-4">
               <h2 className="text-xl font-bold">Nedavne objave</h2>
               <TimelineDisplay limit={10} />
             </div>
+
+            {/* Recent Activity */}
+            <RecentActivity 
+              recentDrinks={recentDrinks}
+              limit={8}
+            />
+
+            {/* Leaderboard */}
+            <Leaderboard 
+              users={sortedUsers}
+              currentUserId={currentUser.id}
+              teamFilter={currentUser.teamId}
+            />
 
             {/* Drink History */}
             {currentUserWithDrinks && (

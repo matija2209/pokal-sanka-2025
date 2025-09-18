@@ -1,10 +1,9 @@
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllUsersWithTeamAndDrinks, getRecentDrinkLogs } from '@/lib/prisma/fetchers'
+import { getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout'
-import { DrinkLogForm, RecentActivity } from '@/components/drinks'
-import { Leaderboard } from '@/components/users'
-import { sortUsersByScore } from '@/lib/utils/calculations'
+import { DrinkLogForm } from '@/components/drinks'
+import { CreatePostForm } from '@/components/timeline'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -30,12 +29,7 @@ export default async function PlayersPage() {
     redirect('/select-team')
   }
   
-  const [allUsers, recentDrinks] = await Promise.all([
-    getAllUsersWithTeamAndDrinks(),
-    getRecentDrinkLogs(20)
-  ])
-  
-  const sortedUsers = sortUsersByScore(allUsers)
+  const allUsers = await getAllUsersWithTeamAndDrinks()
   
   const usersForDropdown = allUsers.map(user => ({
     id: user.id,
@@ -47,35 +41,17 @@ export default async function PlayersPage() {
     <DashboardLayout currentUser={currentUser}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Nadzorna plošča igralcev</h1>
-          <p className="text-gray-600">Sledite svojemu pitju in tekmujte z drugimi igralci!</p>
+          <h1 className="text-3xl font-bold mb-2">Glavni interakcijski center</h1>
+          <p className="text-gray-600">Beležite pijačo in delite svoje izkušnje!</p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Drink Logging Form */}
-          <div className="lg:col-span-1">
-            <div className="space-y-6">
-              <DrinkLogForm 
-                currentUserId={currentUser.id}
-                allUsers={usersForDropdown}
-              />
-              
-              {/* Recent Activity */}
-              <RecentActivity 
-                recentDrinks={recentDrinks}
-                limit={8}
-              />
-            </div>
-          </div>
+        <div className="space-y-8 max-w-md mx-auto">
+          <DrinkLogForm 
+            currentUserId={currentUser.id}
+            allUsers={usersForDropdown}
+          />
           
-          {/* Enhanced Leaderboard */}
-          <div className="lg:col-span-3">
-            <Leaderboard 
-              users={sortedUsers}
-              currentUserId={currentUser.id}
-              teamFilter={currentUser.teamId}
-            />
-          </div>
+          <CreatePostForm currentUser={currentUser} />
         </div>
       </div>
     </DashboardLayout>

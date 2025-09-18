@@ -170,3 +170,57 @@ CommentaryContext {
 - ✅ Responsive design for TV displays
 
 **The dashboard now provides a complete TV broadcasting experience with live commentary, breaking news, and dynamic visual content!**
+
+---
+
+## 📻 Breaking News Banner Enhancement - COMPLETED ✅
+**Upgraded from individual message rotation to continuous scrolling ticker:**
+
+### Banner Transformation:
+- **OLD**: Rotated individual messages every 8 seconds with auto-hide
+- **NEW**: Continuous scrolling ticker showing all recent posts infinitely
+
+### Continuous Scrolling Features:
+- **All Messages Visible**: Shows last 10 posts in one continuous scroll
+- **Infinite Loop**: Seamlessly duplicates content for endless scrolling
+- **60-Second Cycle**: Complete scroll takes 60 seconds (45s on mobile)
+- **Persistent Display**: Never disappears - always visible when posts exist
+- **Message Counter**: Shows "X SPOROČIL" to indicate total posts
+
+### Content Format:
+```
+🚨 EKSKLUZIVNO [OBJAVE] Tajsss (SAŠA UDOVIČ WANNABE): Gremo!!!! 📸 • pred 1min ••• Tajsss: Gas • pred 15h ••• [continues...]
+```
+
+### Technical Implementation:
+- **Duplicated Content**: `${allMessages} ••• ${allMessages}` for seamless loop
+- **CSS Animation**: `continuousScroll 60s linear infinite`
+- **Transform**: `translateX(-50%)` to scroll exactly half the duplicated content
+- **Post Formatting**: Includes user name, team, message, image indicator, timestamp
+
+### Banner Components Separation:
+- **Breaking News Banner**: Shows USER POSTS only
+- **Commentary System**: Appears separately in main dashboard rotation
+- **Clear Distinction**: Posts ≠ AI Commentary (different purposes)
+
+### User Experience Improvements:
+- **Always Visible**: No more disappearing banner
+- **More Information**: See all recent activity at once
+- **TV-Like Feel**: Authentic news ticker experience
+- **Responsive**: Faster on mobile (45s vs 60s cycle)
+
+## 🎯 Current Dashboard System Overview:
+1. **Main Rotation**: Teams → Players → Activity → Commentary (AI-generated)
+2. **Breaking News**: Continuous posts ticker at bottom
+3. **Latest Images**: Multi-source carousel (top-right)
+4. **Real-time Updates**: Server actions trigger immediate updates
+
+## ✅ Complete TV Broadcasting Experience:
+- ✅ AI-powered Slovenian commentary generation
+- ✅ Continuous scrolling news ticker with all posts
+- ✅ Multi-source image display rotation
+- ✅ Professional BBC-style design
+- ✅ Persistent, always-visible content streams
+- ✅ Mobile-responsive animations
+
+**The dashboard now delivers a complete 24/7 TV broadcasting experience with continuous content flow!**
