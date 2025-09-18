@@ -51,6 +51,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
     return () => clearInterval(timer)
   }, [])
 
+
   const getDrinkEmoji = (drinkType: string) => {
     return drinkType === 'REGULAR' ? '🍺' : '🥃'
   }
@@ -95,8 +96,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
             </h2>
           </div>
           
-          <div className="grid gap-4 max-w-6xl mx-auto">
-            {teams.slice(0, 5).map((team, index) => (
+          <div className="max-w-6xl mx-auto">
+            <div className="grid gap-4">
+            {teams.map((team, index) => (
               <Card key={team.id} className="tv-card p-6 tv-animation-slide-in">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center justify-center w-12 h-12">
@@ -123,6 +125,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                 </div>
               </Card>
             ))}
+            </div>
           </div>
         </div>
       )}
@@ -138,7 +141,8 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
             </h2>
           </div>
           
-          <div className="grid gap-4 max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid gap-4">
             {topPlayers.map((player, index) => (
               <Card key={player.id} className="tv-card p-6 tv-animation-slide-in">
                 <div className="flex items-center gap-4">
@@ -177,6 +181,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                 </div>
               </Card>
             ))}
+            </div>
           </div>
         </div>
       )}
@@ -192,8 +197,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
             </h2>
           </div>
           
-          <div className="grid gap-3 max-w-6xl mx-auto">
-            {recentActivity.slice(0, 10).map((activity) => (
+          <div className="max-w-6xl mx-auto">
+            <div className="grid gap-3">
+            {recentActivity.map((activity) => (
               <Card key={activity.id} className="tv-card p-4 tv-animation-slide-in">
                 <div className="flex items-center gap-3">
                   <div className="text-3xl">
@@ -230,6 +236,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                 </div>
               </Card>
             ))}
+            </div>
           </div>
         </div>
       )}
@@ -245,7 +252,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
             </h2>
           </div>
           
-          <div className="grid gap-3 max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             {commentaries.length === 0 ? (
               <Card className="tv-card p-6 tv-animation-slide-in">
                 <div className="text-center">
@@ -255,7 +262,8 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                 </div>
               </Card>
             ) : (
-              commentaries.slice(0, 8).map((commentary) => (
+              <div className="grid gap-3">
+              {commentaries.map((commentary) => (
                 <Card key={commentary.id} className="tv-card p-5 tv-animation-slide-in">
                   <div className="flex items-center gap-4">
                     <div className="text-4xl">
@@ -300,7 +308,8 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                     </div>
                   </div>
                 </Card>
-              ))
+              ))}
+              </div>
             )}
           </div>
         </div>
@@ -320,6 +329,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
           </div>
         </div>
       </div>
+
     </div>
   )
 }

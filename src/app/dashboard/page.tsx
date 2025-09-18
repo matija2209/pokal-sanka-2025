@@ -29,12 +29,12 @@ export default async function DashboardPage() {
   const [allUsers, allTeams, recentDrinks, unreadCommentaries, recentImages, userProfiles, teamLogos, allRecentPosts] = await Promise.all([
     getAllUsersWithTeamAndDrinks(),
     getAllTeams(),
-    getRecentDrinkLogsWithTeam(20),
-    getUnreadCommentaries(10),
+    getRecentDrinkLogsWithTeam(100),
+    getUnreadCommentaries(50),
     getRecentPostsWithImages(5),
     getRecentUserProfileImages(5),
     getRecentTeamLogos(5),
-    getRecentPosts(10)
+    getRecentPosts(50)
   ])
 
   const sortedUsers = sortUsersByScore(allUsers)
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       <DashboardDisplay 
         teams={teamsWithStats}
-        topPlayers={sortedUsers.slice(0, 5)}
+        topPlayers={sortedUsers}
         recentActivity={recentDrinks}
         commentaries={unreadCommentaries}
       />
