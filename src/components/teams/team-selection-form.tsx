@@ -52,7 +52,6 @@ export default function TeamSelectionForm({
               <input type="hidden" name="userId" value={currentUserId} />
               
               <div>
-                <Label>Izberite ekipo</Label>
                 <Select name="teamId" required disabled={isJoinPending}>
                   <SelectTrigger>
                     <SelectValue placeholder="Izberite ekipo za pridružitev" />
@@ -110,7 +109,6 @@ export default function TeamSelectionForm({
             <input type="hidden" name="userId" value={currentUserId} />
             
             <div>
-              <Label htmlFor="teamName">Ime ekipe</Label>
               <Input 
                 id="teamName"
                 name="teamName" 

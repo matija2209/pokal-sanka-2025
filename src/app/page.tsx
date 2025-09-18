@@ -56,11 +56,11 @@ export default async function HomePage() {
           src="/logo.jpg"
           alt="Pokal Šanka - Drinking Game"
           fill
-          className="object-contain object-center md:object-cover"
+          className="object-contain object-top"
           priority
         />
         {/* Gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
       </div>
       
       {/* Login section at bottom */}

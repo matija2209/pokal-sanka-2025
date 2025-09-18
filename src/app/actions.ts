@@ -5,12 +5,13 @@ import { redirect } from 'next/navigation'
 import { createUser, updateUserTeam, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
 import { createTeam, getAllTeams } from '@/lib/prisma/fetchers/team-fetchers'
 import { createDrinkLog } from '@/lib/prisma/fetchers/drink-log-fetchers'
-import { setUserCookie, getCurrentUser } from '@/lib/utils/cookies'
+import { setUserCookie, getCurrentUser, clearUserCookie } from '@/lib/utils/cookies'
 import { getNextAvailableColor } from '@/lib/utils/colors'
 import { uploadImage } from '@/lib/utils/image-upload'
 import { generateCommentaryForDrink, generateBulkDrinkCommentary } from '@/lib/services/commentary-generator'
 import { prisma } from '@/lib/prisma/client'
 import { DRINK_TYPES } from '@/lib/prisma/types'
+import { getDrinkPoints, getDrinkLabel } from '@/lib/utils/drinks'
 import type { 
   UserActionState, 
   TeamActionState, 
@@ -321,7 +322,7 @@ export async function logDrinkAction(
       }
     }
 
-    const points = drinkType === DRINK_TYPES.REGULAR ? 1 : 2
+    const points = getDrinkPoints(drinkType)
 
     const drinkLog = await createDrinkLog(userId, drinkType, points)
 
@@ -346,7 +347,7 @@ export async function logDrinkAction(
 
     return {
       success: true,
-      message: `${drinkType === DRINK_TYPES.REGULAR ? 'Regular' : 'Shot'} logged! +${points} points`,
+      message: `${getDrinkLabel(drinkType)} logged! +${points} points`,
       type: 'create',
       data: {
         drinkLogId: drinkLog.id,
@@ -389,7 +390,7 @@ export async function logMultipleDrinksAction(
       }
     }
 
-    const points = drinkType === DRINK_TYPES.REGULAR ? 1 : 2
+    const points = getDrinkPoints(drinkType)
     const drinkLogPromises = []
 
     for (const userId of userIds) {
@@ -422,7 +423,7 @@ export async function logMultipleDrinksAction(
 
     return {
       success: true,
-      message: `${drinkType === DRINK_TYPES.REGULAR ? 'Regular' : 'Shot'} logged for ${userIds.length} people! +${points * userIds.length} total points`,
+      message: `${getDrinkLabel(drinkType)} logged for ${userIds.length} people! +${points * userIds.length} total points`,
       type: 'create',
       data: {
         drinkLogId: drinkLogs[0]?.id || '',
@@ -652,6 +653,29 @@ export async function createPostAction(
     return {
       success: false,
       message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+// Logout Action
+export async function logoutAction(): Promise<UserActionState> {
+  try {
+    await clearUserCookie()
+    
+    return {
+      success: true,
+      message: 'Successfully logged out',
+      type: 'update',
+      data: {
+        redirectUrl: '/'
+      }
+    }
+  } catch (error) {
+    console.error('Error logging out:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred during logout',
       type: 'error'
     }
   }

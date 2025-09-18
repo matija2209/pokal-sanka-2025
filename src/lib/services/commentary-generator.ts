@@ -39,7 +39,7 @@ function buildCommentaryContext(
       isOnStreak: stats.isOnStreak
     },
     drink: {
-      type: drinkType as 'REGULAR' | 'SHOT',
+      type: drinkType,
       points
     }
   }
@@ -259,7 +259,7 @@ export async function generateBulkDrinkCommentary(
         isOnStreak: false
       },
       drink: {
-        type: drinkType as 'REGULAR' | 'SHOT',
+        type: drinkType,
         points: totalPoints
       },
       bulk: {

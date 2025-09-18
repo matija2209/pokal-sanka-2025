@@ -11,6 +11,7 @@ import Image from 'next/image'
 import type { UserWithTeamAndDrinks, DrinkLogWithUserAndTeam, TeamWithStats } from '@/lib/prisma/types'
 import type { Commentary } from '@/lib/prisma/fetchers/commentary-fetchers'
 import { refreshDashboardAction } from '@/app/actions'
+import { getDrinkLabel, getDrinkPoints } from '@/lib/utils/drinks'
 
 interface DashboardDisplayProps {
   teams: TeamWithStats[]
@@ -73,7 +74,17 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   }, [cycleCount])
 
   const getDrinkEmoji = (drinkType: string) => {
-    return drinkType === 'REGULAR' ? '🍺' : '🥃'
+    const points = getDrinkPoints(drinkType)
+    return points === 1 ? '🍺' : points === 3 ? '🍸' : '🥃'
+  }
+
+  const getDrinkStats = (drinkLogs: any[]) => {
+    const stats: Record<number, number> = {}
+    drinkLogs.forEach((log: any) => {
+      const points = getDrinkPoints(log.drinkType)
+      stats[points] = (stats[points] || 0) + 1
+    })
+    return stats
   }
 
   const getRankIcon = (position: number) => {
@@ -187,8 +198,12 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                     <div className="flex items-center gap-4 text-lg">
                       <span>{player.drinkLogs.length} pijač</span>
                       <span>•</span>
-                      <span>{player.drinkLogs.filter((d: any) => d.drinkType === 'REGULAR').length} 🍺</span>
-                      <span>{player.drinkLogs.filter((d: any) => d.drinkType === 'SHOT').length} 🥃</span>
+                      {(() => {
+                        const stats = getDrinkStats(player.drinkLogs)
+                        return Object.entries(stats).map(([points, count]) => (
+                          <span key={points}>{count} {points === '1' ? '🍺' : points === '3' ? '🍸' : '🥃'}</span>
+                        ))
+                      })()}
                     </div>
                   </div>
                   
@@ -236,10 +251,12 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                       )}
                       <Badge 
                         className={`text-sm px-2 py-0.5 ${
-                          activity.drinkType === 'SHOT' ? 'bg-red-600 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-600'
+                          getDrinkPoints(activity.drinkType) === 3 ? 'bg-purple-600 hover:bg-purple-600' :
+                          getDrinkPoints(activity.drinkType) === 2 ? 'bg-red-600 hover:bg-red-600' : 
+                          'bg-blue-600 hover:bg-blue-600'
                         }`}
                       >
-                        {activity.drinkType === 'SHOT' ? 'Žganje' : 'Pivo'}
+                        {getDrinkLabel(activity.drinkType)}
                       </Badge>
                     </div>
                     <div className="text-base text-gray-400">

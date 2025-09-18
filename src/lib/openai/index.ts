@@ -28,7 +28,7 @@ export interface CommentaryContext {
     createdAgo?: string // "pred 1 uro"
   }
   drink: {
-    type: 'REGULAR' | 'SHOT'
+    type: string
     points: number
     timeOfDay?: string // "popoldan", "zvečer", "ponoči"
   }

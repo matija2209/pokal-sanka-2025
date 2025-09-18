@@ -9,6 +9,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { logDrinkAction, logMultipleDrinksAction } from '@/app/actions'
 import { initialDrinkLogActionState, initialMultiDrinkLogActionState } from '@/lib/types/action-states'
 import { DRINK_TYPES } from '@/lib/prisma/types'
+import { getDrinkLabel, getDrinkPoints } from '@/lib/utils/drinks'
+import DrinkSelectionModal from './drink-selection-modal'
 
 interface DrinkLogFormProps {
   currentUserId: string
@@ -25,6 +27,8 @@ interface DrinkLogFormProps {
 export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormProps) {
   const [isMultiMode, setIsMultiMode] = useState(false)
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+  const [selectedDrink, setSelectedDrink] = useState<string>('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
   
   const [singleState, singleFormAction, singleIsPending] = useActionState(logDrinkAction, initialDrinkLogActionState)
   const [multiState, multiFormAction, multiIsPending] = useActionState(logMultipleDrinksAction, initialMultiDrinkLogActionState)
@@ -36,6 +40,10 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
   const handleModeToggle = (checked: boolean) => {
     setIsMultiMode(checked)
     setSelectedUserIds([])
+  }
+
+  const handleDrinkSelect = (drinkType: string) => {
+    setSelectedDrink(drinkType)
   }
 
   const handleUserToggle = (userId: string, checked: boolean) => {
@@ -52,6 +60,12 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
     }
   }, [multiState.success, isMultiMode])
 
+  useEffect(() => {
+    if (state.success) {
+      setSelectedDrink('')
+    }
+  }, [state.success])
+
   return (
     <Card>
       <CardHeader>
@@ -66,11 +80,10 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
               onCheckedChange={handleModeToggle}
               disabled={isPending}
             />
-            <Label htmlFor="multi-mode">Beleži za več ljudi</Label>
+            <Label htmlFor="multi-mode" className='font-bold'>Beleži za več ljudi</Label>
           </div>
           
           <div>
-            <Label>{isMultiMode ? 'Igralci' : 'Igralec'}</Label>
             
             {!isMultiMode && (
               <Select name="userId" defaultValue={currentUserId} disabled={isPending}>
@@ -144,31 +157,44 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
             <p className="text-green-500 text-sm">{state.message}</p>
           )}
           
-          <div className="flex gap-4">
-            <Button 
-              type="submit" 
-              name="drinkType" 
-              value={DRINK_TYPES.REGULAR}
-              variant="default"
-              disabled={isPending || (isMultiMode && selectedUserIds.length === 0)}
-              className="flex-1"
-            >
-              {isPending ? "Beležim..." : 
-               isMultiMode ? `Navadno (+${selectedUserIds.length})` : "Navadno (+1)"}
-            </Button>
+          <div className="space-y-4">
+              <Button 
+                type="button"
+                variant="outline"
+                onClick={() => setIsModalOpen(true)}
+                disabled={isPending}
+                className="w-full justify-start "
+              >
+                {selectedDrink ? 
+                  `${getDrinkLabel(selectedDrink)} (+${getDrinkPoints(selectedDrink)})` : 
+                  "Izberi pijačo"
+                }
+              </Button>
             
             <Button 
               type="submit" 
               name="drinkType" 
-              value={DRINK_TYPES.SHOT}
-              variant="destructive" 
-              disabled={isPending || (isMultiMode && selectedUserIds.length === 0)}
-              className="flex-1"
+              value={selectedDrink}
+              variant="default"
+              disabled={isPending || !selectedDrink || (isMultiMode && selectedUserIds.length === 0)}
+              className="w-full"
             >
               {isPending ? "Beležim..." : 
-               isMultiMode ? `Žganica (+${selectedUserIds.length * 2})` : "Žganica (+2)"}
+               selectedDrink ? (
+                 isMultiMode ? 
+                   `Beleži ${getDrinkLabel(selectedDrink)} (+${getDrinkPoints(selectedDrink) * selectedUserIds.length})` :
+                   `Beleži ${getDrinkLabel(selectedDrink)} (+${getDrinkPoints(selectedDrink)})`
+               ) : "Izberi pijačo"
+              }
             </Button>
           </div>
+
+          <DrinkSelectionModal 
+            isOpen={isModalOpen}
+            onOpenChange={setIsModalOpen}
+            onSelectDrink={handleDrinkSelect}
+            selectedDrink={selectedDrink}
+          />
         </form>
       </CardContent>
     </Card>

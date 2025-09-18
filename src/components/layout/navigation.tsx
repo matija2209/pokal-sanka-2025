@@ -11,6 +11,7 @@ import {
   User, 
   RefreshCw
 } from 'lucide-react'
+import UserMenu from './user-menu'
 import type { UserWithTeam } from '@/lib/prisma/types'
 
 interface NavigationProps {
@@ -23,7 +24,7 @@ export default function Navigation({ currentUser, onRefresh, isRefreshing }: Nav
   const pathname = usePathname()
   
   const navItems = [
-    { href: '/players', icon: Users, label: 'Igralci', active: pathname === '/players' },
+    { href: '/players', icon: Users, label: 'Štart', active: pathname === '/players' },
     { href: '/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/teams' },
     { href: '/profile', icon: User, label: 'Profil', active: pathname === '/profile' },
   ]
@@ -51,22 +52,7 @@ export default function Navigation({ currentUser, onRefresh, isRefreshing }: Nav
 
           {/* User Info - Responsive */}
           <div className="flex items-center space-x-2 md:space-x-4">
-            <div className="flex items-center space-x-1 md:space-x-2">
-              {currentUser.team && (
-                <div 
-                  className="w-3 h-3 rounded" 
-                  style={{ backgroundColor: currentUser.team.color }}
-                />
-              )}
-              <span className="text-xs md:text-sm font-medium text-gray-700 max-w-20 md:max-w-none truncate">
-                {currentUser.name}
-              </span>
-              {currentUser.team && (
-                <Badge variant="secondary" className="text-xs hidden sm:inline-flex">
-                  {currentUser.team.name}
-                </Badge>
-              )}
-            </div>
+            <UserMenu currentUser={currentUser} />
             
             {onRefresh && (
               <Button

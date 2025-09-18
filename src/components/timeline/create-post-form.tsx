@@ -3,7 +3,7 @@
 import { useActionState, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardAction, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import MobileImageInput from '@/components/ui/mobile-image-input'
 import { createPostAction } from '@/app/actions'
@@ -47,21 +47,14 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
 
   return (
     <Card className="border-0 shadow-sm bg-white">
-      <CardContent className="p-4">
+      <CardHeader>
+        <CardTitle>Objavi</CardTitle>
+      </CardHeader>
+      <CardContent className="">
         {/* User info header */}
-        <div className="flex items-center space-x-3 mb-4">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={currentUser?.profile_image_url || undefined} />
-            <AvatarFallback className="bg-blue-500 text-white text-sm font-medium">
-              {userInitials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900">
-              {currentUser?.name || 'Uporabnik'}
-            </p>
-          </div>
-        </div>
+       
+
+<div className='flex flex-col gap-4'>
 
         <form id="post-form" action={handleSubmit} className="space-y-3">
           <Textarea
@@ -81,23 +74,27 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
             <p className="text-green-500 text-sm mt-2">{state.message}</p>
           )}
         </form>
-      </CardContent>
-      
-      <CardFooter className="flex items-center justify-between pt-2 border-t border-gray-100">
         <MobileImageInput
           name="post-image"
           label="Slika"
           className="border-0 p-0 text-sm font-medium text-gray-600 hover:text-blue-600 cursor-pointer"
         />
-        
+</div>
+      </CardContent>
+      
+      <CardFooter >
+       
+        <CardAction>
         <Button 
           type="submit" 
           form="post-form"
           disabled={!message.trim() || isPending}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full font-medium"
+          className='w-full flex'
         >
           {isPending ? 'Objavljam...' : 'Objavi'}
         </Button>
+
+        </CardAction>
       </CardFooter>
     </Card>
   )

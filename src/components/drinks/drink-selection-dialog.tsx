@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { logDrinkAction } from '@/app/actions'
 import { initialDrinkLogActionState } from '@/lib/types/action-states'
 import { DRINK_TYPES } from '@/lib/prisma/types'
+import { getDrinksByCategory } from '@/lib/utils/drinks'
 import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
 import { toast } from 'sonner'
 
@@ -23,6 +24,7 @@ export default function DrinkSelectionDialog({
   onDrinkLogged 
 }: DrinkSelectionDialogProps) {
   const [state, formAction, isPending] = useActionState(logDrinkAction, initialDrinkLogActionState)
+  const categories = getDrinksByCategory()
 
   useEffect(() => {
     if (state.success) {
@@ -61,34 +63,36 @@ export default function DrinkSelectionDialog({
         <form action={formAction} className="space-y-6">
           <input type="hidden" name="userId" value={selectedUser.id} />
           
-          <div className="grid grid-cols-1 gap-4">
-            <Button 
-              type="submit" 
-              name="drinkType" 
-              value={DRINK_TYPES.REGULAR}
-              variant="default"
-              disabled={isPending}
-              className="h-16 text-lg font-semibold"
-            >
-              <span className="flex flex-col items-center gap-1">
-                <span>🍺 Navadno pivo</span>
-                <span className="text-sm font-normal">+1 točka</span>
-              </span>
-            </Button>
-            
-            <Button 
-              type="submit" 
-              name="drinkType" 
-              value={DRINK_TYPES.SHOT}
-              variant="destructive" 
-              disabled={isPending}
-              className="h-16 text-lg font-semibold"
-            >
-              <span className="flex flex-col items-center gap-1">
-                <span>🥃 Žganica</span>
-                <span className="text-sm font-normal">+2 točki</span>
-              </span>
-            </Button>
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            {categories.map((category) => (
+              <div key={category.name} className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{category.emoji}</span>
+                  <h3 className="font-semibold text-sm">
+                    {category.name} ({category.description})
+                  </h3>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2">
+                  {category.drinks.map((drink) => (
+                    <Button 
+                      key={drink.type}
+                      type="submit" 
+                      name="drinkType" 
+                      value={drink.type}
+                      variant={drink.points === 3 ? "destructive" : "default"}
+                      disabled={isPending}
+                      className="h-12 text-sm font-medium"
+                    >
+                      <span className="flex flex-col items-center gap-0.5">
+                        <span>{drink.label}</span>
+                        <span className="text-xs opacity-80">+{drink.points} {drink.points === 1 ? 'točka' : drink.points === 2 ? 'točki' : 'točke'}</span>
+                      </span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
           
           {isPending && (

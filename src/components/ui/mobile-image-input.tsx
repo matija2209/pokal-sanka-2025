@@ -61,9 +61,6 @@ export default function MobileImageInput({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <label className="block text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
       
       <div className="flex flex-col items-center space-y-4">
         {/* Image Preview */}
@@ -101,7 +98,7 @@ export default function MobileImageInput({
           className="flex items-center gap-2"
         >
           <Camera size={16} />
-          {currentImageUrl || previewUrl ? 'Change Photo' : 'Add Photo'}
+          {currentImageUrl || previewUrl ? 'Zamenjaj sliko' : 'Dodaj sliko'}
         </Button>
 
         {fileName && (

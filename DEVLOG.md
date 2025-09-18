@@ -224,3 +224,76 @@ CommentaryContext {
 - ✅ Mobile-responsive animations
 
 **The dashboard now delivers a complete 24/7 TV broadcasting experience with continuous content flow!**
+
+---
+
+## 🍻 Multi-User Drink Logging + Bulk Hype Commentary - COMPLETED ✅
+**Added ability to log drinks for multiple users simultaneously with special HYPE commentary:**
+
+### Multi-Select Drink Logging Features:
+- **Mode Toggle**: Checkbox "Beleži za več ljudi" switches between single/multi-user modes
+- **Conditional UI**: 
+  - Single mode: Original dropdown (current user pre-selected)
+  - Multi mode: Checkbox list of all users with team colors and names
+- **Smart Validation**: 
+  - Buttons disabled when no users selected in multi-mode
+  - Clear validation message "Izberite vsaj enega igralca"
+- **Dynamic Button Text**: 
+  - Single: "Navadno (+1)" / "Žganica (+2)"
+  - Multi: "Navadno (+X)" / "Žganica (+X*2)" showing total points for all users
+- **Auto-Reset**: Form clears selected users after successful multi-submission
+
+### Backend Implementation:
+- **New Server Action**: `logMultipleDrinksAction` handles batch drink logging
+- **Parallel Processing**: Creates multiple drink logs concurrently with Promise.all
+- **Error Handling**: Validates all logs succeed or reports specific failures
+- **Efficient Design**: Uses existing single-user infrastructure in batch
+
+### Special Bulk Hype Commentary System:
+- **New Function**: `generateBulkDrinkCommentary()` creates maximum excitement for group events
+- **Enhanced Context**: Extended CommentaryContext with `bulk_hype` event type and group data:
+  ```typescript
+  bulk: {
+    userCount: number
+    userNames: string[]
+    teams: string[]
+    totalPointsAdded: number
+  }
+  ```
+- **Specialized AI Prompt**: Maximum energy commentary for group drinking moments:
+  > "Ustvari MAKSIMALNO vznemirljivo komentarsko sporočilo za trenutek, ko več igralcev hkrati pije - to je PRAVI spektakel! Uporabi fraze kot 'vik in vihar nadaljujeta', 'spektakel', 'neverjeten prizor'!"
+
+### UX Benefits:
+- **Perfect for Group Events**: Ideal for "round of shots" scenarios
+- **No Learning Curve**: Existing single-user flow unchanged
+- **Clear Visual Feedback**: Real-time point calculations and user counts
+- **Intuitive Design**: Familiar checkbox pattern for multi-selection
+
+### Technical Integration:
+- **Files Modified**: 
+  - `src/app/actions.ts` - Added `logMultipleDrinksAction` and bulk commentary trigger
+  - `src/lib/types/action-states.ts` - Added initial state for multi-user actions
+  - `src/components/drinks/drink-log-form.tsx` - Complete multi-select UI implementation
+  - `src/lib/services/commentary-generator.ts` - Added `generateBulkDrinkCommentary()`
+  - `src/lib/openai/index.ts` - Extended CommentaryContext and system prompts
+
+### Bulk Commentary Features:
+- **HIGH Priority**: Bulk events get maximum visibility in dashboard
+- **Group Recognition**: Mentions all participants by name
+- **Team Awareness**: Highlights involved teams
+- **Total Impact**: Shows cumulative points added
+- **Special Phrases**: Uses exciting phrases like "vik in vihar nadaljujeta" 🔥🍻
+
+### Example Bulk Commentary:
+> "🔥🍻 SPEKTAKEL! Vik in vihar nadaljujeta! Incredible group moment as Anja, Marko, and Petra all raise their glasses together! Team Alpha and Team Bravo showing us what true camaraderie looks like with +6 total points! 🎉⚡"
+
+## ✅ Complete Multi-User System:
+- ✅ Conditional single/multi-user interface
+- ✅ Batch drink logging with error handling
+- ✅ Special AI-powered BULK HYPE commentary
+- ✅ Real-time validation and feedback
+- ✅ Team color and member display
+- ✅ TypeScript compilation passes
+- ✅ Mobile-responsive design
+
+**The drink logging system now supports both individual and group drinking events with maximum excitement for group moments!**
