@@ -235,7 +235,7 @@
   }
   
   .tv-subtitle {
-    @apply text-4xl font-semibold;
+    @apply text-3xl font-semibold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   }
   
@@ -328,7 +328,7 @@
   }
   
   .tv-subtitle {
-    font-size: 5rem;
+    font-size: 3.5rem;
   }
   
   .tv-score {
