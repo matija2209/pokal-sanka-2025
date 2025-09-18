@@ -48,21 +48,11 @@ export default function BreakingNewsBanner({ posts }: BreakingNewsBannerProps) {
     return null
   }
 
-  // Create continuous scrolling content with all messages
-  const formatPost = (post: PostWithUser) => {
-    const timeAgo = formatDistanceToNow(new Date(post.createdAt))
-      .replace('about ', '')
-      .replace('minutes', 'min')
-      .replace('minute', 'min')
-      .replace('hours', 'h')
-      .replace('hour', 'h')
-    
-    return `${post.user.name}${post.user.team ? ` (${post.user.team.name})` : ''}: ${post.message} ${post.image_url ? '📸' : ''} • pred ${timeAgo}`
-  }
+  // Create team abbreviation helper
+  const getTeamAbbr = (teamName: string) => teamName.substring(0, 3).toUpperCase()
 
-  // Duplicate the messages to create seamless infinite scroll
-  const allMessages = breakingNews.map(formatPost).join(' ••• ')
-  const scrollingContent = `${allMessages} ••• ${allMessages}`
+  // Duplicate the messages to create seamless infinite scroll  
+  const scrollingContent = breakingNews.concat(breakingNews)
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 breaking-news-banner">
@@ -73,17 +63,33 @@ export default function BreakingNewsBanner({ posts }: BreakingNewsBannerProps) {
             🚨 EKSKLUZIVNO
           </div>
           
-          {/* Post Type Badge */}
-          <Badge className="mx-4 text-sm font-bold px-3 py-1 flex-shrink-0 bg-blue-600 hover:bg-blue-600">
-            OBJAVE
-          </Badge>
           
           {/* Continuous Scrolling Messages */}
           <div className="flex-1 overflow-hidden">
-            <div className="breaking-news-continuous-scroll whitespace-nowrap text-lg font-semibold">
-              <span className="inline-block">
-                {scrollingContent}
-              </span>
+            <div className="breaking-news-continuous-scroll whitespace-nowrap">
+              <div className="inline-flex items-center gap-8">
+                {scrollingContent.map((post, index) => {
+                  const timeAgo = formatDistanceToNow(new Date(post.createdAt))
+                    .replace('about ', '')
+                    .replace('minutes', 'min')
+                    .replace('minute', 'min')
+                    .replace('hours', 'h')
+                    .replace('hour', 'h')
+                  
+                  const teamAbbr = post.user.team ? getTeamAbbr(post.user.team.name) : ''
+                  const userDisplay = teamAbbr ? `${post.user.name} (${teamAbbr})` : post.user.name
+                  
+                  return (
+                    <div key={`${post.id}-${index}`} className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-yellow-300 font-medium text-sm">{userDisplay}:</span>
+                      <span className="text-white font-bold text-xl">{post.message}</span>
+                      {post.image_url && <span className="text-lg">📸</span>}
+                      <span className="text-yellow-200 text-xs font-light">pred {timeAgo}</span>
+                      <span className="text-yellow-400 text-lg font-bold mx-2">•••</span>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
           

@@ -10,7 +10,7 @@ const openai = new OpenAI({
 })
 
 export interface CommentaryContext {
-  eventType: 'milestone' | 'streak' | 'achievement' | 'hype' | 'team_event'
+  eventType: 'milestone' | 'streak' | 'achievement' | 'hype' | 'team_event' | 'bulk_hype'
   user: {
     name: string
     totalPoints: number
@@ -46,6 +46,12 @@ export interface CommentaryContext {
     type: 'first_drink' | 'team_leader' | 'team_overtake'
     details?: string
     timingContext?: string // "po 30 minutah"
+  }
+  bulk?: {
+    userCount: number
+    userNames: string[]
+    teams: string[]
+    totalPointsAdded: number
   }
 }
 
@@ -104,7 +110,11 @@ Naj se sliši kot trenutek iz žive športne oddaje.`,
   team_event: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
 Ustvari kratko, vznemirljivo komentarsko sporočilo (največ 2 stavka) za dogodke povezane z ekipo kot so doseženi mejniki ali dinamika tekmovanja med ekipami.
 Uporabi ekipne/tekmovalne emoji znake, osredotoči se na ekipni duh in rivalstvo. Piši v slovenščini.
-Naj se sliši kot pomemben ekipni trenutek.`
+Naj se sliši kot pomemben ekipni trenutek.`,
+  bulk_hype: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
+Ustvari MAKSIMALNO vznemirljivo komentarsko sporočilo (največ 3 stavka) za trenutek, ko več igralcev hkrati pije - to je PRAVI spektakel!
+Uporabi ognjene emoji znake 🔥🍻, omeni vse igralce po imenih, bodi EKSTREMNO navdušen nad skupinskim momentom. Piši v slovenščini.
+To je najbolj vznemirljiv trenutek tekmovanja - pokajži to! Uporabi fraze kot "vik in vihar nadaljujeta", "spektakel", "neverjeten prizor"!`
 }
 
 export async function generateCommentaryMessage(
@@ -114,26 +124,45 @@ export async function generateCommentaryMessage(
     const systemPrompt = SYSTEM_PROMPTS[context.eventType]
     
     // Build context string for the LLM with enhanced time context
-    let contextString = `Igralec: ${context.user.name}\n`
-    contextString += `Skupaj točk: ${context.user.totalPoints}\n`
-    contextString += `Skupaj pijač: ${context.user.totalDrinks}\n`
+    let contextString = ''
     
-    if (context.user.joinedAgo) {
-      contextString += `Pridružen: ${context.user.joinedAgo}\n`
+    if (context.bulk) {
+      // Special handling for bulk events
+      contextString = `SKUPINSKI DOGODEK! ${context.bulk.userCount} igralcev pije hkrati!\n`
+      contextString += `Igralci: ${context.bulk.userNames.join(', ')}\n`
+      if (context.bulk.teams.length > 0) {
+        contextString += `Ekipe: ${context.bulk.teams.join(', ')}\n`
+      }
+      contextString += `Skupaj dodanih točk: ${context.bulk.totalPointsAdded}\n`
+    } else {
+      contextString = `Igralec: ${context.user.name}\n`
+      contextString += `Skupaj točk: ${context.user.totalPoints}\n`
+      contextString += `Skupaj pijač: ${context.user.totalDrinks}\n`
     }
     
-    if (context.user.lastDrinkAgo) {
-      contextString += `Zadnja pijača: ${context.user.lastDrinkAgo}\n`
-    }
-    
-    if (context.team) {
-      contextString += `Ekipa: ${context.team.name} (${context.team.totalPoints} točk, ${context.team.memberCount} članov)\n`
-      if (context.team.createdAgo) {
-        contextString += `Ekipa ustanovljena: ${context.team.createdAgo}\n`
+    if (!context.bulk) {
+      // Single-user specific context
+      if (context.user.joinedAgo) {
+        contextString += `Pridružen: ${context.user.joinedAgo}\n`
+      }
+      
+      if (context.user.lastDrinkAgo) {
+        contextString += `Zadnja pijača: ${context.user.lastDrinkAgo}\n`
+      }
+      
+      if (context.team) {
+        contextString += `Ekipa: ${context.team.name} (${context.team.totalPoints} točk, ${context.team.memberCount} članov)\n`
+        if (context.team.createdAgo) {
+          contextString += `Ekipa ustanovljena: ${context.team.createdAgo}\n`
+        }
       }
     }
     
-    contextString += `Trenutna pijača: ${context.drink.type === 'REGULAR' ? 'Pivo' : 'Žganje'} (+${context.drink.points} točk)\n`
+    if (context.bulk) {
+      contextString += `Vrsta pijače: ${context.drink.type === 'REGULAR' ? 'Pivo' : 'Žganje'} za vse (skupaj +${context.drink.points} točk)\n`
+    } else {
+      contextString += `Trenutna pijača: ${context.drink.type === 'REGULAR' ? 'Pivo' : 'Žganje'} (+${context.drink.points} točk)\n`
+    }
     
     if (context.drink.timeOfDay) {
       contextString += `Čas dneva: ${context.drink.timeOfDay}\n`
@@ -193,7 +222,8 @@ export async function generateCommentaryMessage(
       streak: `🔥 ${context.user.name} je v nizu! ${context.user.recentDrinks} pijač zapored!`,
       achievement: `🎊 ${context.user.name} je dosegel pomemben mejnik!`,
       hype: `🎉 Tekmovanje se stopnjuje!`,
-      team_event: `🚀 Ekipa ${context.team?.name || 'neznana'} napreduje!`
+      team_event: `🚀 Ekipa ${context.team?.name || 'neznana'} napreduje!`,
+      bulk_hype: `🔥🍻 SPEKTAKEL! ${context.bulk?.userNames.join(', ') || 'Več igralcev'} pije hkrati! Vik in vihar nadaljujeta! 🎉`
     }
     
     return fallbackMessages[context.eventType] || '🍻 Odličen trenutek v tekmovanju!'

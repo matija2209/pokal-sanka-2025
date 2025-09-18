@@ -43,3 +43,9 @@ export const initialDrinkLogActionState: DrinkLogActionState = {
   message: '',
   type: 'idle'
 }
+
+export const initialMultiDrinkLogActionState: DrinkLogActionState = {
+  success: false,
+  message: '',
+  type: 'idle'
+}

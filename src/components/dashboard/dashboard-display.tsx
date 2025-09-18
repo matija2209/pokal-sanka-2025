@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card } from '@/components/ui/card'
+import { useState, useEffect, useTransition } from 'react'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Trophy, Users, Activity, Clock } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
@@ -10,6 +10,7 @@ import TeamLogo from '@/components/teams/team-logo'
 import Image from 'next/image'
 import type { UserWithTeamAndDrinks, DrinkLogWithUserAndTeam, TeamWithStats } from '@/lib/prisma/types'
 import type { Commentary } from '@/lib/prisma/fetchers/commentary-fetchers'
+import { refreshDashboardAction } from '@/app/actions'
 
 interface DashboardDisplayProps {
   teams: TeamWithStats[]
@@ -24,6 +25,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   const [currentMode, setCurrentMode] = useState<DisplayMode>('teams')
   const [currentTime, setCurrentTime] = useState(new Date())
   const [countdown, setCountdown] = useState(15)
+  const [cycleCount, setCycleCount] = useState(0)
+  const [isFirstCycle, setIsFirstCycle] = useState(true)
+  const [isPending, startTransition] = useTransition()
 
   // Auto-rotate between different views every 15 seconds
   useEffect(() => {
@@ -33,14 +37,22 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
     let modeIndex = 0
 
     const rotateMode = () => {
-      modeIndex = (modeIndex + 1) % modes.length
+      const newIndex = (modeIndex + 1) % modes.length
+      
+      // Detect cycle completion (returning to first mode)
+      if (newIndex === 0 && !isFirstCycle) {
+        setCycleCount(prev => prev + 1)
+      }
+      
+      if (modeIndex === 0) setIsFirstCycle(false)
+      modeIndex = newIndex
       setCurrentMode(modes[modeIndex])
       setCountdown(15) // Reset countdown
     }
 
     const interval = setInterval(rotateMode, 15000) // 15 seconds
     return () => clearInterval(interval)
-  }, [commentaries.length])
+  }, [commentaries.length, isFirstCycle])
 
   // Update time and countdown every second
   useEffect(() => {
@@ -51,6 +63,14 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
     return () => clearInterval(timer)
   }, [])
 
+  // Handle cycle completion - trigger refresh
+  useEffect(() => {
+    if (cycleCount > 0) {
+      startTransition(() => {
+        refreshDashboardAction()
+      })
+    }
+  }, [cycleCount])
 
   const getDrinkEmoji = (drinkType: string) => {
     return drinkType === 'REGULAR' ? '🍺' : '🥃'
@@ -58,11 +78,11 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
 
   const getRankIcon = (position: number) => {
     switch (position) {
-      case 1: return <Trophy className="h-8 w-8 text-yellow-400 trophy-glow" />
+      case 1: return <Trophy className="h-8 w-8 text-yellow-400" />
       case 2: return <Trophy className="h-8 w-8 text-gray-400" />
       case 3: return <Trophy className="h-8 w-8 text-orange-400" />
       default: return <div className="h-8 w-8 flex items-center justify-center">
-        <span className="text-2xl font-bold text-white">#{position}</span>
+        <span className="text-2xl font-bold">#{position}</span>
       </div>
     }
   }
@@ -76,10 +96,10 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   }
 
   return (
-    <div className="min-h-screen p-8 tv-dashboard relative">
+    <div className="min-h-screen p-8 relative">
       {/* Top-left clock */}
       <div className="fixed top-4 left-4 z-10">
-        <div className="flex items-center gap-2 text-2xl text-white bg-slate-800/90 px-4 py-2 rounded-lg backdrop-blur-sm">
+        <div className="flex items-center gap-2 text-2xl bg-slate-800/90 px-4 py-2 rounded-lg backdrop-blur-sm">
           <Clock className="h-6 w-6" />
           <span>{formatTime(currentTime)}</span>
         </div>
@@ -89,18 +109,18 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       {currentMode === 'teams' && (
         <div className="space-y-6">
           <div className="text-center mb-6">
-            <h2 className="tv-subtitle mb-4 flex items-center justify-center gap-4 tv-animation-fade-in">
+            <h2 className="mb-4 flex items-center justify-center gap-4">
               <Image src="/logo.jpg" alt="Pokal Šanka" width={48} height={48} className="rounded-lg" />
-              <Users className="h-12 w-12 text-blue-400 tv-glow-effect" />
-              LESTVICA EKIP
+              <Users className="h-12 w-12 text-blue-400" />
+              Ekipna Lestvica
             </h2>
           </div>
           
           <div className="max-w-6xl mx-auto">
             <div className="grid gap-4">
             {teams.map((team, index) => (
-              <Card key={team.id} className="tv-card p-6 tv-animation-slide-in">
-                <div className="flex items-center gap-4">
+              <Card key={team.id}>
+                <CardContent className="flex items-center gap-4">
                   <div className="flex items-center justify-center w-12 h-12">
                     {getRankIcon(index + 1)}
                   </div>
@@ -108,8 +128,8 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                   <TeamLogo team={team} size="md" />
                   
                   <div className="flex-1">
-                    <h3 className="text-3xl font-bold text-white mb-1">{team.name}</h3>
-                    <div className="flex items-center gap-4 text-lg text-gray-300">
+                    <h3 className="text-3xl font-bold mb-1">{team.name}</h3>
+                    <div className="flex items-center gap-4 text-lg">
                       <span>{team.memberCount} članov</span>
                       <span>•</span>
                       <span>{team.totalDrinks} pijač</span>
@@ -120,9 +140,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                     <div className="text-5xl font-bold text-yellow-400">
                       {team.totalScore}
                     </div>
-                    <div className="text-base text-gray-300">točk</div>
+                    <div className="text-base">točk</div>
                   </div>
-                </div>
+                </CardContent>
               </Card>
             ))}
             </div>
@@ -134,9 +154,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       {currentMode === 'players' && (
         <div className="space-y-6">
           <div className="text-center mb-6">
-            <h2 className="tv-subtitle mb-4 flex items-center justify-center gap-4 tv-animation-fade-in">
+            <h2 className="mb-4 flex items-center justify-center gap-4">
               <Image src="/logo.jpg" alt="Pokal Šanka" width={48} height={48} className="rounded-lg" />
-              <Trophy className="h-12 w-12 text-yellow-400 trophy-glow tv-glow-effect" />
+              <Trophy className="h-12 w-12 text-yellow-400" />
               NAJBOLJŠI IGRALCI
             </h2>
           </div>
@@ -144,8 +164,8 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
           <div className="max-w-6xl mx-auto">
             <div className="grid gap-4">
             {topPlayers.map((player, index) => (
-              <Card key={player.id} className="tv-card p-6 tv-animation-slide-in">
-                <div className="flex items-center gap-4">
+              <Card key={player.id}>
+                <CardContent className="flex items-center gap-4">
                   <div className="flex items-center justify-center w-12 h-12">
                     {getRankIcon(index + 1)}
                   </div>
@@ -154,7 +174,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-3xl font-bold text-white">{player.name}</h3>
+                      <h3 className="text-3xl font-bold">{player.name}</h3>
                       {player.team && (
                         <div className="flex items-center gap-2">
                           <TeamLogo team={player.team} size="sm" />
@@ -164,7 +184,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-4 text-lg text-gray-300">
+                    <div className="flex items-center gap-4 text-lg">
                       <span>{player.drinkLogs.length} pijač</span>
                       <span>•</span>
                       <span>{player.drinkLogs.filter((d: any) => d.drinkType === 'REGULAR').length} 🍺</span>
@@ -176,9 +196,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                     <div className="text-5xl font-bold text-green-400">
                       {player.drinkLogs.reduce((sum: number, log: any) => sum + log.points, 0)}
                     </div>
-                    <div className="text-base text-gray-300">točk</div>
+                    <div className="text-base">točk</div>
                   </div>
-                </div>
+                </CardContent>
               </Card>
             ))}
             </div>
@@ -190,9 +210,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       {currentMode === 'activity' && (
         <div className="space-y-6">
           <div className="text-center mb-6">
-            <h2 className="tv-subtitle mb-4 flex items-center justify-center gap-4 tv-animation-fade-in">
+            <h2 className="mb-4 flex items-center justify-center gap-4">
               <Image src="/logo.jpg" alt="Pokal Šanka" width={48} height={48} className="rounded-lg" />
-              <Activity className="h-12 w-12 text-green-400 tv-glow-effect" />
+              <Activity className="h-12 w-12 text-green-400" />
               ZADNJA AKTIVNOST
             </h2>
           </div>
@@ -200,8 +220,8 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
           <div className="max-w-6xl mx-auto">
             <div className="grid gap-3">
             {recentActivity.map((activity) => (
-              <Card key={activity.id} className="tv-card p-4 tv-animation-slide-in">
-                <div className="flex items-center gap-3">
+              <Card key={activity.id}>
+                <CardContent className="flex items-center gap-3 py-4">
                   <div className="text-3xl">
                     {getDrinkEmoji(activity.drinkType)}
                   </div>
@@ -210,7 +230,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-xl font-bold text-white">{activity.user.name}</span>
+                      <span className="text-xl font-bold">{activity.user.name}</span>
                       {activity.user.team && (
                         <TeamLogo team={activity.user.team} size="sm" />
                       )}
@@ -228,12 +248,12 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                   </div>
                   
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-green-400 tv-animation-fade-in">
+                    <div className="text-2xl font-bold text-green-400">
                       +{activity.points}
                     </div>
-                    <div className="text-sm text-gray-300">točk</div>
+                    <div className="text-sm">točk</div>
                   </div>
-                </div>
+                </CardContent>
               </Card>
             ))}
             </div>
@@ -245,27 +265,27 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       {currentMode === 'commentary' && (
         <div className="space-y-6">
           <div className="text-center mb-6">
-            <h2 className="tv-subtitle mb-4 flex items-center justify-center gap-4 tv-animation-fade-in">
+            <h2 className="mb-4 flex items-center justify-center gap-4">
               <Image src="/logo.jpg" alt="Pokal Šanka" width={48} height={48} className="rounded-lg" />
-              <Trophy className="h-12 w-12 text-purple-400 tv-glow-effect" />
+              <Trophy className="h-12 w-12 text-purple-400" />
               KOMENTARJI & DOSEŽKI
             </h2>
           </div>
           
           <div className="max-w-6xl mx-auto">
             {commentaries.length === 0 ? (
-              <Card className="tv-card p-6 tv-animation-slide-in">
-                <div className="text-center">
+              <Card>
+                <CardContent className="text-center">
                   <div className="text-3xl mb-3">🎉</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Pripravljena scena!</h3>
-                  <p className="text-lg text-gray-300">Komentarji se bodo prikazali, ko začnete piti...</p>
-                </div>
+                  <h3 className="text-2xl font-bold mb-2">Pripravljena scena!</h3>
+                  <p className="text-lg">Komentarji se bodo prikazali, ko začnete piti...</p>
+                </CardContent>
               </Card>
             ) : (
               <div className="grid gap-3">
               {commentaries.map((commentary) => (
-                <Card key={commentary.id} className="tv-card p-5 tv-animation-slide-in">
-                  <div className="flex items-center gap-4">
+                <Card key={commentary.id}>
+                  <CardContent className="flex items-center gap-4 py-5">
                     <div className="text-4xl">
                       {commentary.type === 'milestone' ? '🏆' :
                        commentary.type === 'streak' ? '🔥' :
@@ -292,11 +312,11 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                           pred {formatDistanceToNow(new Date(commentary.createdAt)).replace('about ', '').replace('minutes', 'min').replace('minute', 'min').replace('hours', 'h').replace('hour', 'h')}
                         </div>
                       </div>
-                      <h3 className="text-2xl font-bold text-white">{commentary.message}</h3>
+                      <h3 className="text-2xl font-bold">{commentary.message}</h3>
                     </div>
                     
                     <div className="text-right">
-                      <div className={`text-3xl font-bold tv-animation-fade-in ${
+                      <div className={`text-3xl font-bold ${
                         commentary.priority >= 4 ? 'text-red-400' :
                         commentary.priority >= 3 ? 'text-orange-400' :
                         commentary.priority >= 2 ? 'text-blue-400' :
@@ -304,9 +324,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                       }`}>
                         {'★'.repeat(commentary.priority)}
                       </div>
-                      <div className="text-sm text-gray-300">prioriteta</div>
+                      <div className="text-sm">prioriteta</div>
                     </div>
-                  </div>
+                  </CardContent>
                 </Card>
               ))}
               </div>
@@ -315,12 +335,19 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
         </div>
       )}
 
+      {/* Loading indicator for refresh */}
+      {isPending && (
+        <div className="fixed top-4 right-20 text-sm bg-blue-600 px-3 py-2 rounded-lg z-20">
+          Refreshing data...
+        </div>
+      )}
+
       {/* Auto-refresh indicator with countdown */}
       <div className="fixed bottom-4 right-4 text-sm text-gray-400 bg-slate-800/80 px-4 py-3 rounded-lg">
         <div className="flex items-center gap-3">
-          <div className="text-lg font-bold text-white">{countdown}s</div>
+          <div className="text-lg font-bold">{countdown}s</div>
           <div>
-            Naslednji: <span className="font-semibold text-white">
+            Naslednji: <span className="font-semibold">
               {currentMode === 'teams' ? 'Igralci' : 
                currentMode === 'players' ? 'Aktivnost' : 
                currentMode === 'activity' ? (commentaries.length > 0 ? 'Komentarji' : 'Ekipe') :

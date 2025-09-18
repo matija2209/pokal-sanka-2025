@@ -223,3 +223,70 @@ export async function checkForTeamOvertake(teamId: string): Promise<string | nul
   // Placeholder implementation - will implement proper logic later
   return null
 }
+
+// Special function for bulk drink logging - creates HYPE message
+export async function generateBulkDrinkCommentary(
+  userIds: string[],
+  drinkType: string,
+  totalPoints: number
+): Promise<void> {
+  try {
+    console.log('🔥 Generating BULK DRINK HYPE for:', { userCount: userIds.length, drinkType, totalPoints })
+    
+    // Get all users involved
+    const userStats = await Promise.all(
+      userIds.map(userId => getUserStatsForCommentary(userId))
+    )
+    
+    const validUsers = userStats.filter(stat => stat !== null)
+    if (validUsers.length === 0) {
+      console.log('❌ No valid users found for bulk commentary')
+      return
+    }
+
+    // Extract user names and teams
+    const userNames = validUsers.map(stat => stat!.user.name)
+    const teams = [...new Set(validUsers.map(stat => stat!.user.team?.name).filter(Boolean))] as string[]
+    
+    // Build special bulk context
+    const bulkContext: CommentaryContext = {
+      eventType: 'bulk_hype',
+      user: {
+        name: userNames.join(', '),
+        totalPoints: validUsers.reduce((sum, stat) => sum + stat!.stats.totalPoints, 0),
+        totalDrinks: validUsers.reduce((sum, stat) => sum + stat!.stats.totalDrinks, 0),
+        recentDrinks: 0,
+        isOnStreak: false
+      },
+      drink: {
+        type: drinkType as 'REGULAR' | 'SHOT',
+        points: totalPoints
+      },
+      bulk: {
+        userCount: userIds.length,
+        userNames,
+        teams,
+        totalPointsAdded: totalPoints
+      }
+    }
+
+    console.log('🤖 Generating BULK HYPE message...')
+    const message = await generateCommentaryMessage(bulkContext)
+    console.log('✅ Generated bulk hype message:', message)
+
+    // Create high-priority hype commentary
+    await createCommentary(COMMENTARY_TYPES.HYPE, message, PRIORITY.HIGH, {
+      userIds,
+      drinkType,
+      totalPoints,
+      userCount: userIds.length,
+      teams,
+      trigger: 'bulk_drink'
+    })
+    console.log('💾 Saved BULK HYPE commentary to database')
+
+  } catch (error) {
+    console.error('Error generating bulk commentary:', error)
+    // Don't throw - commentary generation should not break drink logging
+  }
+}

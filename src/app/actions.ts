@@ -1,13 +1,14 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { createUser, updateUserTeam, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
 import { createTeam, getAllTeams } from '@/lib/prisma/fetchers/team-fetchers'
 import { createDrinkLog } from '@/lib/prisma/fetchers/drink-log-fetchers'
 import { setUserCookie, getCurrentUser } from '@/lib/utils/cookies'
 import { getNextAvailableColor } from '@/lib/utils/colors'
 import { uploadImage } from '@/lib/utils/image-upload'
-import { generateCommentaryForDrink } from '@/lib/services/commentary-generator'
+import { generateCommentaryForDrink, generateBulkDrinkCommentary } from '@/lib/services/commentary-generator'
 import { prisma } from '@/lib/prisma/client'
 import { DRINK_TYPES } from '@/lib/prisma/types'
 import type { 
@@ -362,6 +363,82 @@ export async function logDrinkAction(
   }
 }
 
+export async function logMultipleDrinksAction(
+  prevState: DrinkLogActionState,
+  formData: FormData
+): Promise<DrinkLogActionState> {
+  try {
+    console.log('🚀 logMultipleDrinksAction called')
+    
+    const userIds = formData.getAll('userIds') as string[]
+    const drinkType = formData.get('drinkType') as string
+
+    if (!userIds || userIds.length === 0) {
+      return {
+        success: false,
+        message: 'At least one user must be selected',
+        type: 'error'
+      }
+    }
+
+    if (!drinkType || !Object.values(DRINK_TYPES).includes(drinkType as any)) {
+      return {
+        success: false,
+        message: 'Valid drink type is required',
+        type: 'error'
+      }
+    }
+
+    const points = drinkType === DRINK_TYPES.REGULAR ? 1 : 2
+    const drinkLogPromises = []
+
+    for (const userId of userIds) {
+      drinkLogPromises.push(createDrinkLog(userId, drinkType, points))
+    }
+
+    const drinkLogs = await Promise.all(drinkLogPromises)
+    
+    // Check if any drink logs failed
+    const failedLogs = drinkLogs.filter(log => !log)
+    if (failedLogs.length > 0) {
+      return {
+        success: false,
+        message: `Failed to log drinks for ${failedLogs.length} user(s)`,
+        type: 'error'
+      }
+    }
+
+    // Generate SPECIAL BULK HYPE commentary (async, don't await to avoid blocking)
+    const totalPoints = points * userIds.length
+    console.log('🔥 Triggering BULK HYPE commentary for:', { userCount: userIds.length, drinkType, totalPoints })
+    generateBulkDrinkCommentary(userIds, drinkType, totalPoints).catch(error => {
+      console.error('❌ Bulk commentary generation failed:', error)
+    })
+
+    revalidatePath('/players')
+    revalidatePath('/teams')
+    revalidatePath('/quick-log')
+    revalidatePath('/dashboard')
+
+    return {
+      success: true,
+      message: `${drinkType === DRINK_TYPES.REGULAR ? 'Regular' : 'Shot'} logged for ${userIds.length} people! +${points * userIds.length} total points`,
+      type: 'create',
+      data: {
+        drinkLogId: drinkLogs[0]?.id || '',
+        points: points * userIds.length
+      }
+    }
+  } catch (error) {
+    console.error('Error logging multiple drinks:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
 // Profile Image Actions
 export async function updateUserProfileAction(
   prevState: UserActionState,
@@ -577,5 +654,23 @@ export async function createPostAction(
       message: 'An unexpected error occurred',
       type: 'error'
     }
+  }
+}
+
+// Dashboard Refresh Action
+export async function refreshDashboardAction(): Promise<void> {
+  try {
+    // Revalidate all dashboard-related paths to clear cache
+    revalidatePath('/dashboard')
+    revalidatePath('/players') 
+    revalidatePath('/teams')
+    revalidatePath('/')
+    
+    // Force hard refresh by redirecting to current page
+    redirect('/dashboard')
+  } catch (error) {
+    console.error('Error refreshing dashboard:', error)
+    // Graceful fallback - still try to redirect
+    redirect('/dashboard')
   }
 }
