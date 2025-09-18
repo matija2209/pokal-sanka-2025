@@ -22,6 +22,25 @@ interface DashboardDisplayProps {
 
 type DisplayMode = 'teams' | 'players' | 'activity' | 'commentary'
 
+interface SlideHeaderProps {
+  title: string
+  icon: React.ReactNode
+}
+
+function SlideHeader({ title, icon }: SlideHeaderProps) {
+  return (
+    <div className="text-center mb-8">
+      <h1 className="mb-6 flex items-center justify-center gap-6 text-6xl font-extrabold tracking-wider uppercase bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
+        <Image src="/logo.jpg" alt="Pokal Šanka" width={60} height={60} className="rounded-lg shadow-lg" />
+        <div className="flex items-center gap-4">
+          {icon}
+          <span className="font-black">{title}</span>
+        </div>
+      </h1>
+    </div>
+  )
+}
+
 export default function DashboardDisplay({ teams, topPlayers, recentActivity, commentaries }: DashboardDisplayProps) {
   const [currentMode, setCurrentMode] = useState<DisplayMode>('teams')
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -107,25 +126,34 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   }
 
   return (
-    <div className="min-h-screen p-8 relative">
+    <div className="min-h-screen p-8 relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 overflow-hidden">
+      {/* Neon background effects */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-80 h-80 bg-purple-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-500 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      </div>
+      
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.5) 1px, transparent 0)`,
+        backgroundSize: '50px 50px'
+      }}></div>
       {/* Top-left clock */}
       <div className="fixed top-4 left-4 z-10">
-        <div className="flex items-center gap-2 text-2xl bg-slate-800/90 px-4 py-2 rounded-lg backdrop-blur-sm">
-          <Clock className="h-6 w-6" />
-          <span>{formatTime(currentTime)}</span>
+        <div className="flex items-center gap-2 text-2xl text-white bg-slate-800/90 px-4 py-2 rounded-lg backdrop-blur-sm">
+          <Clock className="h-6 w-6 text-white" />
+          <span className="text-white font-bold">{formatTime(currentTime)}</span>
         </div>
       </div>
 
       {/* Team Rankings View */}
       {currentMode === 'teams' && (
         <div className="space-y-6">
-          <div className="text-center mb-6">
-            <h2 className="mb-4 flex items-center justify-center gap-4">
-              <Image src="/logo.jpg" alt="Pokal Šanka" width={48} height={48} className="rounded-lg" />
-              <Users className="h-12 w-12 text-blue-400" />
-              Ekipna Lestvica
-            </h2>
-          </div>
+          <SlideHeader 
+            title="Ekipna Lestvica" 
+            icon={<Users className="h-12 w-12 text-blue-400" />} 
+          />
           
           <div className="max-w-6xl mx-auto">
             <div className="grid gap-4">
@@ -164,13 +192,10 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       {/* Top Players View */}
       {currentMode === 'players' && (
         <div className="space-y-6">
-          <div className="text-center mb-6">
-            <h2 className="mb-4 flex items-center justify-center gap-4">
-              <Image src="/logo.jpg" alt="Pokal Šanka" width={48} height={48} className="rounded-lg" />
-              <Trophy className="h-12 w-12 text-yellow-400" />
-              NAJBOLJŠI IGRALCI
-            </h2>
-          </div>
+          <SlideHeader 
+            title="Posamezična Lestvica" 
+            icon={<Trophy className="h-12 w-12 text-yellow-400" />} 
+          />
           
           <div className="max-w-6xl mx-auto">
             <div className="grid gap-4">
@@ -224,13 +249,10 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       {/* Recent Activity View */}
       {currentMode === 'activity' && (
         <div className="space-y-6">
-          <div className="text-center mb-6">
-            <h2 className="mb-4 flex items-center justify-center gap-4">
-              <Image src="/logo.jpg" alt="Pokal Šanka" width={48} height={48} className="rounded-lg" />
-              <Activity className="h-12 w-12 text-green-400" />
-              ZADNJA AKTIVNOST
-            </h2>
-          </div>
+          <SlideHeader 
+            title="Zadnja Aktivnost" 
+            icon={<Activity className="h-12 w-12 text-green-400" />} 
+          />
           
           <div className="max-w-6xl mx-auto">
             <div className="grid gap-3">
@@ -281,13 +303,10 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       {/* Commentary View */}
       {currentMode === 'commentary' && (
         <div className="space-y-6">
-          <div className="text-center mb-6">
-            <h2 className="mb-4 flex items-center justify-center gap-4">
-              <Image src="/logo.jpg" alt="Pokal Šanka" width={48} height={48} className="rounded-lg" />
-              <Trophy className="h-12 w-12 text-purple-400" />
-              KOMENTARJI & DOSEŽKI
-            </h2>
-          </div>
+          <SlideHeader 
+            title="Novinarski Kotiček" 
+            icon={<Trophy className="h-12 w-12 text-purple-400" />} 
+          />
           
           <div className="max-w-6xl mx-auto">
             {commentaries.length === 0 ? (
