@@ -1,6 +1,8 @@
-import { getAllUsersWithTeamAndDrinks, getAllTeams, getRecentDrinkLogsWithTeam, getUnreadCommentaries } from '@/lib/prisma/fetchers'
+import { getAllUsersWithTeamAndDrinks, getAllTeams, getRecentDrinkLogsWithTeam, getUnreadCommentaries, getRecentPostsWithImages, getRecentUserProfileImages, getRecentTeamLogos, getRecentPosts } from '@/lib/prisma/fetchers'
 import { sortUsersByScore, getTeamsWithStats } from '@/lib/utils/calculations'
 import { DashboardDisplay } from '@/components/dashboard'
+import BreakingNewsBanner from '@/components/dashboard/breaking-news-banner'
+import LatestImagesDisplay from '@/components/dashboard/latest-images-display'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -24,15 +26,42 @@ export const metadata: Metadata = {
 }
 
 export default async function DashboardPage() {
-  const [allUsers, allTeams, recentDrinks, unreadCommentaries] = await Promise.all([
+  const [allUsers, allTeams, recentDrinks, unreadCommentaries, recentImages, userProfiles, teamLogos, allRecentPosts] = await Promise.all([
     getAllUsersWithTeamAndDrinks(),
     getAllTeams(),
     getRecentDrinkLogsWithTeam(20),
-    getUnreadCommentaries(10)
+    getUnreadCommentaries(10),
+    getRecentPostsWithImages(5),
+    getRecentUserProfileImages(5),
+    getRecentTeamLogos(5),
+    getRecentPosts(10)
   ])
 
   const sortedUsers = sortUsersByScore(allUsers)
   const teamsWithStats = getTeamsWithStats(allUsers, allTeams)
+  
+  // Prepare image data for LatestImagesDisplay
+  const imageData = {
+    posts: recentImages as any[],
+    userImages: userProfiles.map(user => ({
+      userId: user.id,
+      userName: user.name,
+      imageUrl: user.profile_image_url,
+      updatedAt: user.createdAt,
+      team: user.team ? {
+        name: user.team.name,
+        color: user.team.color,
+        logo_image_url: user.team.logo_image_url
+      } : undefined
+    })),
+    teamLogos: teamLogos.map(team => ({
+      teamId: team.id,
+      teamName: team.name,
+      logoUrl: team.logo_image_url,
+      updatedAt: team.createdAt,
+      color: team.color
+    }))
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
@@ -42,6 +71,12 @@ export default async function DashboardPage() {
         recentActivity={recentDrinks}
         commentaries={unreadCommentaries}
       />
+      
+      {/* Breaking News Banner */}
+      <BreakingNewsBanner posts={allRecentPosts as any} />
+      
+      {/* Latest Images Display */}
+      <LatestImagesDisplay {...imageData} />
     </div>
   )
 }

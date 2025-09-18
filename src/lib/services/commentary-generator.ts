@@ -1,4 +1,5 @@
 import { createCommentary, getUserStatsForCommentary, getTeamStatsForCommentary } from '@/lib/prisma/fetchers'
+import { generateCommentaryMessage, isSignificantMilestone, getAchievementDescription, type CommentaryContext } from '@/lib/openai'
 
 // Commentary types
 export const COMMENTARY_TYPES = {
@@ -18,47 +19,63 @@ export const PRIORITY = {
   CRITICAL: 5
 } as const
 
-// Dummy message templates (will be replaced by LLM later)
-const DUMMY_MESSAGES = {
-  [COMMENTARY_TYPES.MILESTONE]: [
-    "🎉 {userName} just hit {points} points!",
-    "🏆 Milestone alert! {userName} reached {points} points!",
-    "⭐ {userName} is crushing it with {points} points!"
-  ],
-  [COMMENTARY_TYPES.STREAK]: [
-    "🔥 {userName} is on fire! {streakCount} drinks in 30 minutes!",
-    "⚡ {userName} is unstoppable! {streakCount} drink streak!",
-    "🚀 {userName} is in the zone with {streakCount} consecutive drinks!"
-  ],
-  [COMMENTARY_TYPES.ACHIEVEMENT]: [
-    "🎊 First drink of the day goes to {userName}!",
-    "👑 {userName} just became the new team leader!",
-    "🥇 {userName} takes the lead with {points} points!"
-  ],
-  [COMMENTARY_TYPES.HYPE]: [
-    "🍻 The party is heating up!",
-    "🎉 Another round, another point!",
-    "⚡ The energy is electric tonight!",
-    "🔥 This is what competition looks like!"
-  ],
-  [COMMENTARY_TYPES.TEAM_EVENT]: [
-    "🚀 Team {teamName} just passed {rivalTeam}!",
-    "👑 Team {teamName} takes the lead with {points} points!",
-    "🏆 Team {teamName} is dominating the leaderboard!"
-  ]
-}
+// Helper function to build commentary context for LLM
+function buildCommentaryContext(
+  eventType: string,
+  user: any,
+  stats: any,
+  team: any,
+  drinkType: string,
+  points: number,
+  additionalData?: any
+): CommentaryContext {
+  const context: CommentaryContext = {
+    eventType: eventType as CommentaryContext['eventType'],
+    user: {
+      name: user.name,
+      totalPoints: stats.totalPoints,
+      totalDrinks: stats.totalDrinks,
+      recentDrinks: stats.recentDrinks,
+      isOnStreak: stats.isOnStreak
+    },
+    drink: {
+      type: drinkType as 'REGULAR' | 'SHOT',
+      points
+    }
+  }
 
-// Get random message template
-function getRandomMessage(type: string): string {
-  const messages = DUMMY_MESSAGES[type as keyof typeof DUMMY_MESSAGES] || DUMMY_MESSAGES[COMMENTARY_TYPES.HYPE]
-  return messages[Math.floor(Math.random() * messages.length)]
-}
+  if (team) {
+    context.team = {
+      name: team.team.name,
+      color: team.team.color,
+      totalPoints: team.stats.totalPoints,
+      memberCount: team.stats.memberCount
+    }
+  }
 
-// Replace placeholders in message template
-function formatMessage(template: string, data: Record<string, any>): string {
-  return template.replace(/\{(\w+)\}/g, (match, key) => {
-    return data[key] || match
-  })
+  // Add specific context based on event type
+  if (eventType === COMMENTARY_TYPES.MILESTONE) {
+    context.milestone = {
+      pointsReached: stats.totalPoints,
+      isSignificant: isSignificantMilestone(stats.totalPoints)
+    }
+  }
+
+  if (eventType === COMMENTARY_TYPES.STREAK) {
+    context.streak = {
+      count: stats.recentDrinks,
+      timeWindow: "30 minut"
+    }
+  }
+
+  if (eventType === COMMENTARY_TYPES.ACHIEVEMENT && additionalData) {
+    context.achievement = {
+      type: additionalData.achievement,
+      details: getAchievementDescription(additionalData.achievement)
+    }
+  }
+
+  return context
 }
 
 // Main function to generate commentary after drink log
@@ -68,22 +85,33 @@ export async function generateCommentaryForDrink(
   points: number
 ): Promise<void> {
   try {
+    console.log('🎤 Starting commentary generation for:', { userId, drinkType, points })
+    
     // Get user and team stats
     const userStats = await getUserStatsForCommentary(userId)
-    if (!userStats) return
+    if (!userStats) {
+      console.log('❌ No user stats found for:', userId)
+      return
+    }
 
     const { user, stats } = userStats
     const teamStats = user.teamId ? await getTeamStatsForCommentary(user.teamId) : null
+    
+    console.log('📊 User stats:', { user: user.name, stats, teamStats: teamStats?.team?.name })
 
     // Check for milestone (every 5, 10, 25, 50 points)
     if (stats.totalPoints % 5 === 0 && stats.totalPoints >= 5) {
+      console.log('🏆 Milestone detected:', stats.totalPoints, 'points')
       const priority = stats.totalPoints >= 25 ? PRIORITY.HIGH : 
                       stats.totalPoints >= 10 ? PRIORITY.NORMAL : PRIORITY.LOW
       
-      const message = formatMessage(getRandomMessage(COMMENTARY_TYPES.MILESTONE), {
-        userName: user.name,
-        points: stats.totalPoints
-      })
+      const context = buildCommentaryContext(
+        COMMENTARY_TYPES.MILESTONE, user, stats, teamStats, drinkType, points
+      )
+      
+      console.log('🤖 Generating LLM message for milestone...')
+      const message = await generateCommentaryMessage(context)
+      console.log('✅ Generated milestone message:', message)
 
       await createCommentary(COMMENTARY_TYPES.MILESTONE, message, priority, {
         userId: user.id,
@@ -91,14 +119,16 @@ export async function generateCommentaryForDrink(
         points: stats.totalPoints,
         drinkType
       })
+      console.log('💾 Saved milestone commentary to database')
     }
 
     // Check for streak (3+ drinks in 30 minutes)
     if (stats.isOnStreak && stats.recentDrinks >= 3) {
-      const message = formatMessage(getRandomMessage(COMMENTARY_TYPES.STREAK), {
-        userName: user.name,
-        streakCount: stats.recentDrinks
-      })
+      const context = buildCommentaryContext(
+        COMMENTARY_TYPES.STREAK, user, stats, teamStats, drinkType, points
+      )
+      
+      const message = await generateCommentaryMessage(context)
 
       await createCommentary(COMMENTARY_TYPES.STREAK, message, PRIORITY.HIGH, {
         userId: user.id,
@@ -110,20 +140,47 @@ export async function generateCommentaryForDrink(
 
     // Check for first drink achievement
     if (stats.totalDrinks === 1) {
-      const message = formatMessage(getRandomMessage(COMMENTARY_TYPES.ACHIEVEMENT), {
-        userName: user.name
-      })
+      console.log('🎊 First drink detected for:', user.name)
+      const context = buildCommentaryContext(
+        COMMENTARY_TYPES.ACHIEVEMENT, user, stats, teamStats, drinkType, points,
+        { achievement: 'first_drink' }
+      )
+      
+      console.log('🤖 Generating LLM message for first drink...')
+      const message = await generateCommentaryMessage(context)
+      console.log('✅ Generated first drink message:', message)
 
       await createCommentary(COMMENTARY_TYPES.ACHIEVEMENT, message, PRIORITY.NORMAL, {
         userId: user.id,
         teamId: user.teamId,
         achievement: 'first_drink'
       })
+      console.log('💾 Saved first drink commentary to database')
     }
+
+    // ALWAYS generate a simple hype message for testing
+    console.log('🎉 Generating test hype message...')
+    const context = buildCommentaryContext(
+      COMMENTARY_TYPES.HYPE, user, stats, teamStats, drinkType, points
+    )
+    
+    const message = await generateCommentaryMessage(context)
+    console.log('✅ Generated hype message:', message)
+
+    await createCommentary(COMMENTARY_TYPES.HYPE, message, PRIORITY.NORMAL, {
+      userId: user.id,
+      teamId: user.teamId,
+      trigger: 'test_always'
+    })
+    console.log('💾 Saved test hype commentary to database')
 
     // Random hype message (20% chance)
     if (Math.random() < 0.2) {
-      const message = getRandomMessage(COMMENTARY_TYPES.HYPE)
+      const context = buildCommentaryContext(
+        COMMENTARY_TYPES.HYPE, user, stats, teamStats, drinkType, points
+      )
+      
+      const message = await generateCommentaryMessage(context)
       
       await createCommentary(COMMENTARY_TYPES.HYPE, message, PRIORITY.LOW, {
         userId: user.id,
@@ -134,10 +191,11 @@ export async function generateCommentaryForDrink(
 
     // Team event check (placeholder for now)
     if (teamStats && stats.totalPoints % 10 === 0) {
-      const message = formatMessage(getRandomMessage(COMMENTARY_TYPES.TEAM_EVENT), {
-        teamName: teamStats.team.name,
-        points: teamStats.stats.totalPoints
-      })
+      const context = buildCommentaryContext(
+        COMMENTARY_TYPES.TEAM_EVENT, user, stats, teamStats, drinkType, points
+      )
+      
+      const message = await generateCommentaryMessage(context)
 
       await createCommentary(COMMENTARY_TYPES.TEAM_EVENT, message, PRIORITY.NORMAL, {
         userId: user.id,

@@ -63,17 +63,110 @@ Each commentary captures rich context:
 - Empty state for pre-activity periods
 - Star rating display for priority levels
 
-## 🚀 Next Steps for LLM Integration
-1. Replace dummy templates with LLM API calls
-2. Use metadata context for personalized messages
-3. Add sentiment analysis for tone variation
-4. Implement advanced team rivalry detection
-5. Add commentary history analysis for storylines
+## 🚀 LLM Integration - COMPLETED ✅
+**Replaced dummy templates with full OpenAI integration:**
 
-## ✅ Testing Ready
-- Database migrated with new Commentary table
-- Commentary generation triggers on drink logging
-- Dashboard displays commentaries in rotation
-- All data structures prepared for LLM enhancement
+### New LLM Service:
+- `src/lib/openai/index.ts` - Server-only OpenAI service with GPT-4o-mini
+- Rich context building for personalized commentary
+- Slovenian language sports commentator prompts
+- Graceful fallback to simple templates if API fails
 
-The foundation is complete and ready for intelligent commentary generation!
+### Updated Commentary Generator:
+- `src/lib/services/commentary-generator.ts` - Now uses LLM for all message types
+- Context-aware message generation with user/team stats
+- Cost-optimized with GPT-4o-mini (max 100 tokens)
+- Temperature 0.8 for creative variation
+
+### Environment Setup:
+- Added `OPENAI_API_KEY` to `.env`
+- Installed `openai` package (v5.20.3)
+- Server-only implementation for security
+
+### LLM Context System:
+```typescript
+CommentaryContext {
+  eventType: 'milestone' | 'streak' | 'achievement' | 'hype' | 'team_event'
+  user: { name, totalPoints, totalDrinks, recentDrinks, isOnStreak }
+  team?: { name, color, totalPoints, memberCount }
+  drink: { type: 'REGULAR' | 'SHOT', points }
+  milestone?: { pointsReached, isSignificant }
+  streak?: { count, timeWindow }
+  achievement?: { type, details }
+}
+```
+
+## 🎯 Commentary Features Now Live:
+- **Smart Milestones**: AI recognizes significance (5/10/25/50+ points)
+- **Streak Detection**: Celebrates momentum with context
+- **Achievement Recognition**: First drinks, leadership changes
+- **Dynamic Hype**: Contextual encouragement based on current state
+- **Team Dynamics**: Celebrates team progress and competition
+
+## ✅ Implementation Complete
+- ✅ Database migrated with Commentary table
+- ✅ OpenAI integration with fallback system
+- ✅ Commentary generation triggers on drink logging
+- ✅ Dashboard displays AI-generated commentaries
+- ✅ TypeScript compilation passes
+- ✅ Server-only security implementation
+
+**The system now generates intelligent, context-aware commentary in Slovenian for every drink logged!**
+
+---
+
+## 📺 TV Dashboard Enhancements - COMPLETED ✅
+**Added BBC-style breaking news banner and latest images display:**
+
+### New Dashboard Components:
+- `src/components/dashboard/breaking-news-banner.tsx` - BBC-style breaking news ticker
+- `src/components/dashboard/latest-images-display.tsx` - Latest images carousel display
+
+### Breaking News Banner Features:
+- **BBC-Style Design**: Red gradient background with yellow "EKSKLUZIVNO" label
+- **Smart Filtering**: Only shows high-priority commentaries (3+ priority)
+- **Auto-Rotation**: 8-second intervals between messages
+- **Progress Indicators**: Visual progress bar and dots
+- **Auto-Hide**: Disappears after showing all messages
+- **Slovenian Labels**: "MEJNIK", "NIZ", "DOSEŽEK", "EKIPA" type labels
+- **Animations**: Slide-up entrance, scrolling text, flashing label
+
+### Latest Images Display Features:
+- **Multi-Source Display**: Posts with images, profile pictures, team logos
+- **Auto-Rotation**: 10s between types, 5s within type
+- **Fixed Position**: Top-right corner overlay
+- **Image Categories**:
+  - 📸 **Post Images**: User posts with photos and captions
+  - 👤 **Profile Updates**: New profile pictures with team info
+  - 🏢 **Team Logos**: Updated team logos with branding
+- **Slovenian UI**: "Najnovejše slike", "Nova objava", "Nov profil", "Nov logo"
+- **Responsive Design**: Mobile-optimized animations
+
+### Enhanced Data Fetching:
+- `src/lib/prisma/fetchers/post-fetchers.ts` - Added image-specific queries:
+  - `getRecentPostsWithImages()` - Posts with image attachments
+  - `getRecentUserProfileImages()` - Users with profile pictures
+  - `getRecentTeamLogos()` - Teams with logo images
+
+### Dashboard Integration:
+- **Parallel Data Loading**: All image sources fetched concurrently
+- **Smart Empty States**: Graceful handling when no images available
+- **Non-Blocking Overlays**: Banner and images don't interfere with main content
+- **Auto-Refresh Compatible**: Updates with dashboard revalidation
+
+## 🎯 Enhanced User Experience:
+- **TV-Ready Interface**: Designed for large screen viewing
+- **Real-Time Updates**: Live commentary with breaking news presentation
+- **Visual Engagement**: Latest images keep content fresh and personal
+- **Professional Broadcasting Feel**: BBC-style news ticker for excitement
+- **Slovenian Localization**: All UI elements in Slovenian language
+
+## ✅ Complete TV Dashboard System
+- ✅ Main dashboard with team/player/activity rotation
+- ✅ AI-generated commentary with LLM integration
+- ✅ Breaking news banner for high-priority events
+- ✅ Latest images display with multi-source rotation
+- ✅ TypeScript compilation passes
+- ✅ Responsive design for TV displays
+
+**The dashboard now provides a complete TV broadcasting experience with live commentary, breaking news, and dynamic visual content!**

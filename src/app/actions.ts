@@ -299,6 +299,8 @@ export async function logDrinkAction(
   formData: FormData
 ): Promise<DrinkLogActionState> {
   try {
+    console.log('🚀 logDrinkAction called with:', { userId: formData.get('userId'), drinkType: formData.get('drinkType') })
+    
     const userId = formData.get('userId') as string
     const drinkType = formData.get('drinkType') as string
 
@@ -331,8 +333,9 @@ export async function logDrinkAction(
     }
 
     // Generate commentary for this drink (async, don't await to avoid blocking)
+    console.log('🍻 Triggering commentary generation for:', { userId, drinkType, points })
     generateCommentaryForDrink(userId, drinkType, points).catch(error => {
-      console.error('Commentary generation failed:', error)
+      console.error('❌ Commentary generation failed:', error)
     })
 
     revalidatePath('/players')
