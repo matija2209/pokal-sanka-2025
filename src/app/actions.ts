@@ -8,7 +8,10 @@ import { createDrinkLog } from '@/lib/prisma/fetchers/drink-log-fetchers'
 import { setUserCookie, getCurrentUser, clearUserCookie } from '@/lib/utils/cookies'
 import { getNextAvailableColor } from '@/lib/utils/colors'
 import { uploadImage } from '@/lib/utils/image-upload'
-import { generateCommentaryForDrink, generateBulkDrinkCommentary } from '@/lib/services/commentary-generator'
+import { generateCommentaryForDrink, generateBulkDrinkCommentary, generateEnhancedCommentaryForDrink, generateEnhancedBulkDrinkCommentary } from '@/lib/services/commentary-generator'
+import { captureCompleteState } from '@/lib/services/state-capture'
+import { compareStates, prioritizeChanges } from '@/lib/services/state-comparator'
+import { createEnhancedLLMContext } from '@/lib/services/llm-preprocessor'
 import { prisma } from '@/lib/prisma/client'
 import { DRINK_TYPES } from '@/lib/prisma/types'
 import { getDrinkPoints, getDrinkLabel } from '@/lib/utils/drinks'
@@ -324,6 +327,10 @@ export async function logDrinkAction(
 
     const points = getDrinkPoints(drinkType)
 
+    // ✨ NEW: Capture state BEFORE drink logging
+    console.log('📊 Capturing state before drink logging...')
+    const beforeState = await captureCompleteState()
+
     const drinkLog = await createDrinkLog(userId, drinkType, points)
 
     if (!drinkLog) {
@@ -334,11 +341,31 @@ export async function logDrinkAction(
       }
     }
 
-    // Generate commentary for this drink (async, don't await to avoid blocking)
-    console.log('🍻 Triggering commentary generation for:', { userId, drinkType, points })
-    generateCommentaryForDrink(userId, drinkType, points).catch(error => {
-      console.error('❌ Commentary generation failed:', error)
-    })
+    // ✨ NEW: Capture state AFTER drink logging and compare
+    console.log('📊 Capturing state after drink logging and comparing...')
+    const afterState = await captureCompleteState()
+    const stateComparison = compareStates(beforeState, afterState)
+    
+    // If significant changes detected, use enhanced commentary
+    if (stateComparison.significantChanges.length > 0) {
+      console.log('🎯 Significant changes detected:', stateComparison.significantChanges.length)
+      
+      // Get user name for context
+      const userName = afterState.users[userId]?.name || 'Unknown User'
+      
+      generateEnhancedCommentaryForDrink(
+        stateComparison.significantChanges,
+        { userId, userName, drinkType, points }
+      ).catch(error => {
+        console.error('❌ Enhanced commentary generation failed:', error)
+      })
+    } else {
+      // Use regular commentary if no significant changes
+      console.log('🍻 No significant changes, using regular commentary')
+      generateCommentaryForDrink(userId, drinkType, points).catch(error => {
+        console.error('❌ Commentary generation failed:', error)
+      })
+    }
 
     revalidatePath('/players')
     revalidatePath('/teams')
@@ -391,8 +418,12 @@ export async function logMultipleDrinksAction(
     }
 
     const points = getDrinkPoints(drinkType)
-    const drinkLogPromises = []
 
+    // ✨ NEW: Capture state BEFORE bulk drink logging
+    console.log('📊 Capturing state before bulk drink logging...')
+    const beforeState = await captureCompleteState()
+
+    const drinkLogPromises = []
     for (const userId of userIds) {
       drinkLogPromises.push(createDrinkLog(userId, drinkType, points))
     }
@@ -409,12 +440,42 @@ export async function logMultipleDrinksAction(
       }
     }
 
-    // Generate SPECIAL BULK HYPE commentary (async, don't await to avoid blocking)
+    // ✨ NEW: Capture state AFTER bulk logging and compare
+    console.log('📊 Capturing state after bulk logging and comparing...')
+    const afterState = await captureCompleteState()
+    const stateComparison = compareStates(beforeState, afterState)
+    
     const totalPoints = points * userIds.length
-    console.log('🔥 Triggering BULK HYPE commentary for:', { userCount: userIds.length, drinkType, totalPoints })
-    generateBulkDrinkCommentary(userIds, drinkType, totalPoints).catch(error => {
-      console.error('❌ Bulk commentary generation failed:', error)
-    })
+    
+    // Always use enhanced commentary for bulk operations due to higher likelihood of significant changes
+    if (stateComparison.significantChanges.length > 0) {
+      console.log('🎯 Significant bulk changes detected:', stateComparison.significantChanges.length)
+      
+      // Get user names and teams for context
+      const users = userIds.map(userId => {
+        const user = afterState.users[userId]
+        return {
+          id: userId,
+          name: user?.name || 'Unknown User',
+          teamName: user?.team?.name
+        }
+      }).filter(u => u.name !== 'Unknown User')
+      
+      generateEnhancedBulkDrinkCommentary(
+        stateComparison.significantChanges,
+        users,
+        drinkType,
+        totalPoints
+      ).catch(error => {
+        console.error('❌ Enhanced bulk commentary generation failed:', error)
+      })
+    } else {
+      // Use regular bulk commentary if no significant changes
+      console.log('🔥 No significant changes, using regular bulk commentary')
+      generateBulkDrinkCommentary(userIds, drinkType, totalPoints).catch(error => {
+        console.error('❌ Bulk commentary generation failed:', error)
+      })
+    }
 
     revalidatePath('/players')
     revalidatePath('/teams')

@@ -326,7 +326,14 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                       {commentary.type === 'milestone' ? '🏆' :
                        commentary.type === 'streak' ? '🔥' :
                        commentary.type === 'achievement' ? '🎊' :
-                       commentary.type === 'team_event' ? '🚀' : '🎉'}
+                       commentary.type === 'team_event' ? '🚀' :
+                       commentary.type === 'leadership_change' ? '👑' :
+                       commentary.type === 'top_3_change' ? '🥇' :
+                       commentary.type === 'team_leadership' ? '👑' :
+                       commentary.type === 'team_overtake' ? '🏁' :
+                       commentary.type === 'rank_jump' ? '🚀' :
+                       commentary.type === 'last_place_change' ? '💪' :
+                       commentary.type === 'consolidated_bulk' ? '🔥' : '🎉'}
                     </div>
                     
                     <div className="flex-1">
@@ -342,7 +349,14 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                           {commentary.type === 'milestone' ? 'Mejnik' :
                            commentary.type === 'streak' ? 'Niz' :
                            commentary.type === 'achievement' ? 'Dosežek' :
-                           commentary.type === 'team_event' ? 'Ekipa' : 'Vzpodbuda'}
+                           commentary.type === 'team_event' ? 'Ekipa' :
+                           commentary.type === 'leadership_change' ? 'Vodstvo' :
+                           commentary.type === 'top_3_change' ? 'TOP 3' :
+                           commentary.type === 'team_leadership' ? 'Vodja Ekipe' :
+                           commentary.type === 'team_overtake' ? 'Prehit' :
+                           commentary.type === 'rank_jump' ? 'Skok' :
+                           commentary.type === 'last_place_change' ? 'Preboj' :
+                           commentary.type === 'consolidated_bulk' ? 'Spektakel' : 'Vzpodbuda'}
                         </Badge>
                         <div className="text-base ">
                           pred {formatDistanceToNow(new Date(commentary.createdAt)).replace('about ', '').replace('minutes', 'min').replace('minute', 'min').replace('hours', 'h').replace('hour', 'h')}

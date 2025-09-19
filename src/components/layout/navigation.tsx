@@ -9,7 +9,8 @@ import {
   Users, 
   Trophy, 
   User, 
-  RefreshCw
+  RefreshCw,
+  TrendingUp
 } from 'lucide-react'
 import UserMenu from './user-menu'
 import type { UserWithTeam } from '@/lib/prisma/types'
@@ -26,6 +27,7 @@ export default function Navigation({ currentUser, onRefresh, isRefreshing }: Nav
   const navItems = [
     { href: '/players', icon: Users, label: 'Štart', active: pathname === '/players' },
     { href: '/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/teams' },
+    { href: '/stats', icon: TrendingUp, label: 'Statistike', active: pathname === '/stats' },
     { href: '/profile', icon: User, label: 'Profil', active: pathname === '/profile' },
   ]
 

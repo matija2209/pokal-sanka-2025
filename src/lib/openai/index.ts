@@ -10,7 +10,9 @@ const openai = new OpenAI({
 })
 
 export interface CommentaryContext {
-  eventType: 'milestone' | 'streak' | 'achievement' | 'hype' | 'team_event' | 'bulk_hype'
+  eventType: 'milestone' | 'streak' | 'achievement' | 'hype' | 'team_event' | 'bulk_hype' |
+             'leadership_change' | 'top_3_change' | 'team_leadership' | 'team_overtake' | 
+             'rank_jump' | 'last_place_change' | 'consolidated_bulk'
   user: {
     name: string
     totalPoints: number
@@ -52,6 +54,36 @@ export interface CommentaryContext {
     userNames: string[]
     teams: string[]
     totalPointsAdded: number
+  }
+  // Enhanced competitive changes
+  competitiveChanges?: {
+    leadershipChanges: Array<{
+      type: 'global' | 'team'
+      newLeader: { name: string; points: number }
+      previousLeader: { name: string; points: number }  
+      margin: number
+      teamName?: string
+    }>
+    rankingShifts: Array<{
+      user: string
+      type: 'global' | 'team'
+      from: number
+      to: number
+      pointsGained: number
+      usersJumped: string[]
+    }>
+    teamOvertakes: Array<{
+      overtakingTeam: { name: string; color: string }
+      overtakenTeam: { name: string; color: string }
+      newRanks: { overtaking: number; overtaken: number }
+      pointDifference: number
+    }>
+    positionChanges: Array<{
+      user: string
+      type: 'entered_top_3' | 'left_top_3' | 'escaped_last' | 'became_last'
+      newPosition: number
+      previousPosition: number
+    }>
   }
 }
 
@@ -111,10 +143,48 @@ Naj se sliši kot trenutek iz žive športne oddaje.`,
 Ustvari kratko, vznemirljivo komentarsko sporočilo (največ 2 stavka) za dogodke povezane z ekipo kot so doseženi mejniki ali dinamika tekmovanja med ekipami.
 Uporabi ekipne/tekmovalne emoji znake, osredotoči se na ekipni duh in rivalstvo. Piši v slovenščini.
 Naj se sliši kot pomemben ekipni trenutek.`,
+
   bulk_hype: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
 Ustvari MAKSIMALNO vznemirljivo komentarsko sporočilo (največ 3 stavka) za trenutek, ko več igralcev hkrati pije - to je PRAVI spektakel!
 Uporabi ognjene emoji znake 🔥🍻, omeni vse igralce po imenih, bodi EKSTREMNO navdušen nad skupinskim momentom. Piši v slovenščini.
-To je najbolj vznemirljiv trenutek tekmovanja - pokajži to! Uporabi fraze kot "vik in vihar nadaljujeta", "spektakel", "neverjeten prizor"!`
+To je najbolj vznemirljiv trenutek tekmovanja - pokajži to! Uporabi fraze kot "vik in vihar nadaljujeta", "spektakel", "neverjeten prizor"!`,
+
+  // Enhanced prompts for competitive changes
+  leadership_change: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
+Ustvari IZJEMNO vznemirljivo komentarsko sporočilo (največ 2 stavka) za trenutek, ko se spremeni vodstvo - bodisi globalno ali v ekipi!
+Uporabi kronske emoji znake 👑🏆, omeni imena igralcev, točke in razliko. Piši v slovenščini.
+To je NAJBOLJ vznemirljiv trenutek tekmovanja! Uporabi fraze kot "novi vladar", "prestol je padel", "prevzem vodstva"!`,
+
+  top_3_change: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
+Ustvari vznemirljivo komentarsko sporočilo (največ 2 stavka) za vstop/izstop iz TOP 3!
+Uporabi stopničke emoji znake 🥇🥈🥉, omeni imena in pozicije. Piši v slovenščini.
+To je pomemben premik na vrhu - pokajži vznemirjenje za boj za stopničke!`,
+
+  team_leadership: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
+Ustvari vznemirljivo komentarsko sporočilo (največ 2 stavka) za spremembo vodstva v ekipi!
+Uporabi ekipne/vodstvene emoji znake 👑🏟️, omeni ime novega vodje in ekipo. Piši v slovenščini.
+To je pomemben trenutek za ekipno dinamiko!`,
+
+  team_overtake: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
+Ustvari MOČNO vznemirljivo komentarsko sporočilo (največ 2 stavka) za trenutek, ko ena ekipa prehiti drugo!
+Uporabi tekmovalne emoji znake 🏁⚡, omeni obe ekipi in nova mesta. Piši v slovenščini.
+To je dramatičen obrat v ekipnem boju! Uporabi fraze kot "spektakularni prehit", "dramatičen obrat", "boj za ekipno prvenstvo"!`,
+
+  rank_jump: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
+Ustvari vznemirljivo komentarsko sporočilo (največ 2 stavka) za velik skok v rangiranju (3+ mest)!
+Uporabi rakete/skokovne emoji znake 🚀📈, omeni ime, skok in prekašene igralce. Piši v slovenščini.
+To je impresiven napredek - pokajži presenečenje nad velikim skokom!`,
+
+  last_place_change: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
+Ustvari primerno komentarsko sporočilo (največ 2 stavka) za spremembe na zadnjem mestu.
+Za izhod iz zadnjega mesta: uporabi vzpodbudne emoji 💪⬆️ in slavnostni ton.
+Za padec na zadnje mesto: bodi spodbuden 💪🍻 in ne žalosten. Piši v slovenščini.
+Ohranjaj pozitivno vzdušje tudi pri padcih!`,
+
+  consolidated_bulk: `Si energičen športni komentator za tekmovanje v pitju "Pokal Šanka".
+Ustvari MAKSIMALNO epsko komentarsko sporočilo (največ 4 stavka) za množico sprememb, ki se zgodijo hkrati!
+Uporabi MIX vseh emotikonov 🔥👑🚀🏁🍻, omeni VEE pomembne spremembe in igralce. Piši v slovenščini.
+To je ZGODOVINSKI trenutek tekmovanja! Uporabi fraze kot "popoln kaos", "vse na glavo", "neverjeten spektakel", "zgodovinski preobrat"!`
 }
 
 export async function generateCommentaryMessage(
@@ -189,6 +259,47 @@ export async function generateCommentaryMessage(
       }
     }
 
+    // Enhanced competitive changes context
+    if (context.competitiveChanges) {
+      // Leadership changes
+      context.competitiveChanges.leadershipChanges.forEach(change => {
+        if (change.type === 'global') {
+          contextString += `🏆 NOVO GLOBALNO VODSTVO: ${change.newLeader.name} (${change.newLeader.points}) je prehitel ${change.previousLeader.name} (${change.previousLeader.points})! Razlika: ${change.margin} točk.\n`
+        } else {
+          contextString += `👑 NOVO EKIPNO VODSTVO v ${change.teamName}: ${change.newLeader.name} (${change.newLeader.points}) je prehitel ${change.previousLeader.name} (${change.previousLeader.points})! Razlika: ${change.margin} točk.\n`
+        }
+      })
+      
+      // Ranking shifts  
+      context.competitiveChanges.rankingShifts.forEach(shift => {
+        const pozicijaType = shift.type === 'global' ? 'globalni' : 'ekipni'
+        contextString += `📈 VELIK SKOK: ${shift.user} je skočil s ${shift.from}. na ${shift.to}. mesto (${pozicijaType} rang)! Prekašeni: ${shift.usersJumped.join(', ')}. Pridobljeno: +${shift.pointsGained} točk.\n`
+      })
+      
+      // Team overtakes
+      context.competitiveChanges.teamOvertakes.forEach(overtake => {
+        contextString += `🏁 EKIPNI PREHIT: ${overtake.overtakingTeam.name} je prehitela ${overtake.overtakenTeam.name}! Nova mesta: ${overtake.overtakingTeam.name} na ${overtake.newRanks.overtaking}., ${overtake.overtakenTeam.name} na ${overtake.newRanks.overtaken}. Razlika: ${overtake.pointDifference} točk.\n`
+      })
+      
+      // Position changes
+      context.competitiveChanges.positionChanges.forEach(positionChange => {
+        switch (positionChange.type) {
+          case 'entered_top_3':
+            contextString += `🥉 TOP 3 VSTOP: ${positionChange.user} je vstopil na ${positionChange.newPosition}. mesto (prej ${positionChange.previousPosition}.)!\n`
+            break
+          case 'left_top_3':
+            contextString += `⬇️ TOP 3 IZSTOP: ${positionChange.user} je padel na ${positionChange.newPosition}. mesto (prej ${positionChange.previousPosition}.).\n`
+            break
+          case 'escaped_last':
+            contextString += `💪 IZHOD IZ DNNA: ${positionChange.user} ni več zadnji! Sedaj na ${positionChange.newPosition}. mestu.\n`
+            break
+          case 'became_last':
+            contextString += `⬇️ PADEC NA DNO: ${positionChange.user} je padel na zadnje mesto (prej ${positionChange.previousPosition}.).\n`
+            break
+        }
+      })
+    }
+
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini', // More cost-effective for short messages
       messages: [
@@ -223,7 +334,15 @@ export async function generateCommentaryMessage(
       achievement: `🎊 ${context.user.name} je dosegel pomemben mejnik!`,
       hype: `🎉 Tekmovanje se stopnjuje!`,
       team_event: `🚀 Ekipa ${context.team?.name || 'neznana'} napreduje!`,
-      bulk_hype: `🔥🍻 SPEKTAKEL! ${context.bulk?.userNames.join(', ') || 'Več igralcev'} pije hkrati! Vik in vihar nadaljujeta! 🎉`
+      bulk_hype: `🔥🍻 SPEKTAKEL! ${context.bulk?.userNames.join(', ') || 'Več igralcev'} pije hkrati! Vik in vihar nadaljujeta! 🎉`,
+      // Enhanced fallback messages
+      leadership_change: `👑 Novo vodstvo! ${context.user.name} je prevzel prestol s ${context.user.totalPoints} točkami!`,
+      top_3_change: `🥉 ${context.user.name} je vstopil v TOP 3 z ${context.user.totalPoints} točkami!`,
+      team_leadership: `👑 ${context.user.name} je novi vodja ekipe ${context.team?.name}!`,
+      team_overtake: `🏁 Dramatičen prehit! Ekipa je prehitela tekmece!`,
+      rank_jump: `🚀 ${context.user.name} je naredil velik skok v rangiranju!`,
+      last_place_change: `💪 ${context.user.name} se je prebil z dna!`,
+      consolidated_bulk: `🔥👑 Popoln kaos! Množica sprememb na lestvici hkrati! 🚀🍻`
     }
     
     return fallbackMessages[context.eventType] || '🍻 Odličen trenutek v tekmovanju!'
