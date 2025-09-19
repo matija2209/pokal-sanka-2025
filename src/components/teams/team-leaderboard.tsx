@@ -68,10 +68,10 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                   href={`/teams/${team.id}`}
                   className={`block p-6 rounded-lg border-2 transition-all hover:shadow-lg cursor-pointer ${
                     isCurrentUserTeam 
-                      ? ' border-blue-200 shadow-md hover:border-blue-300' 
+                      ? 'border-blue-200 shadow-md hover:border-blue-300' 
                       : position <= 3
-                        ? ' border-yellow-200 hover:border-yellow-300'
-                        : ' border-gray-200 hover:border-gray-300'
+                        ? 'border-yellow-200 hover:border-yellow-300'
+                        : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-4">
@@ -152,8 +152,8 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                       
                       {/* Top performer indicator */}
                       {team.users.length > 0 && (
-                        <div className="ml-auto text-xs ">
-                          Najboljši: {team.users
+                        <div className="ml-auto text-xs">
+                          Najboljsi: {team.users
                             .map(u => ({ ...u, score: u.drinkLogs.reduce((s, l) => s + l.points, 0) }))
                             .sort((a, b) => b.score - a.score)[0]?.name}
                         </div>

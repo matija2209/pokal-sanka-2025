@@ -84,7 +84,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                       ? 'border-2 shadow-md hover:border-blue-300' 
                       : position <= 3
                         ? 'border border-yellow-200 hover:border-yellow-300'
-                        : ' hover:bg-gray-100 hover:border-gray-300 border border-transparent'
+                        : 'hover:bg-gray-100 hover:border-gray-300 border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-4">
@@ -132,8 +132,8 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                     }`}>
                       {score}
                     </div>
-                    <div className="text-sm ">
-                      {score === 1 ? 'točka' : score === 2 ? 'točki' : score <= 4 ? 'točke' : 'točk'}
+                    <div className="text-sm">
+                      {score === 1 ? 'tocka' : score === 2 ? 'tocki' : score <= 4 ? 'tocke' : 'tock'}
                     </div>
                   </div>
                 </div>
