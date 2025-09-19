@@ -26,10 +26,10 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
   const getRankIcon = (position: number) => {
     switch (position) {
       case 1: return <Trophy className="h-5 w-5 text-yellow-500 trophy-glow" />
-      case 2: return <Medal className="h-5 w-5 text-gray-400" />
+      case 2: return <Medal className="h-5 w-5 " />
       case 3: return <Award className="h-5 w-5 text-orange-500" />
       default: return <div className="w-5 h-5 flex items-center justify-center">
-        <span className="text-sm font-bold text-gray-500">#{position}</span>
+        <span className="text-sm font-bold ">#{position}</span>
       </div>
     }
   }
@@ -63,7 +63,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
       <CardContent>
         <div className="space-y-3">
           {filteredUsers.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 ">
               Ni najdenih igralcev
             </div>
           ) : (
@@ -82,7 +82,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                       ? 'bg-blue-50 border-blue-200 border-2 shadow-md' 
                       : position <= 3
                         ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200'
-                        : 'bg-gray-50 hover:bg-gray-100'
+                        : ' hover:bg-gray-100'
                   }`}
                 >
                   <div className="flex items-center gap-4">
@@ -94,7 +94,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                       <div>
                         <div className="flex items-center gap-2">
                           <span className={`font-semibold ${
-                            isCurrentUser ? 'text-blue-700' : 'text-gray-900'
+                            isCurrentUser ? 'text-blue-700' : ''
                           }`}>
                             {user.name}
                             {isCurrentUser && ' (Vi)'}
@@ -103,19 +103,19 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                         </div>
                         
                         {user.team && (
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm ">
                             {user.team.name}
                           </span>
                         )}
                         
                         <div className="flex items-center gap-3 mt-1">
                           {regularDrinks > 0 && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs ">
                               🍺 {regularDrinks}
                             </span>
                           )}
                           {shotDrinks > 0 && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs ">
                               🥃 {shotDrinks}
                             </span>
                           )}
@@ -126,11 +126,11 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                   
                   <div className="text-right">
                     <div className={`text-2xl font-bold ${
-                      isCurrentUser ? 'text-blue-700' : position <= 3 ? 'text-yellow-600' : 'text-gray-900'
+                      isCurrentUser ? 'text-blue-700' : position <= 3 ? 'text-yellow-600' : ''
                     }`}>
                       {score}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm ">
                       {score === 1 ? 'točka' : score === 2 ? 'točki' : score <= 4 ? 'točke' : 'točk'}
                     </div>
                   </div>
@@ -141,7 +141,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
         </div>
         
         {filteredUsers.length > 0 && (
-          <div className="mt-6 pt-4 border-t text-center text-sm text-gray-500">
+          <div className="mt-6 pt-4 border-t text-center text-sm ">
             {viewMode === 'all' 
               ? `Prikaz vseh ${filteredUsers.length} igralcev`
               : `Prikaz ${filteredUsers.length} članov ekipe`

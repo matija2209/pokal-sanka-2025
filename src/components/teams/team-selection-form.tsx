@@ -133,7 +133,7 @@ export default function TeamSelectionForm({
               {isCreatePending ? "Ustvarjam ekipo..." : "Ustvari in pridruži se ekipi"}
             </Button>
             
-            <p className="text-sm text-gray-500">
+            <p className="text-sm ">
               Vaši ekipi bo dodeljena naključna barva
             </p>
           </form>

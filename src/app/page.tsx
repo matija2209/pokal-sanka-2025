@@ -77,9 +77,8 @@ export default async function HomePage() {
           </div>
           
           {/* Entry options */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl">
+
             <EntryScreen existingUsers={existingUsers} />
-          </div>
         </div>
       </div>
     </div>

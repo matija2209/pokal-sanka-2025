@@ -20,7 +20,7 @@ export function Loading({ text = 'Loading...', className = '', size = 'md' }: Lo
     <div className={`flex items-center justify-center p-8 ${className}`}>
       <div className="flex items-center gap-2">
         <Loader2 className={`animate-spin ${sizeClasses[size]}`} />
-        <span className="text-sm text-gray-600">{text}</span>
+        <span className="text-sm ">{text}</span>
       </div>
     </div>
   )

@@ -67,22 +67,22 @@ export default function TeamStats({ team, allTeams, rank }: TeamStatsProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{teamScore}</div>
-              <div className="text-sm text-gray-500">Total Points</div>
+              <div className="text-sm ">Total Points</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{memberCount}</div>
-              <div className="text-sm text-gray-500">Members</div>
+              <div className="text-sm ">Members</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">{avgScorePerMember.toFixed(1)}</div>
-              <div className="text-sm text-gray-500">Avg/Member</div>
+              <div className="text-sm ">Avg/Member</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">{recentScore}</div>
-              <div className="text-sm text-gray-500">This Week</div>
+              <div className="text-sm ">This Week</div>
             </div>
           </div>
 
@@ -90,7 +90,7 @@ export default function TeamStats({ team, allTeams, rank }: TeamStatsProps) {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Progress to Leading Team</span>
-              <span className="text-sm text-gray-500">{progressPercentage.toFixed(0)}%</span>
+              <span className="text-sm ">{progressPercentage.toFixed(0)}%</span>
             </div>
             <Progress value={progressPercentage} className="h-2" />
           </div>
@@ -121,11 +121,11 @@ export default function TeamStats({ team, allTeams, rank }: TeamStatsProps) {
           <CardContent>
             <div className="space-y-3">
               {topPerformers.map((user, index) => (
-                <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={user.id} className="flex items-center justify-between p-3  rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center justify-center">
                       {index === 0 && <Trophy className="h-5 w-5 text-yellow-500" />}
-                      {index === 1 && <Award className="h-5 w-5 text-gray-400" />}
+                      {index === 1 && <Award className="h-5 w-5 " />}
                       {index === 2 && <Award className="h-5 w-5 text-orange-500" />}
                     </div>
                     
@@ -137,7 +137,7 @@ export default function TeamStats({ team, allTeams, rank }: TeamStatsProps) {
                     
                     <div>
                       <div className="font-medium">{user.name}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm ">
                         {user.drinkLogs.length} drinks
                       </div>
                     </div>
@@ -145,7 +145,7 @@ export default function TeamStats({ team, allTeams, rank }: TeamStatsProps) {
                   
                   <div className="text-right">
                     <div className="font-bold">{user.score}</div>
-                    <div className="text-sm text-gray-500">points</div>
+                    <div className="text-sm ">points</div>
                   </div>
                 </div>
               ))}
@@ -178,14 +178,14 @@ export default function TeamStats({ team, allTeams, rank }: TeamStatsProps) {
                     </Avatar>
                     <div>
                       <div className="font-medium">{user.name}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm ">
                         {userDrinks} drinks total
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-bold text-lg">{userScore}</div>
-                    <div className="text-sm text-gray-500">points</div>
+                    <div className="text-sm ">points</div>
                   </div>
                 </div>
               )
@@ -193,7 +193,7 @@ export default function TeamStats({ team, allTeams, rank }: TeamStatsProps) {
           </div>
           
           {memberCount === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 ">
               No members in this team yet
             </div>
           )}

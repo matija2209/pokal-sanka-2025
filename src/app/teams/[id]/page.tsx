@@ -54,7 +54,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
             />
             <h1 className="text-3xl font-bold">{team.name}</h1>
           </div>
-          <p className="text-gray-600">Team statistics and member performance</p>
+          <p className="">Team statistics and member performance</p>
         </div>
         
         <div className="max-w-4xl mx-auto">

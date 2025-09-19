@@ -136,7 +136,7 @@ export default function UserAchievements({ user, allUsers, rank }: UserAchieveme
       case 'competition': return 'bg-yellow-100 text-yellow-800'
       case 'consistency': return 'bg-green-100 text-green-800'
       case 'special': return 'bg-purple-100 text-purple-800'
-      default: return 'bg-gray-100 text-gray-800'
+      default: return 'bg-gray-100 '
     }
   }
 
@@ -164,10 +164,10 @@ export default function UserAchievements({ user, allUsers, rank }: UserAchieveme
       <CardContent>
         <div className="space-y-6">
           {/* Progress Overview */}
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className=" p-4 rounded-lg">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium">Napredek dosežkov</span>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm ">
                 {unlockedAchievements.length} / {achievements.length}
               </span>
             </div>
@@ -201,7 +201,7 @@ export default function UserAchievements({ user, allUsers, rank }: UserAchieveme
                           {achievement.category}
                         </Badge>
                       </div>
-                      <p className="text-xs text-gray-600 mb-1">{achievement.description}</p>
+                      <p className="text-xs  mb-1">{achievement.description}</p>
                       {achievement.maxProgress && (
                         <div className="text-xs text-green-600 font-medium">
                           Končano: {achievement.progress} / {achievement.maxProgress}
@@ -220,21 +220,21 @@ export default function UserAchievements({ user, allUsers, rank }: UserAchieveme
           {/* Locked Achievements */}
           {lockedAchievements.length > 0 && (
             <div>
-              <h3 className="text-sm font-semibold mb-3 text-gray-600">
+              <h3 className="text-sm font-semibold mb-3 ">
                 🔒 Zaklenjen ({lockedAchievements.length})
               </h3>
               <div className="grid gap-3">
                 {lockedAchievements.map((achievement) => (
                   <div 
                     key={achievement.id} 
-                    className="flex items-start gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg opacity-75"
+                    className="flex items-start gap-3 p-3  border border-gray-200 rounded-lg opacity-75"
                   >
                     <div className="mt-0.5 opacity-50">
                       {achievement.icon}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium text-sm text-gray-700">{achievement.name}</span>
+                        <span className="font-medium text-sm ">{achievement.name}</span>
                         <Badge 
                           variant="outline"
                           className="text-xs"
@@ -242,10 +242,10 @@ export default function UserAchievements({ user, allUsers, rank }: UserAchieveme
                           {achievement.category}
                         </Badge>
                       </div>
-                      <p className="text-xs text-gray-500 mb-2">{achievement.description}</p>
+                      <p className="text-xs  mb-2">{achievement.description}</p>
                       {achievement.maxProgress && (
                         <div className="space-y-1">
-                          <div className="flex justify-between text-xs text-gray-500">
+                          <div className="flex justify-between text-xs ">
                             <span>Napredek: {achievement.progress || 0} / {achievement.maxProgress}</span>
                             <span>{Math.round(((achievement.progress || 0) / achievement.maxProgress) * 100)}%</span>
                           </div>

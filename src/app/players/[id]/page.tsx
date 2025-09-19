@@ -46,7 +46,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
               <span className="text-lg text-blue-600 font-medium">(You)</span>
             )}
           </div>
-          <p className="text-gray-600">
+          <p className="">
             {user.team ? (
               <>Player statistics and performance in {user.team.name}</>
             ) : (

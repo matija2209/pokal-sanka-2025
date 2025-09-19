@@ -68,22 +68,22 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">{score}</div>
-              <div className="text-sm text-gray-500">Skupaj točk</div>
+              <div className="text-sm ">Skupaj točk</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">{regularDrinks}</div>
-              <div className="text-sm text-gray-500">Pivo</div>
+              <div className="text-sm ">Pivo</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-red-600">{shotDrinks}</div>
-              <div className="text-sm text-gray-500">Žganje</div>
+              <div className="text-sm ">Žganje</div>
             </div>
             
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">{recentScore}</div>
-              <div className="text-sm text-gray-500">Ta teden</div>
+              <div className="text-sm ">Ta teden</div>
             </div>
           </div>
 
@@ -91,7 +91,7 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium">Napredek do vodilnega</span>
-              <span className="text-sm text-gray-500">{progressPercentage.toFixed(0)}%</span>
+              <span className="text-sm ">{progressPercentage.toFixed(0)}%</span>
             </div>
             <Progress value={progressPercentage} className="h-2" />
           </div>
@@ -122,7 +122,7 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {achievements.map((achievement, index) => (
-                <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                <div key={index} className="flex items-center gap-2 p-3  rounded-lg">
                   <span className="text-lg">{achievement.icon}</span>
                   <span className="text-sm font-medium">{achievement.label}</span>
                 </div>
@@ -146,7 +146,7 @@ export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
               <div className="text-3xl font-bold text-orange-500 mb-2">
                 🔥 {streak} {streak === 1 ? 'dan' : 'dni'}
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm ">
                 Nadaljujte s pitjem, da ohranite svoj niz!
               </p>
             </div>

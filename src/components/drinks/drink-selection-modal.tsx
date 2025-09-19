@@ -61,7 +61,7 @@ export default function DrinkSelectionModal({
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 ml-6">
                   {category.drinks.map((drink) => (
-                    <div key={drink.type} className="flex items-center space-x-3 p-3 rounded-lg border hover:bg-gray-50 transition-colors">
+                    <div key={drink.type} className="flex items-center space-x-3 p-3 rounded-lg border hover: transition-colors">
                       <RadioGroupItem 
                         value={drink.type} 
                         id={drink.type}

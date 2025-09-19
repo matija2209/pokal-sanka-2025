@@ -109,7 +109,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   const getRankIcon = (position: number) => {
     switch (position) {
       case 1: return <Trophy className="h-8 w-8 text-yellow-400" />
-      case 2: return <Trophy className="h-8 w-8 text-gray-400" />
+      case 2: return <Trophy className="h-8 w-8 " />
       case 3: return <Trophy className="h-8 w-8 text-orange-400" />
       default: return <div className="h-8 w-8 flex items-center justify-center">
         <span className="text-2xl font-bold">#{position}</span>
@@ -281,7 +281,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                         {getDrinkLabel(activity.drinkType)}
                       </Badge>
                     </div>
-                    <div className="text-base text-gray-400">
+                    <div className="text-base ">
                       pred {formatDistanceToNow(new Date(activity.createdAt)).replace('about ', '').replace('minutes', 'min').replace('minute', 'min').replace('hours', 'h').replace('hour', 'h')}
                     </div>
                   </div>
@@ -344,7 +344,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                            commentary.type === 'achievement' ? 'Dosežek' :
                            commentary.type === 'team_event' ? 'Ekipa' : 'Vzpodbuda'}
                         </Badge>
-                        <div className="text-base text-gray-400">
+                        <div className="text-base ">
                           pred {formatDistanceToNow(new Date(commentary.createdAt)).replace('about ', '').replace('minutes', 'min').replace('minute', 'min').replace('hours', 'h').replace('hour', 'h')}
                         </div>
                       </div>
@@ -356,7 +356,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                         commentary.priority >= 4 ? 'text-red-400' :
                         commentary.priority >= 3 ? 'text-orange-400' :
                         commentary.priority >= 2 ? 'text-blue-400' :
-                        'text-gray-400'
+                        ''
                       }`}>
                         {'★'.repeat(commentary.priority)}
                       </div>
@@ -379,7 +379,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       )}
 
       {/* Auto-refresh indicator with countdown */}
-      <div className="fixed bottom-4 right-4 text-sm text-gray-400 bg-slate-800/80 px-4 py-3 rounded-lg">
+      <div className="fixed bottom-4 right-4 text-sm  bg-slate-800/80 px-4 py-3 rounded-lg">
         <div className="flex items-center gap-3">
           <div className="text-lg font-bold">{countdown}s</div>
           <div>

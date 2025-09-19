@@ -19,10 +19,10 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
   const getRankIcon = (position: number) => {
     switch (position) {
       case 1: return <Trophy className="h-6 w-6 text-yellow-500" />
-      case 2: return <Medal className="h-6 w-6 text-gray-400" />
+      case 2: return <Medal className="h-6 w-6 " />
       case 3: return <Award className="h-6 w-6 text-orange-500" />
       default: return <div className="w-6 h-6 flex items-center justify-center">
-        <span className="text-sm font-bold text-gray-500">#{position}</span>
+        <span className="text-sm font-bold ">#{position}</span>
       </div>
     }
   }
@@ -49,7 +49,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
       <CardContent>
         <div className="space-y-4">
           {sortedTeams.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 ">
               No teams found
             </div>
           ) : (
@@ -69,7 +69,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                       ? 'bg-blue-50 border-blue-200 shadow-md' 
                       : position <= 3
                         ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200'
-                        : 'bg-white border-gray-200 hover:border-gray-300'
+                        : ' border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-4">
@@ -85,7 +85,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                         <div>
                           <div className="flex items-center gap-2">
                             <h3 className={`text-lg font-semibold ${
-                              isCurrentUserTeam ? 'text-blue-700' : 'text-gray-900'
+                              isCurrentUserTeam ? 'text-blue-700' : ''
                             }`}>
                               {team.name}
                               {isCurrentUserTeam && ' (Your Team)'}
@@ -93,7 +93,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                             {position <= 3 && getPositionBadge(position)}
                           </div>
                           
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <div className="flex items-center gap-4 text-sm ">
                             <div className="flex items-center gap-1">
                               <Users className="h-4 w-4" />
                               <span>{memberCount} members</span>
@@ -112,19 +112,19 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                           ? 'text-blue-700' 
                           : position <= 3 
                             ? 'text-yellow-600' 
-                            : 'text-gray-900'
+                            : ''
                       }`}>
                         {teamScore}
                       </div>
-                      <div className="text-sm text-gray-500">points</div>
+                      <div className="text-sm ">points</div>
                     </div>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs text-gray-500">Team Progress</span>
-                      <span className="text-xs text-gray-500">{progressPercentage.toFixed(0)}%</span>
+                      <span className="text-xs ">Team Progress</span>
+                      <span className="text-xs ">{progressPercentage.toFixed(0)}%</span>
                     </div>
                     <Progress value={progressPercentage} className="h-2" />
                   </div>
@@ -132,7 +132,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                   {/* Team Members Preview */}
                   {team.users.length > 0 && (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">Members:</span>
+                      <span className="text-xs ">Members:</span>
                       <div className="flex -space-x-2">
                         {team.users.slice(0, 5).map((user: any) => (
                           <Avatar key={user.id} className="h-6 w-6 border-2 border-white">
@@ -143,14 +143,14 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                         ))}
                         {team.users.length > 5 && (
                           <div className="h-6 w-6 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center">
-                            <span className="text-xs text-gray-600">+{team.users.length - 5}</span>
+                            <span className="text-xs ">+{team.users.length - 5}</span>
                           </div>
                         )}
                       </div>
                       
                       {/* Top performer indicator */}
                       {team.users.length > 0 && (
-                        <div className="ml-auto text-xs text-gray-500">
+                        <div className="ml-auto text-xs ">
                           Top: {team.users
                             .map(u => ({ ...u, score: u.drinkLogs.reduce((s, l) => s + l.points, 0) }))
                             .sort((a, b) => b.score - a.score)[0]?.name}
@@ -165,7 +165,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
         </div>
         
         {sortedTeams.length > 0 && (
-          <div className="mt-6 pt-4 border-t text-center text-sm text-gray-500">
+          <div className="mt-6 pt-4 border-t text-center text-sm ">
             Showing all {sortedTeams.length} teams
           </div>
         )}

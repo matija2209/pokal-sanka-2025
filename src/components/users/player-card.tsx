@@ -19,7 +19,7 @@ export default function PlayerCard({ user, currentUserId, onSelectPlayer }: Play
   return (
     <Card 
       className={`cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] border-2 ${
-        isCurrentUser ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+        isCurrentUser ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:'
       }`}
       style={{ borderColor: teamColor }}
       onClick={() => onSelectPlayer(user)}
@@ -53,16 +53,16 @@ export default function PlayerCard({ user, currentUserId, onSelectPlayer }: Play
                 </span>
               </div>
             ) : (
-              <span className="text-xs text-gray-500">No Team</span>
+              <span className="text-xs ">No Team</span>
             )}
           </div>
           
           {/* Score */}
           <div className="text-center">
-            <div className="text-lg font-bold text-gray-900">
+            <div className="text-lg font-bold ">
               {userScore}
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs ">
               points
             </div>
           </div>

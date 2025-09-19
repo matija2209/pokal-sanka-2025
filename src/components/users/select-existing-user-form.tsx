@@ -28,7 +28,7 @@ export default function SelectExistingUserForm({ users, onBack }: SelectExisting
     <Card className="w-full max-w-lg mx-auto">
       <CardHeader>
         <CardTitle>Izberite svoj račun</CardTitle>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm ">
           Kliknite na svoje ime za vstop v turnir
         </p>
       </CardHeader>
@@ -45,11 +45,11 @@ export default function SelectExistingUserForm({ users, onBack }: SelectExisting
                 type="submit"
                 variant="outline"
                 disabled={isPending}
-                className="w-full p-4 h-auto justify-start text-left hover:bg-gray-50"
+                className="w-full p-4 h-auto justify-start text-left hover:"
               >
                 <div className="flex items-center gap-3 w-full">
                   <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-lg font-bold text-gray-700">
+                    <span className="text-lg font-bold ">
                       {user.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -70,7 +70,7 @@ export default function SelectExistingUserForm({ users, onBack }: SelectExisting
                       )}
                     </div>
                     {!user.team && (
-                      <p className="text-xs text-gray-500">Potrebna izbira ekipe</p>
+                      <p className="text-xs ">Potrebna izbira ekipe</p>
                     )}
                   </div>
                 </div>
@@ -80,7 +80,7 @@ export default function SelectExistingUserForm({ users, onBack }: SelectExisting
         </div>
 
         {users.length === 0 && (
-          <p className="text-center text-gray-500 py-4">
+          <p className="text-center  py-4">
             Ni še obstoječih računov
           </p>
         )}

@@ -43,7 +43,7 @@ export default async function ProfilePage() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Vaš profil</h1>
-          <p className="text-gray-600">Upravljajte svoj račun in si oglejte statistične podatke o vaši učinkovitosti.</p>
+          <p className="">Upravljajte svoj račun in si oglejte statistične podatke o vaši učinkovitosti.</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">

@@ -30,7 +30,7 @@ export default function Navigation({ currentUser, onRefresh, isRefreshing }: Nav
   ]
 
   return (
-    <nav className="bg-white border-b shadow-sm">
+    <nav className=" border-b shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo/Brand - Compact on mobile */}
@@ -40,12 +40,12 @@ export default function Navigation({ currentUser, onRefresh, isRefreshing }: Nav
               alt="Pokal Šanka" 
               width={24} 
               height={24}
-              className="w-5 h-5 md:w-6 md:h-6 object-contain"
+              className="w-12 h-12 md:w-6 md:h-6 object-contain"
             />
-            <span className="text-lg md:text-xl font-bold text-gray-900 hidden sm:block">
+            <span className="text-lg md:text-xl font-bold  hidden sm:block">
               Pokal Šanka — Matija 2025 Edition
             </span>
-            <span className="text-lg font-bold text-gray-900 sm:hidden">
+            <span className="text-lg font-bold  sm:hidden">
               Šanka
             </span>
           </Link>
@@ -60,7 +60,7 @@ export default function Navigation({ currentUser, onRefresh, isRefreshing }: Nav
                 size="sm"
                 onClick={onRefresh}
                 disabled={isRefreshing}
-                className="text-gray-600 hover:text-gray-900 p-1 md:p-2"
+                className=" hover: p-1 md:p-2"
               >
                 <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               </Button>

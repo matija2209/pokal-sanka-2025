@@ -127,7 +127,7 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
   if (allImages.length === 0) {
     return (
       <div className="fixed top-0 right-0 w-96 h-screen p-6 bg-slate-900/95 backdrop-blur-sm flex items-center justify-center">
-        <p className="text-gray-400 text-lg">Še ni objavljenih slik...</p>
+        <p className=" text-lg">Še ni objavljenih slik...</p>
       </div>
     )
   }
@@ -176,7 +176,7 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
                 )}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-white text-sm truncate">{image.userName}</h3>
-                  <p className="text-gray-400 text-xs">
+                  <p className=" text-xs">
                     pred {formatDistanceToNow(new Date(image.timestamp)).replace('about ', '').replace('minutes', 'min')}
                   </p>
                 </div>
@@ -202,7 +202,7 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
 
               {/* Message for posts */}
               {image.message && (
-                <div className="bg-slate-800/70 p-2 rounded text-xs text-gray-200 line-clamp-2 flex-shrink-0" style={{ maxHeight: '40px' }}>
+                <div className="bg-slate-800/70 p-2 rounded text-xs  line-clamp-2 flex-shrink-0" style={{ maxHeight: '40px' }}>
                   "{image.message}"
                 </div>
               )}

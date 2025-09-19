@@ -37,11 +37,11 @@ export default function EntryScreen({ existingUsers }: EntryScreenProps) {
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <UserPlus className="h-6 w-6 text-blue-600" />
+              <UserPlus className="h-6 w-6 " />
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-semibold">Ustvari nov račun</h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm ">
                 Nov igralec v turnirju
               </p>
             </div>
@@ -60,7 +60,7 @@ export default function EntryScreen({ existingUsers }: EntryScreenProps) {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold">Izberite obstoječ račun</h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm ">
                   Že sodelujem v turnirju ({existingUsers.length} {existingUsers.length === 1 ? 'igralec' : 'igralcev'})
                 </p>
               </div>

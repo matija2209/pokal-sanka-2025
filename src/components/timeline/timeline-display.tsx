@@ -15,7 +15,7 @@ export default async function TimelineDisplay({ limit = 10 }: TimelineDisplayPro
   if (posts.length === 0) {
     return (
       <Card>
-        <CardContent className="p-6 text-center text-gray-500">
+        <CardContent className="p-6 text-center ">
           Še ni objav. Bodite prvi, ki bo delil kaj zanimivega!
         </CardContent>
       </Card>
@@ -36,17 +36,17 @@ export default async function TimelineDisplay({ limit = 10 }: TimelineDisplayPro
                   {post.user.team && (
                     <>
                       <TeamLogo team={post.user.team} size="sm" />
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm ">
                         {post.user.team.name}
                       </span>
                     </>
                   )}
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm ">
                     {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
                   </span>
                 </div>
                 
-                <p className="text-gray-800 mb-3 whitespace-pre-wrap">{post.message}</p>
+                <p className=" mb-3 whitespace-pre-wrap">{post.message}</p>
                 
                 {post.image_url && (
                   <div className="rounded-lg overflow-hidden max-w-sm">

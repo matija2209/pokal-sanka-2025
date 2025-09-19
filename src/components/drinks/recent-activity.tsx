@@ -33,7 +33,7 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
       </CardHeader>
       <CardContent>
         {displayDrinks.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 ">
             <Activity className="h-12 w-12 mx-auto mb-4 opacity-30" />
             <p>No recent activity</p>
             <p className="text-sm">Start logging drinks to see activity here!</p>
@@ -41,7 +41,7 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
         ) : (
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {displayDrinks.map((log) => (
-              <div key={log.id} className="flex items-center gap-3 card-mobile bg-gray-50 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+              <div key={log.id} className="flex items-center gap-3 card-mobile  rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
                 <Avatar className="h-10 w-10">
                   <AvatarFallback>
                     {log.user.name.charAt(0).toUpperCase()}
@@ -61,7 +61,7 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
                     </Badge>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <div className="flex items-center gap-2 text-sm ">
                     <Clock className="h-3 w-3" />
                     <span>{formatDistanceToNow(new Date(log.createdAt))} ago</span>
                     <span>•</span>
@@ -80,7 +80,7 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
         )}
         
         {displayDrinks.length > 0 && recentDrinks.length > limit && (
-          <div className="mt-4 pt-4 border-t text-center text-sm text-gray-500">
+          <div className="mt-4 pt-4 border-t text-center text-sm ">
             Showing {displayDrinks.length} of {recentDrinks.length} recent activities
           </div>
         )}

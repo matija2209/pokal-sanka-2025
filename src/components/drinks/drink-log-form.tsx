@@ -102,7 +102,7 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
                         )}
                         <span>{user.name}</span>
                         {user.team && (
-                          <span className="text-gray-500">({user.team.name})</span>
+                          <span className="">({user.team.name})</span>
                         )}
                       </div>
                     </SelectItem>
@@ -136,7 +136,7 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
                       )}
                       <span>{user.name}</span>
                       {user.team && (
-                        <span className="text-gray-500">({user.team.name})</span>
+                        <span className="">({user.team.name})</span>
                       )}
                     </Label>
                   </div>

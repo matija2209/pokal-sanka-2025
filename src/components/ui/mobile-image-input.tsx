@@ -84,7 +84,7 @@ export default function MobileImageInput({
               )}
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
+            <div className="w-full h-full flex items-center justify-center ">
               <Camera size={24} />
             </div>
           )}
@@ -102,7 +102,7 @@ export default function MobileImageInput({
         </Button>
 
         {fileName && (
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-sm  text-center">
             Selected: {fileName}
           </p>
         )}

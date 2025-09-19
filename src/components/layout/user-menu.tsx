@@ -45,7 +45,7 @@ export default function UserMenu({ currentUser }: UserMenuProps) {
         <Button 
           variant="ghost" 
           size="sm"
-          className="flex items-center space-x-1 md:space-x-2 text-gray-700 hover:text-gray-900"
+          className="flex items-center space-x-1 md:space-x-2  hover:"
         >
           <div className="flex items-center space-x-1 md:space-x-2">
             {currentUser.team && (

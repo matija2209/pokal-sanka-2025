@@ -64,7 +64,7 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
       </CardHeader>
       <CardContent>
         {drinkHistory.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 ">
             <Calendar className="h-12 w-12 mx-auto mb-4 opacity-30" />
             <p>Še ni zgodovine pijač</p>
             <p className="text-sm">Začnite beležiti pijače, da vidite svojo zgodovino!</p>
@@ -74,20 +74,20 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
             {dailyStats.map((dayGroup) => (
               <div key={dayGroup.date.toISOString()}>
                 <div className="flex items-center gap-2 mb-3 sticky top-0 bg-card pb-2 border-b">
-                  <h3 className="text-sm font-semibold text-gray-700">
+                  <h3 className="text-sm font-semibold ">
                     {formatDateGroup(dayGroup.date)}
                   </h3>
                   <Badge variant="outline" className="text-xs">
                     {dayGroup.drinks.length} pijač
                   </Badge>
-                  <div className="text-xs text-gray-500 ml-auto">
+                  <div className="text-xs  ml-auto">
                     +{dayGroup.drinks.reduce((sum, drink) => sum + drink.points, 0)} točk
                   </div>
                 </div>
                 
                 <div className="space-y-2 pl-2">
                   {dayGroup.drinks.map((log) => (
-                    <div key={log.id} className="flex items-center gap-3 p-2 bg-gray-50 rounded border border-gray-100">
+                    <div key={log.id} className="flex items-center gap-3 p-2  rounded border border-gray-100">
                       <div className="text-lg">
                         {getDrinkEmoji(log.drinkType)}
                       </div>
@@ -103,7 +103,7 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
                           </Badge>
                         </div>
                         
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                        <div className="flex items-center gap-2 text-xs  mt-1">
                           <Clock className="h-3 w-3" />
                           <span>{format(new Date(log.createdAt), 'HH:mm')}</span>
                           <span>•</span>
@@ -123,7 +123,7 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
             ))}
             
             {user.drinkLogs.length > limit && (
-              <div className="mt-4 pt-4 border-t text-center text-sm text-gray-500">
+              <div className="mt-4 pt-4 border-t text-center text-sm ">
                 Prikazano {limit} od {user.drinkLogs.length} pijač skupaj
               </div>
             )}

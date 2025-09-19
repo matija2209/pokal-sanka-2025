@@ -38,7 +38,7 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Ime
               </label>
               <Input
@@ -50,7 +50,7 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium  mb-2">
                 Ekipa
               </label>
               <Select name="teamId" defaultValue={currentUser.teamId || 'none'}>

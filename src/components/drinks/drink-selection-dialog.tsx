@@ -45,7 +45,7 @@ export default function DrinkSelectionDialog({
           <DialogTitle className="text-center">
             Beleži pijačo za {selectedUser.name}
           </DialogTitle>
-          <div className="text-center text-sm text-gray-600">
+          <div className="text-center text-sm ">
             {selectedUser.team ? (
               <div className="flex items-center justify-center gap-2">
                 <div 
@@ -96,7 +96,7 @@ export default function DrinkSelectionDialog({
           </div>
           
           {isPending && (
-            <div className="text-center text-sm text-gray-600">
+            <div className="text-center text-sm ">
               Beležim pijačo...
             </div>
           )}
