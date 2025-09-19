@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -75,14 +76,15 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
               const shotDrinks = user.drinkLogs.filter(log => log.drinkType === 'SHOT').length
               
               return (
-                <div 
+                <Link 
                   key={user.id} 
-                  className={`flex items-center justify-between p-4 rounded-lg transition-all ${
+                  href={`/players/${user.id}`}
+                  className={`flex items-center justify-between p-4 rounded-lg transition-all hover:shadow-lg cursor-pointer ${
                     isCurrentUser 
-                      ? 'bg-blue-50 border-blue-200 border-2 shadow-md' 
+                      ? 'border-2 shadow-md hover:border-blue-300' 
                       : position <= 3
-                        ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200'
-                        : ' hover:bg-gray-100'
+                        ? 'border border-yellow-200 hover:border-yellow-300'
+                        : ' hover:bg-gray-100 hover:border-gray-300 border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-4">
@@ -135,7 +137,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                     </div>
                   </div>
                 </div>
-              )
+              </Link>
             })
           )}
         </div>

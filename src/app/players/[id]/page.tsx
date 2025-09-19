@@ -43,14 +43,14 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
             )}
             <h1 className="text-3xl font-bold">{user.name}</h1>
             {user.id === currentUser.id && (
-              <span className="text-lg text-blue-600 font-medium">(You)</span>
+              <span className="text-lg text-blue-600 font-medium">(Vi)</span>
             )}
           </div>
           <p className="">
             {user.team ? (
-              <>Player statistics and performance in {user.team.name}</>
+              <>Statistike in uspešnost igralca v ekipi {user.team.name}</>
             ) : (
-              'Player statistics and performance'
+              'Statistike in uspešnost igralca'
             )}
           </p>
         </div>
