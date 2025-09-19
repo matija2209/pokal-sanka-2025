@@ -19,19 +19,18 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
   
   const getRankIcon = (position: number) => {
     switch (position) {
-      case 1: return <Trophy className="h-6 w-6 text-yellow-500" />
-      case 2: return <Medal className="h-6 w-6 " />
-      case 3: return <Award className="h-6 w-6 text-orange-500" />
+      case 1: return <Trophy className="h-6 w-6" />
+      case 2: return <Medal className="h-6 w-6" />
+      case 3: return <Award className="h-6 w-6" />
       default: return <div className="w-6 h-6 flex items-center justify-center">
-        <span className="text-sm font-bold ">#{position}</span>
+        <span className="text-sm font-bold">#{position}</span>
       </div>
     }
   }
 
   const getPositionBadge = (position: number) => {
     if (position <= 3) {
-      const colors = ['bg-yellow-500', 'bg-gray-400', 'bg-orange-500']
-      return <Badge className={`${colors[position - 1]} text-white`}>#{position}</Badge>
+      return <Badge>#{position}</Badge>
     }
     return <Badge variant="outline">#{position}</Badge>
   }
@@ -50,7 +49,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
       <CardContent>
         <div className="space-y-4">
           {sortedTeams.length === 0 ? (
-            <div className="text-center py-8 ">
+            <div className="text-center py-8">
               Ni najdenih ekip
             </div>
           ) : (
@@ -68,9 +67,9 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                   href={`/teams/${team.id}`}
                   className={`block p-6 rounded-lg border-2 transition-all hover:shadow-lg cursor-pointer ${
                     isCurrentUserTeam 
-                      ? 'border-blue-200 shadow-md hover:border-blue-300' 
+                      ? 'border-blue-200  shadow-md hover:border-blue-300' 
                       : position <= 3
-                        ? 'border-yellow-200 hover:border-yellow-300'
+                        ? 'border-yellow-200  hover:border-yellow-300'
                         : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -86,16 +85,14 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                         
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className={`text-lg font-semibold ${
-                              isCurrentUserTeam ? 'text-blue-700' : ''
-                            }`}>
+                            <h3 className={`text-lg font-semibold`}>
                               {team.name}
                               {isCurrentUserTeam && ' (Vaša Ekipa)'}
                             </h3>
                             {position <= 3 && getPositionBadge(position)}
                           </div>
                           
-                          <div className="flex items-center gap-4 text-sm ">
+                          <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center gap-1">
                               <Users className="h-4 w-4" />
                               <span>{memberCount} članov</span>
@@ -109,24 +106,18 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                     </div>
                     
                     <div className="text-right">
-                      <div className={`text-3xl font-bold ${
-                        isCurrentUserTeam 
-                          ? 'text-blue-700' 
-                          : position <= 3 
-                            ? 'text-yellow-600' 
-                            : ''
-                      }`}>
+                      <div className={`text-3xl font-bold`}>
                         {teamScore}
                       </div>
-                      <div className="text-sm ">točk</div>
+                      <div className="text-sm">točk</div>
                     </div>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs ">Napredek Ekipe</span>
-                      <span className="text-xs ">{progressPercentage.toFixed(0)}%</span>
+                      <span className="text-xs">Napredek Ekipe</span>
+                      <span className="text-xs">{progressPercentage.toFixed(0)}%</span>
                     </div>
                     <Progress value={progressPercentage} className="h-2" />
                   </div>
@@ -134,7 +125,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                   {/* Team Members Preview */}
                   {team.users.length > 0 && (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs ">Člani:</span>
+                      <span className="text-xs">Člani:</span>
                       <div className="flex -space-x-2">
                         {team.users.slice(0, 5).map((user: any) => (
                           <Avatar key={user.id} className="h-8 w-8 border-2 border-white">
@@ -144,8 +135,8 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                           </Avatar>
                         ))}
                         {team.users.length > 5 && (
-                          <div className="h-6 w-6  rounded-full border-2 border-white flex items-center justify-center">
-                            <span className="text-xs ">+{team.users.length - 5}</span>
+                          <div className="h-6 w-6 rounded-full border-2 border-white flex items-center justify-center">
+                            <span className="text-xs">+{team.users.length - 5}</span>
                           </div>
                         )}
                       </div>
@@ -153,21 +144,21 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
                       {/* Top performer indicator */}
                       {team.users.length > 0 && (
                         <div className="ml-auto text-xs">
-                          Najboljsi: {team.users
+                          Najboljši: {team.users
                             .map(u => ({ ...u, score: u.drinkLogs.reduce((s, l) => s + l.points, 0) }))
                             .sort((a, b) => b.score - a.score)[0]?.name}
                         </div>
                       )}
                     </div>
                   )}
-                </div>
-              </Link>
+                </Link>
+              )
             })
           )}
         </div>
         
         {sortedTeams.length > 0 && (
-          <div className="mt-6 pt-4 border-t text-center text-sm ">
+          <div className="mt-6 pt-4 border-t text-center text-sm">
             Prikaz vseh {sortedTeams.length} ekip
           </div>
         )}

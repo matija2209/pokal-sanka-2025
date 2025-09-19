@@ -27,10 +27,10 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
   const getRankIcon = (position: number) => {
     switch (position) {
       case 1: return <Trophy className="h-5 w-5 text-yellow-500 trophy-glow" />
-      case 2: return <Medal className="h-5 w-5 " />
+      case 2: return <Medal className="h-5 w-5 text-gray-400" />
       case 3: return <Award className="h-5 w-5 text-orange-500" />
       default: return <div className="w-5 h-5 flex items-center justify-center">
-        <span className="text-sm font-bold ">#{position}</span>
+        <span className="text-sm font-bold text-gray-600">#{position}</span>
       </div>
     }
   }
@@ -64,7 +64,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
       <CardContent>
         <div className="space-y-3">
           {filteredUsers.length === 0 ? (
-            <div className="text-center py-8 ">
+            <div className="text-center py-8 text-gray-500">
               Ni najdenih igralcev
             </div>
           ) : (
@@ -81,9 +81,9 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                   href={`/players/${user.id}`}
                   className={`flex items-center justify-between p-4 rounded-lg transition-all hover:shadow-lg cursor-pointer ${
                     isCurrentUser 
-                      ? 'border-2 shadow-md hover:border-blue-300' 
+                      ? 'border-2 border-blue-200  shadow-md hover:border-blue-300' 
                       : position <= 3
-                        ? 'border border-yellow-200 hover:border-yellow-300'
+                        ? 'border border-yellow-200  hover:border-yellow-300'
                         : 'hover:bg-gray-100 hover:border-gray-300 border border-transparent'
                   }`}
                 >
@@ -105,19 +105,19 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                         </div>
                         
                         {user.team && (
-                          <span className="text-sm ">
+                          <span className="text-sm text-gray-600">
                             {user.team.name}
                           </span>
                         )}
                         
                         <div className="flex items-center gap-3 mt-1">
                           {regularDrinks > 0 && (
-                            <span className="text-xs ">
+                            <span className="text-xs text-gray-500">
                               🍺 {regularDrinks}
                             </span>
                           )}
                           {shotDrinks > 0 && (
-                            <span className="text-xs ">
+                            <span className="text-xs text-gray-500">
                               🥃 {shotDrinks}
                             </span>
                           )}
@@ -132,18 +132,18 @@ export default function Leaderboard({ users, currentUserId, teamFilter }: Leader
                     }`}>
                       {score}
                     </div>
-                    <div className="text-sm">
+                    <div className="text-sm text-gray-500">
                       {score === 1 ? 'tocka' : score === 2 ? 'tocki' : score <= 4 ? 'tocke' : 'tock'}
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              )
             })
           )}
         </div>
         
         {filteredUsers.length > 0 && (
-          <div className="mt-6 pt-4 border-t text-center text-sm ">
+          <div className="mt-6 pt-4 border-t text-center text-sm text-gray-500">
             {viewMode === 'all' 
               ? `Prikaz vseh ${filteredUsers.length} igralcev`
               : `Prikaz ${filteredUsers.length} članov ekipe`
