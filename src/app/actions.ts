@@ -604,27 +604,13 @@ export async function createPostAction(
     }
     
     const message = formData.get('message') as string
-    const imageFile = formData.get('post-image') as File | null
+    const imageUrl = formData.get('imageUrl') as string | null
     
     if (!message || !message.trim()) {
       return {
         success: false,
         message: 'Message is required',
         type: 'error'
-      }
-    }
-    
-    let imageUrl: string | null = null
-    
-    if (imageFile && imageFile.size > 0) {
-      try {
-        imageUrl = await uploadImage(imageFile, 'posts', currentUser.id)
-      } catch (error) {
-        return {
-          success: false,
-          message: `Image upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          type: 'error'
-        }
       }
     }
     
