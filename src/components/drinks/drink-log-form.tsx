@@ -11,6 +11,7 @@ import { initialDrinkLogActionState, initialMultiDrinkLogActionState } from '@/l
 import { DRINK_TYPES } from '@/lib/prisma/types'
 import { getDrinkLabel, getDrinkPoints } from '@/lib/utils/drinks'
 import DrinkSelectionModal from './drink-selection-modal'
+import { toast } from 'sonner'
 
 interface DrinkLogFormProps {
   currentUserId: string
@@ -55,16 +56,14 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
   }
 
   useEffect(() => {
-    if (multiState.success && isMultiMode) {
-      setSelectedUserIds([])
-    }
-  }, [multiState.success, isMultiMode])
-
-  useEffect(() => {
     if (state.success) {
+      toast.success(state.message || 'Pijača uspešno zabeležena!')
       setSelectedDrink('')
+      setSelectedUserIds([])
+    } else if (state.message && !state.success) {
+      toast.error(state.message)
     }
-  }, [state.success])
+  }, [state.success, state.message])
 
   return (
     <Card>
@@ -149,13 +148,6 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
             <p className="text-orange-500 text-sm">Izberite vsaj enega igralca</p>
           )}
 
-          {state.message && !state.success && (
-            <p className="text-red-500 text-sm">{state.message}</p>
-          )}
-
-          {state.message && state.success && (
-            <p className="text-green-500 text-sm">{state.message}</p>
-          )}
           
           <div className="space-y-4">
               <Button 

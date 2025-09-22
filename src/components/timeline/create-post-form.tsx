@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState, useTransition } from 'react'
+import { useActionState, useState, useTransition, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardAction, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,6 +10,7 @@ import { createPostAction } from '@/app/actions'
 import { initialDrinkLogActionState } from '@/lib/types/action-states'
 import { upload } from '@vercel/blob/client'
 import { compressImage, shouldCompress } from '@/lib/utils/client-image-compression'
+import { toast } from 'sonner'
 
 interface CreatePostFormProps {
   currentUser?: {
@@ -25,6 +26,15 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isPending, startTransition] = useTransition()
   const [state, formAction] = useActionState(createPostAction, initialDrinkLogActionState)
+  
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.message || 'Objava uspešno ustvarjena!')
+      setMessage('')
+    } else if (state.message && !state.success) {
+      toast.error(state.message)
+    }
+  }, [state.success, state.message])
   
   const handleImageUpload = async (file: File): Promise<string | null> => {
     try {
@@ -85,9 +95,6 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
 
       startTransition(async () => {
         await formAction(postData)
-        if (state.success) {
-          setMessage('')
-        }
       })
     } catch (error) {
       console.error('Post submission failed:', error)
@@ -145,13 +152,6 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
             </div>
           )}
 
-          {state.message && !state.success && (
-            <p className="text-red-500 text-sm mt-2">{state.message}</p>
-          )}
-
-          {state.message && state.success && (
-            <p className="text-green-500 text-sm mt-2">{state.message}</p>
-          )}
         </form>
 </div>
       </CardContent>

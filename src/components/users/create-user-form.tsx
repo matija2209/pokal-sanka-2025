@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { createUserAction } from '@/app/actions'
 import { initialUserActionState } from '@/lib/types/action-states'
+import { toast } from 'sonner'
 
 interface CreateUserFormProps {
   onBack?: () => void
@@ -16,12 +17,17 @@ interface CreateUserFormProps {
 export default function CreateUserForm({ onBack }: CreateUserFormProps) {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(createUserAction, initialUserActionState)
+  const [name, setName] = useState('')
 
   useEffect(() => {
     if (state.success && state.data?.redirectUrl) {
+      toast.success(state.message || 'Račun uspešno ustvarjen!')
+      setName('')
       router.push(state.data.redirectUrl)
+    } else if (state.message && !state.success) {
+      toast.error(state.message)
     }
-  }, [state.success, state.data?.redirectUrl, router])
+  }, [state.success, state.message, state.data?.redirectUrl, router])
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -35,6 +41,8 @@ export default function CreateUserForm({ onBack }: CreateUserFormProps) {
             <Input 
               id="name" 
               name="name" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required 
               placeholder="Vnesite vaše ime"
               disabled={isPending}
@@ -44,13 +52,6 @@ export default function CreateUserForm({ onBack }: CreateUserFormProps) {
             )}
           </div>
 
-          {state.message && !state.success && (
-            <p className="text-red-500 text-sm">{state.message}</p>
-          )}
-
-          {state.message && state.success && (
-            <p className="text-green-500 text-sm">{state.message}</p>
-          )}
           
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending ? "Ustvarjam račun..." : "Ustvari račun"}
