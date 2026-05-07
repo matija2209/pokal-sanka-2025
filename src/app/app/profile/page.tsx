@@ -4,16 +4,21 @@ import { redirect } from 'next/navigation'
 import { UserProfile } from '@/components/users'
 import { TeamLogoForm } from '@/components/teams'
 import type { Metadata } from 'next'
+import { getSiteBrandParts } from '@/lib/events'
 
-export const metadata: Metadata = {
-  title: 'Moj Profil | Pokal Šanka - Matija Edition',
-  description: 'Vaš osebni profil v Pokal Šanka turnirju. Upravljajte svoj račun, nastavitve profila in ekipo.',
-  keywords: ['profil', 'nastavitve', 'ekipa', 'uporabnik', 'upravljanje'],
-  robots: 'noindex, nofollow',
-  openGraph: {
-    title: 'Moj Profil - Pokal Šanka',
-    description: 'Upravljanje osebnega profila in nastavitev.',
-    locale: 'sl_SI'
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await getSiteBrandParts()
+  return {
+    title: 'Moj Profil',
+    description:
+      'Vaš osebni profil v Pokal Šanka turnirju. Upravljajte svoj račun, nastavitve profila in ekipo.',
+    keywords: ['profil', 'nastavitve', 'ekipa', 'uporabnik', 'upravljanje'],
+    robots: 'noindex, nofollow',
+    openGraph: {
+      title: `Moj Profil | ${brand}`,
+      description: 'Upravljanje osebnega profila in nastavitev.',
+      locale: 'sl_SI',
+    },
   }
 }
 

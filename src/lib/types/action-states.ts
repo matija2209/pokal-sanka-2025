@@ -49,3 +49,19 @@ export const initialMultiDrinkLogActionState: DrinkLogActionState = {
   message: '',
   type: 'idle'
 }
+
+export interface BachelorActionState extends BaseActionState {
+  data?: {
+    sightingId?: string
+    points?: number
+    friendshipLevel?: string
+    hypeVoteCount?: number
+    redirectUrl?: string
+  }
+}
+
+export const initialBachelorActionState: BachelorActionState = {
+  success: false,
+  message: '',
+  type: 'idle'
+}

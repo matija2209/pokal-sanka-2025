@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { uploadImage } from '@/lib/utils/image-upload'
 import { createSighting, getSightingById } from '@/lib/prisma/fetchers/sighting-fetchers'
 import { createHypeVote, getHypeVoteCount, getNextLockedHypeEvent, incrementHypeEventVoteCount } from '@/lib/prisma/fetchers/hype-fetchers'
-import { ACTION_POINTS, ACTION_FRIENDSHIP, HYPE_VOTE_THRESHOLD } from '@/lib/utils/bachelor-points'
+import { ACTION_POINTS, ACTION_FRIENDSHIP, ACTION_TYPES, HYPE_VOTE_THRESHOLD, isActionType } from '@/lib/utils/bachelor-points'
 import type { BachelorActionState } from '@/lib/types/action-states'
 
 export async function submitSightingAction(
@@ -12,7 +12,8 @@ export async function submitSightingAction(
   formData: FormData
 ): Promise<BachelorActionState> {
   try {
-    const actionType = (formData.get('actionType') as string) || 'spot'
+    const rawActionType = (formData.get('actionType') as string) || ACTION_TYPES.SPOT
+    const actionType = isActionType(rawActionType) ? rawActionType : ACTION_TYPES.SPOT
     const latitude = parseFloat(formData.get('latitude') as string)
     const longitude = parseFloat(formData.get('longitude') as string)
     const submitterName = (formData.get('submitterName') as string) || undefined
@@ -90,7 +91,7 @@ export async function submitSightingAction(
 
     return {
       success: true,
-      message: 'Sighting logged successfully!',
+      message: 'Moment logged successfully!',
       type: 'create',
       data: {
         sightingId: sighting.id,

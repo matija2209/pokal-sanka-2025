@@ -1,7 +1,7 @@
-import { Prisma, User, Team, DrinkLog, Event, Person, Post, Commentary } from '@prisma/client'
+import { Prisma, User, Team, DrinkLog, Event, Person, Post, Commentary, PublicSighting, HypeVote, HypeEvent } from '@prisma/client'
 
 // Re-export base types
-export type { User, Team, DrinkLog, Event, Person, Post, Commentary, Prisma }
+export type { User, Team, DrinkLog, Event, Person, Post, Commentary, PublicSighting, HypeVote, HypeEvent, Prisma }
 
 // Drink type constants
 export const DRINK_TYPES = {
@@ -83,3 +83,12 @@ export type TeamWithStats = Team & {
 export type CreateUserInput = Prisma.UserCreateInput
 export type CreateTeamInput = Prisma.TeamCreateInput
 export type CreateDrinkLogInput = Prisma.DrinkLogCreateInput
+
+// Public sighting composite types
+export type PublicSightingWithEvent = Prisma.PublicSightingGetPayload<{
+  include: { event: true }
+}>
+
+export type PublicSightingWithApprover = Prisma.PublicSightingGetPayload<{
+  include: { event: true; admin: true }
+}>

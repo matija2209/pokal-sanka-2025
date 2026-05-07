@@ -1,9 +1,18 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { getSiteBrandParts } from '@/lib/events'
 
-export const metadata: Metadata = {
-  title: 'Trivia Pravila | Pokal Šanka',
-  description: 'Pravila trivia kviza Pokal Šanka — kako delujejo kategorije, točkovanje in moči.',
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await getSiteBrandParts()
+  return {
+    title: 'Trivia Pravila',
+    description: `Pravila trivia kviza — kako delujejo kategorije, točkovanje in moči. ${brand}.`,
+    openGraph: {
+      title: `Trivia Pravila | ${brand}`,
+      description: 'Pravila trivia kviza Pokal Šanka — kategorije, točkovanje in moči.',
+      locale: 'sl_SI',
+    },
+  }
 }
 
 export default function TriviaRulesPage() {

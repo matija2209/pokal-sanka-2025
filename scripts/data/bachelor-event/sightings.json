@@ -1,0 +1,104 @@
+[
+  {
+    "submitterName": "Carla",
+    "submitterCountry": "Malta",
+    "actionType": "spot",
+    "latitude": 35.8989,
+    "longitude": 14.5146,
+    "message": "Spotted him negotiating brunch like it was a diplomatic summit.",
+    "hoursAgo": 34,
+    "approved": true
+  },
+  {
+    "submitterName": "Jonas",
+    "submitterCountry": "Germany",
+    "actionType": "message",
+    "latitude": 35.9137,
+    "longitude": 14.4989,
+    "message": "Best of luck. Hydrate before every major life decision.",
+    "hoursAgo": 31,
+    "approved": true
+  },
+  {
+    "submitterName": "Luca",
+    "submitterCountry": "Italy",
+    "actionType": "say_hi",
+    "latitude": 35.9563,
+    "longitude": 14.3762,
+    "message": "He waved back and looked extremely committed to the bit.",
+    "hoursAgo": 29,
+    "approved": true
+  },
+  {
+    "submitterName": "Sophie",
+    "submitterCountry": "France",
+    "actionType": "drink_together",
+    "latitude": 35.9242,
+    "longitude": 14.4897,
+    "message": "Shared a drink. Solid form. Strong laugh. Respect.",
+    "hoursAgo": 24,
+    "approved": true
+  },
+  {
+    "submitterName": "Ben",
+    "submitterCountry": "United Kingdom",
+    "actionType": "photo_together",
+    "latitude": 35.9352,
+    "longitude": 14.3522,
+    "message": "Proof obtained. Groom morale remains high.",
+    "hoursAgo": 20,
+    "approved": true
+  },
+  {
+    "submitterName": "Nika",
+    "submitterCountry": "Slovenia",
+    "actionType": "challenge",
+    "latitude": 35.8871,
+    "longitude": 14.5067,
+    "message": "Challenge accepted. Outcome unclear. Spirit undeniable.",
+    "hoursAgo": 16,
+    "approved": true
+  },
+  {
+    "submitterName": "Mateo",
+    "submitterCountry": "Spain",
+    "actionType": "spot",
+    "latitude": 35.9496,
+    "longitude": 14.4098,
+    "message": null,
+    "hoursAgo": 11,
+    "approved": false,
+    "adminNotes": "Waiting for clearer face shot."
+  },
+  {
+    "submitterName": "Emma",
+    "submitterCountry": "Sweden",
+    "actionType": "message",
+    "latitude": 35.8995,
+    "longitude": 14.511,
+    "message": "Tell the lads the playlist peaked too early.",
+    "hoursAgo": 8,
+    "approved": false,
+    "adminNotes": "Off-topic but funny."
+  },
+  {
+    "submitterName": "Ivan",
+    "submitterCountry": "Croatia",
+    "actionType": "drink_together",
+    "latitude": 35.9374,
+    "longitude": 14.3619,
+    "message": "He looked locked in for a long shift.",
+    "hoursAgo": 5,
+    "approved": true
+  },
+  {
+    "submitterName": "Maja",
+    "submitterCountry": "Slovenia",
+    "actionType": "photo_together",
+    "latitude": 35.9479,
+    "longitude": 14.4013,
+    "message": "This one belongs in the official archives.",
+    "hoursAgo": 2,
+    "approved": true
+  }
+]

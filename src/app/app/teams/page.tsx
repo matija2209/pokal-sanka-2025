@@ -3,16 +3,21 @@ import { getAllTeamsWithUsersAndDrinks } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import { TeamLeaderboard } from '@/components/teams'
 import type { Metadata } from 'next'
+import { getSiteBrandParts } from '@/lib/events'
 
-export const metadata: Metadata = {
-  title: 'Ekipe | Pokal Šanka - Matija Edition',
-  description: 'Lestvica ekip v Pokal Šanka turnirju. Poglejte statistike svoje ekipe in tekmovalnih ekip.',
-  keywords: ['ekipe', 'lestvica', 'statistike', 'turnir', 'tekmovanje'],
-  robots: 'noindex, nofollow',
-  openGraph: {
-    title: 'Ekipe - Pokal Šanka',
-    description: 'Lestvica ekip in statistike tekmovalnih skupin.',
-    locale: 'sl_SI'
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await getSiteBrandParts()
+  return {
+    title: 'Ekipe',
+    description:
+      'Lestvica ekip v Pokal Šanka turnirju. Poglejte statistike svoje ekipe in tekmovalnih ekip.',
+    keywords: ['ekipe', 'lestvica', 'statistike', 'turnir', 'tekmovanje'],
+    robots: 'noindex, nofollow',
+    openGraph: {
+      title: `Ekipe | ${brand}`,
+      description: 'Lestvica ekip in statistike tekmovalnih skupin.',
+      locale: 'sl_SI',
+    },
   }
 }
 

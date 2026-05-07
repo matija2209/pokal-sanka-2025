@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { getSiteBrandParts } from "@/lib/events";
 
 import { Luckiest_Guy, Roboto } from 'next/font/google'
  
@@ -27,10 +28,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Pokal Šanka — Matija 2025 Edition",
-  description: "Tekmovanje v pitju piva - Pokal Šanka — Matija 2025 Edition",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { eventName, brand } = await getSiteBrandParts();
+  return {
+    title: {
+      default: brand,
+      template: `%s | ${brand}`,
+    },
+    description: `Tekmovanje v pitju — ${eventName}. Pokal Šanka.`,
+  };
+}
 
 export default function RootLayout({
   children,

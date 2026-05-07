@@ -1,0 +1,27 @@
+[
+  {
+    "userIndex": 0,
+    "powerType": "Airstrike",
+    "cost": 2,
+    "note": "Used to force a reveal on Airport Intelligence."
+  },
+  {
+    "userIndex": 3,
+    "powerType": "Solo Rider",
+    "cost": 1,
+    "note": "Backed own answer on Malta Forecast."
+  },
+  {
+    "userIndex": 7,
+    "powerType": "Cockblock",
+    "cost": 2,
+    "targetUserIndex": 0,
+    "note": "Blocked an obvious favorite in Night Shift Tactics."
+  },
+  {
+    "userIndex": 10,
+    "powerType": "Zadnji v Vrsti",
+    "cost": 1,
+    "note": "Emergency comeback token before the active round."
+  }
+]

@@ -2,17 +2,21 @@ import { getCurrentUser } from '@/lib/utils/cookies'
 import { redirect } from 'next/navigation'
 import { EventFeed } from '@/components/timeline'
 import type { Metadata } from 'next'
+import { getSiteBrandParts } from '@/lib/events'
 
-export const metadata: Metadata = {
-  title: 'Feed | Pokal Šanka - Matija Edition',
-  description: 'Zasebni feed dogodka z objavami, slikami in vecjimi trenutki turnirja.',
-  keywords: ['feed', 'objave', 'slike', 'timeline', 'dogodek'],
-  robots: 'noindex, nofollow',
-  openGraph: {
-    title: 'Feed - Pokal Šanka',
-    description: 'Zasebni timeline dogodka z objavami in highlighti.',
-    locale: 'sl_SI',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await getSiteBrandParts()
+  return {
+    title: 'Feed',
+    description: 'Zasebni feed dogodka z objavami, slikami in vecjimi trenutki turnirja.',
+    keywords: ['feed', 'objave', 'slike', 'timeline', 'dogodek'],
+    robots: 'noindex, nofollow',
+    openGraph: {
+      title: `Feed | ${brand}`,
+      description: 'Zasebni timeline dogodka z objavami in highlighti.',
+      locale: 'sl_SI',
+    },
+  }
 }
 
 export const dynamic = 'force-dynamic'

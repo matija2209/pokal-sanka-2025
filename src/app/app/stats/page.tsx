@@ -8,16 +8,21 @@ import { TimelineDisplay } from '@/components/timeline'
 import { getUserRanking, sortUsersByScore, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import type { Metadata } from 'next'
+import { getSiteBrandParts } from '@/lib/events'
 
-export const metadata: Metadata = {
-  title: 'Statistike | Pokal Šanka - Matija Edition',
-  description: 'Statistike, lestvice in dosežki v Pokal Šanka turnirju. Poglejte svoje dosežke, lestvico igralcev in nedavno aktivnost.',
-  keywords: ['statistike', 'lestvica', 'dosežki', 'aktivnost', 'turnir'],
-  robots: 'noindex, nofollow',
-  openGraph: {
-    title: 'Statistike - Pokal Šanka',
-    description: 'Statistike, lestvice in dosežki v turnirju.',
-    locale: 'sl_SI'
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await getSiteBrandParts()
+  return {
+    title: 'Statistike',
+    description:
+      'Statistike, lestvice in dosežki v Pokal Šanka turnirju. Poglejte svoje dosežke, lestvico igralcev in nedavno aktivnost.',
+    keywords: ['statistike', 'lestvica', 'dosežki', 'aktivnost', 'turnir'],
+    robots: 'noindex, nofollow',
+    openGraph: {
+      title: `Statistike | ${brand}`,
+      description: 'Statistike, lestvice in dosežki v turnirju.',
+      locale: 'sl_SI',
+    },
   }
 }
 

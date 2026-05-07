@@ -119,6 +119,17 @@ export async function getActiveEvent(): Promise<Event | null> {
   return fallbackEvent
 }
 
+/** HTML/meta brand line from the active event (for titles and descriptions). */
+export async function getSiteBrandParts(): Promise<{
+  eventName: string
+  brand: string
+}> {
+  const activeEvent = await getActiveEvent()
+  const eventName = activeEvent?.name?.trim() || 'Turnir'
+  const brand = `Pokal Šanka — ${eventName}`
+  return { eventName, brand }
+}
+
 export async function requireActiveEventId(): Promise<string> {
   const activeEvent = await getActiveEvent()
 
@@ -136,4 +147,24 @@ export async function setActiveEventCookie(eventId: string): Promise<void> {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
   })
+}
+
+export async function requireBachelorEventId(): Promise<string> {
+  if (!(await isMultiEventSchemaAvailable())) {
+    const legacy = getLegacyFallbackEvent()
+    return legacy.id
+  }
+
+  let event = await getEventBySlug(DEFAULT_BACHELOR_EVENT_SLUG)
+
+  if (!event) {
+    event = await prisma.event.create({
+      data: {
+        slug: DEFAULT_BACHELOR_EVENT_SLUG,
+        name: DEFAULT_BACHELOR_EVENT_NAME,
+      },
+    })
+  }
+
+  return event.id
 }

@@ -7,6 +7,7 @@ import { HypeMeter } from '@/components/bachelor/hype-meter'
 import { ParticipationLadder } from '@/components/bachelor/participation-ladder'
 import { SightingTimeline } from '@/components/bachelor/sighting-timeline'
 import { Footer } from '@/components/bachelor/footer'
+import { BachelorMobileNav } from '@/components/bachelor/mobile-nav'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,34 +32,37 @@ export default async function BachelorPage() {
   }))
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-16 sm:pb-0">
       <HeroSection />
 
-      <section id="stats" className="py-12 px-4 max-w-4xl mx-auto">
-        <StatsCards stats={stats} hypeVotes={hypeVoteCount} />
-      </section>
+      <div className="space-y-4 sm:space-y-0">
+        <section id="stats" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
+          <StatsCards stats={stats} hypeVotes={hypeVoteCount} />
+        </section>
 
-      <section id="map" className="py-12 px-4 max-w-6xl mx-auto">
-        <h2 className="text-3xl font-lucky text-center mb-6">Malta Sighting Map</h2>
-        <MaltaMap sightings={mapSightings} />
-      </section>
+        <section id="map" className="py-8 sm:py-12 px-4 max-w-6xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Malta Sighting Map</h2>
+          <MaltaMap sightings={mapSightings} />
+        </section>
 
-      <section id="hype" className="py-12 px-4 max-w-4xl mx-auto">
-        <h2 className="text-3xl font-lucky text-center mb-6">Hype the Groom</h2>
-        <HypeMeter voteCount={hypeVoteCount} events={hypeEvents} />
-      </section>
+        <section id="hype" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Hype the Groom</h2>
+          <HypeMeter voteCount={hypeVoteCount} events={hypeEvents} />
+        </section>
 
-      <section id="ladder" className="py-12 px-4 max-w-4xl mx-auto">
-        <h2 className="text-3xl font-lucky text-center mb-6">Friendship Levels</h2>
-        <ParticipationLadder />
-      </section>
+        <section id="ladder" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Friendship Levels</h2>
+          <ParticipationLadder />
+        </section>
 
-      <section id="timeline" className="py-12 px-4 max-w-4xl mx-auto">
-        <h2 className="text-3xl font-lucky text-center mb-6">Recent Sightings</h2>
-        <SightingTimeline sightings={sightings} />
-      </section>
+        <section id="timeline" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Recent Sightings</h2>
+          <SightingTimeline sightings={sightings} />
+        </section>
+      </div>
 
       <Footer />
+      <BachelorMobileNav />
     </div>
   )
 }

@@ -4,16 +4,21 @@ import { redirect } from 'next/navigation'
 import { DrinkLogForm } from '@/components/drinks'
 import { CreatePostForm } from '@/components/timeline'
 import type { Metadata } from 'next'
+import { getSiteBrandParts } from '@/lib/events'
 
-export const metadata: Metadata = {
-  title: 'Igralci | Pokal Šanka - Matija Edition',
-  description: 'Glavna nadzorna plošča turnirja. Beležite pijačo, spremljajte lestvico in tekmujte s prijatelji v Pokal Šanka turnirju.',
-  keywords: ['igralci', 'lestvica', 'turnir', 'pitje', 'točke', 'tekmovanje'],
-  robots: 'noindex, nofollow',
-  openGraph: {
-    title: 'Igralci - Pokal Šanka',
-    description: 'Glavna nadzorna plošča turnirja za beleženje pijače in spremljanje lestvice.',
-    locale: 'sl_SI'
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await getSiteBrandParts()
+  return {
+    title: 'Igralci',
+    description:
+      'Glavna nadzorna plošča turnirja. Beležite pijačo, spremljajte lestvico in tekmujte s prijatelji v Pokal Šanka turnirju.',
+    keywords: ['igralci', 'lestvica', 'turnir', 'pitje', 'točke', 'tekmovanje'],
+    robots: 'noindex, nofollow',
+    openGraph: {
+      title: `Igralci | ${brand}`,
+      description: 'Glavna nadzorna plošča turnirja za beleženje pijače in spremljanje lestvice.',
+      locale: 'sl_SI',
+    },
   }
 }
 

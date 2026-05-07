@@ -5,24 +5,29 @@ import { DashboardDisplay } from '@/components/dashboard'
 import BreakingNewsBanner from '@/components/dashboard/breaking-news-banner'
 import LatestImagesDisplay from '@/components/dashboard/latest-images-display'
 import type { Metadata } from 'next'
+import { getSiteBrandParts } from '@/lib/events'
 
-export const metadata: Metadata = {
-  title: 'Pokal Šanka - TV Nadzorna Plošča | Lestvice in Statistike',
-  description: 'Velika nadzorna plošča za televizijske zaslone. Spremljajte lestvice ekip, najboljše igralce in zadnjo aktivnost v realnem času.',
-  keywords: ['dashboard', 'lestvica', 'statistike', 'turnir', 'tv', 'nadzorna plošča', 'pokal šanka'],
-  robots: 'noindex, nofollow',
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#0f172a',
-  colorScheme: 'dark',
-  openGraph: {
-    title: 'Pokal Šanka - TV Dashboard',
-    description: 'Spremljajte turnir v realnem času z našo TV nadzorno ploščo.',
-    type: 'website',
-    locale: 'sl_SI',
-    siteName: 'Pokal Šanka'
-  },
-  icons: {
-    icon: '/logo.jpg'
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await getSiteBrandParts()
+  return {
+    title: 'TV Nadzorna Plošča',
+    description:
+      'Velika nadzorna plošča za televizijske zaslone. Spremljajte lestvice ekip, najboljše igralce in zadnjo aktivnost v realnem času.',
+    keywords: ['dashboard', 'lestvica', 'statistike', 'turnir', 'tv', 'nadzorna plošča', 'pokal šanka'],
+    robots: 'noindex, nofollow',
+    viewport: 'width=device-width, initial-scale=1',
+    themeColor: '#0f172a',
+    colorScheme: 'dark',
+    openGraph: {
+      title: `TV Nadzorna Plošča | ${brand}`,
+      description: 'Spremljajte turnir v realnem času z našo TV nadzorno ploščo.',
+      type: 'website',
+      locale: 'sl_SI',
+      siteName: 'Pokal Šanka',
+    },
+    icons: {
+      icon: '/logo.jpg',
+    },
   }
 }
 

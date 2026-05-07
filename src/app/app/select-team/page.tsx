@@ -3,16 +3,21 @@ import { getAllTeams } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import { TeamSelectionForm } from '@/components/teams'
 import type { Metadata } from 'next'
+import { getSiteBrandParts } from '@/lib/events'
 
-export const metadata: Metadata = {
-  title: 'Izbira Ekipe | Pokal Šanka - Matija Edition',
-  description: 'Izberite svojo ekipo za sodelovanje v Pokal Šanka turnirju. Pridružite se obstoječi ekipi ali ustvarite novo.',
-  keywords: ['izbira ekipe', 'ekipa', 'turnir', 'pridružitev', 'nova ekipa'],
-  robots: 'noindex, nofollow',
-  openGraph: {
-    title: 'Izbira Ekipe - Pokal Šanka',
-    description: 'Izberite ali ustvarite svojo ekipo za turnir.',
-    locale: 'sl_SI'
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await getSiteBrandParts()
+  return {
+    title: 'Izbira Ekipe',
+    description:
+      'Izberite svojo ekipo za sodelovanje v Pokal Šanka turnirju. Pridružite se obstoječi ekipi ali ustvarite novo.',
+    keywords: ['izbira ekipe', 'ekipa', 'turnir', 'pridružitev', 'nova ekipa'],
+    robots: 'noindex, nofollow',
+    openGraph: {
+      title: `Izbira Ekipe | ${brand}`,
+      description: 'Izberite ali ustvarite svojo ekipo za turnir.',
+      locale: 'sl_SI',
+    },
   }
 }
 

@@ -5,37 +5,41 @@ import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { EntryScreen } from '@/components/entry'
 import type { Metadata } from 'next'
-import { getActiveEvent, getAllEvents } from '@/lib/events'
+import { getActiveEvent, getAllEvents, getSiteBrandParts } from '@/lib/events'
 import EventSwitcher from '@/components/events/event-switcher'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 import { prisma } from '@/lib/prisma/client'
 
-export const metadata: Metadata = {
-  title: 'Pokal Šanka - Matija Edition',
-  description: 'Pridružite se najbolj zabavnemu turnirju v pitju! Tekmujte s prijatelji, zbirajte točke in pokažite svoje spretnosti v igri Pokal Šanka.',
-  keywords: ['turnir', 'pitje', 'igra', 'tekmovanje', 'zabava', 'prijatelji', 'pokal', 'šanka'],
-  authors: [{ name: 'Pokal Šanka Team' }],
-  creator: 'Pokal Šanka',
-  publisher: 'Pokal Šanka',
-  robots: 'noindex, nofollow',
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#1e293b',
-  colorScheme: 'dark light',
-  openGraph: {
-    title: 'Pokal Šanka - Turnir v Pitju',
-    description: 'Najbolj zabaven turnir v pitju! Tekmujte s prijatelji in pokažite svoje spretnosti.',
-    type: 'website',
-    locale: 'sl_SI',
-    siteName: 'Pokal Šanka'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Pokal Šanka - Turnir v Pitju',
-    description: 'Najbolj zabaven turnir v pitju! Tekmujte s prijatelji.'
-  },
-  icons: {
-    icon: '/logo.jpg',
-    apple: '/logo.jpg'
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand, eventName } = await getSiteBrandParts()
+  const ogTitle = `${brand} — Turnir v Pitju`
+  return {
+    title: brand,
+    description: `Pridružite se najbolj zabavnemu turnirju v pitju (${eventName})! Tekmujte s prijatelji, zbirajte točke in pokažite svoje spretnosti v igri Pokal Šanka.`,
+    keywords: ['turnir', 'pitje', 'igra', 'tekmovanje', 'zabava', 'prijatelji', 'pokal', 'šanka'],
+    authors: [{ name: 'Pokal Šanka Team' }],
+    creator: 'Pokal Šanka',
+    publisher: 'Pokal Šanka',
+    robots: 'noindex, nofollow',
+    viewport: 'width=device-width, initial-scale=1',
+    themeColor: '#1e293b',
+    colorScheme: 'dark light',
+    openGraph: {
+      title: ogTitle,
+      description: `Najbolj zabaven turnir v pitju (${eventName})! Tekmujte s prijatelji in pokažite svoje spretnosti.`,
+      type: 'website',
+      locale: 'sl_SI',
+      siteName: 'Pokal Šanka',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: ogTitle,
+      description: `Najbolj zabaven turnir v pitju! Tekmujte s prijatelji.`,
+    },
+    icons: {
+      icon: '/logo.jpg',
+      apple: '/logo.jpg',
+    },
   }
 }
 

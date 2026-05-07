@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Sunset Toast on the Waterfront",
+    "description": "Unlocked by crowd demand and already completed.",
+    "status": "completed",
+    "voteThreshold": 5,
+    "voteCount": 5,
+    "unlockedHoursAgo": 15,
+    "completedHoursAgo": 13,
+    "createdHoursAgo": 19
+  },
+  {
+    "title": "Mandatory Dance Circle",
+    "description": "Crowd secured this one. Execution still pending.",
+    "status": "unlocked",
+    "voteThreshold": 10,
+    "voteCount": 5,
+    "unlockedHoursAgo": 7,
+    "completedHoursAgo": null,
+    "createdHoursAgo": 17
+  },
+  {
+    "title": "Best Man Speech Teaser",
+    "description": "One more batch of votes should unlock it.",
+    "status": "locked",
+    "voteThreshold": 15,
+    "voteCount": 2,
+    "unlockedHoursAgo": null,
+    "completedHoursAgo": null,
+    "createdHoursAgo": 12
+  },
+  {
+    "title": "Diplomatic Bar Crawl Detour",
+    "description": "Final stretch objective for the public.",
+    "status": "locked",
+    "voteThreshold": 20,
+    "voteCount": 0,
+    "unlockedHoursAgo": null,
+    "completedHoursAgo": null,
+    "createdHoursAgo": 9
+  }
+]
