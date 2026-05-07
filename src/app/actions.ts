@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { createUser, createUserForPerson, updateUserProfile, updateUserTeam, getUserByPersonAndEvent, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
 import { createTeam, getAllTeams, updateTeam } from '@/lib/prisma/fetchers/team-fetchers'
 import { createDrinkLog } from '@/lib/prisma/fetchers/drink-log-fetchers'
-import { setUserCookie, getCurrentPersonId, getCurrentUser, clearUserCookie } from '@/lib/utils/cookies'
+import { setUserCookie, setPersonCookie, clearActiveUserCookie, getCurrentPersonId, getCurrentUser, clearUserCookie } from '@/lib/utils/cookies'
 import { getNextAvailableColor } from '@/lib/utils/colors'
 import { uploadImage } from '@/lib/utils/image-upload'
 import { generateCommentaryForDrink, generateBulkDrinkCommentary, generateEnhancedCommentaryForDrink, generateEnhancedBulkDrinkCommentary } from '@/lib/services/commentary-generator'
@@ -147,6 +147,72 @@ export async function selectExistingUserAction(
     }
   } catch (error) {
     console.error('Error selecting existing user:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+export async function selectExistingPersonAction(
+  prevState: UserActionState,
+  formData: FormData
+): Promise<UserActionState> {
+  try {
+    const personId = formData.get('personId') as string
+
+    if (!personId) {
+      return {
+        success: false,
+        message: 'Person ID is required',
+        type: 'error'
+      }
+    }
+
+    const multiEventEnabled = await isMultiEventSchemaAvailable()
+
+    if (!multiEventEnabled) {
+      return {
+        success: false,
+        message: 'Person selection is not available before migration',
+        type: 'error'
+      }
+    }
+
+    const activeEvent = await getActiveEvent()
+    if (!activeEvent) {
+      return {
+        success: false,
+        message: 'No active event found',
+        type: 'error'
+      }
+    }
+
+    await setPersonCookie(personId)
+
+    const eventUser = await getUserByPersonAndEvent(personId, activeEvent.id)
+
+    if (eventUser) {
+      await setUserCookie(eventUser.id, personId)
+    } else {
+      await clearActiveUserCookie()
+    }
+
+    revalidatePath('/')
+    revalidatePath('/select-team')
+    revalidatePath('/players')
+
+    return {
+      success: true,
+      message: 'Identity selected successfully!',
+      type: 'update',
+      data: {
+        redirectUrl: eventUser ? (eventUser.teamId ? '/players' : '/select-team') : '/'
+      }
+    }
+  } catch (error) {
+    console.error('Error selecting existing person:', error)
     return {
       success: false,
       message: 'An unexpected error occurred',

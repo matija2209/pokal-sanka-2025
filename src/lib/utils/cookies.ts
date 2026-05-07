@@ -55,6 +55,19 @@ export async function setUserCookie(userId: string, personId?: string): Promise<
   }
 }
 
+export async function setPersonCookie(personId: string): Promise<void> {
+  try {
+    const cookieStore = await cookies()
+    cookieStore.set(PERSON_COOKIE_NAME, personId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    })
+  } catch (error) {
+    console.error('Error setting person cookie:', error)
+  }
+}
+
 export async function getCurrentPersonId(): Promise<string | null> {
   try {
     const cookieStore = await cookies()
@@ -62,6 +75,15 @@ export async function getCurrentPersonId(): Promise<string | null> {
   } catch (error) {
     console.error('Error getting current person ID:', error)
     return null
+  }
+}
+
+export async function clearActiveUserCookie(): Promise<void> {
+  try {
+    const cookieStore = await cookies()
+    cookieStore.delete(USER_COOKIE_NAME)
+  } catch (error) {
+    console.error('Error clearing active user cookie:', error)
   }
 }
 

@@ -12,49 +12,73 @@ import { toast } from 'sonner'
 
 interface CreateUserFormProps {
   onBack?: () => void
+  knownPersonName?: string | null
+  activeEventName?: string | null
 }
 
-export default function CreateUserForm({ onBack }: CreateUserFormProps) {
+export default function CreateUserForm({ onBack, knownPersonName, activeEventName }: CreateUserFormProps) {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(createUserAction, initialUserActionState)
-  const [name, setName] = useState('')
+  const [name, setName] = useState(knownPersonName ?? '')
+  const isKnownPersonJoin = Boolean(knownPersonName)
 
   useEffect(() => {
     if (state.success && state.data?.redirectUrl) {
-      toast.success(state.message || 'Račun uspešno ustvarjen!')
+      toast.success(state.message || (isKnownPersonJoin ? 'Dogodku ste se uspešno pridružili!' : 'Račun uspešno ustvarjen!'))
       setName('')
       router.push(state.data.redirectUrl)
     } else if (state.message && !state.success) {
       toast.error(state.message)
     }
-  }, [state.success, state.message, state.data?.redirectUrl, router])
+  }, [state.success, state.message, state.data?.redirectUrl, router, isKnownPersonJoin])
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Dobrodošli v Pokal Šanka — Matija 2025 Edition!</CardTitle>
+        <CardTitle>
+          {isKnownPersonJoin ? 'Pridružitev dogodku' : 'Dobrodošli v Pokal Šanka — Matija 2025 Edition!'}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
-          <div>
-            <Label htmlFor="name">Vaše ime</Label>
-            <Input 
-              id="name" 
-              name="name" 
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required 
-              placeholder="Vnesite vaše ime"
-              disabled={isPending}
-            />
-            {state.errors?.name && (
-              <p className="text-red-500 text-sm mt-1">{state.errors.name[0]}</p>
-            )}
-          </div>
+          {isKnownPersonJoin ? (
+            <>
+              <input type="hidden" name="name" value={name} />
+              <div className="rounded-lg border bg-muted/40 p-4">
+                <p className="text-sm text-muted-foreground">Prijavljeni ste kot</p>
+                <p className="text-lg font-semibold">{knownPersonName}</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {activeEventName
+                    ? `Temu dogodku se še niste pridružili: ${activeEventName}.`
+                    : 'Temu dogodku se še niste pridružili.'}
+                </p>
+              </div>
+            </>
+          ) : (
+            <div>
+              <Label htmlFor="name">Vaše ime</Label>
+              <Input 
+                id="name" 
+                name="name" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required 
+                placeholder="Vnesite vaše ime"
+                disabled={isPending}
+              />
+              {state.errors?.name && (
+                <p className="text-red-500 text-sm mt-1">{state.errors.name[0]}</p>
+              )}
+            </div>
+          )}
 
           
           <Button type="submit" disabled={isPending} className="w-full">
-            {isPending ? "Ustvarjam račun..." : "Ustvari račun"}
+            {isPending
+              ? (isKnownPersonJoin ? 'Pridružujem dogodek...' : 'Ustvarjam račun...')
+              : (isKnownPersonJoin
+                ? `Pridruži me ${activeEventName ?? 'dogodku'}`
+                : 'Ustvari račun')}
           </Button>
         </form>
 
