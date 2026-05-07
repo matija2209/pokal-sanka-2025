@@ -3,14 +3,15 @@
 import { useActionState, useState, useTransition, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardAction, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import MobileImageInput from '@/components/ui/mobile-image-input'
 import { createPostAction } from '@/app/actions'
 import { initialDrinkLogActionState } from '@/lib/types/action-states'
 import { upload } from '@vercel/blob/client'
 import { compressImage, shouldCompress } from '@/lib/utils/client-image-compression'
 import { toast } from 'sonner'
+import UserAvatar from '@/components/users/user-avatar'
+import { Sparkles } from 'lucide-react'
 
 interface CreatePostFormProps {
   currentUser?: {
@@ -41,10 +42,8 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
       setUploadingImage(true)
       setUploadProgress(0)
       
-      // Compress image if needed
       let fileToUpload = file
       if (shouldCompress(file)) {
-        console.log('Compressing image...')
         fileToUpload = await compressImage(file, {
           maxWidth: 1920,
           maxHeight: 1080,
@@ -52,17 +51,15 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
         })
       }
 
-      // Upload directly to Vercel Blob
       const blob = await upload(fileToUpload.name, fileToUpload, {
         access: 'public',
         handleUploadUrl: '/api/upload',
-        multipart: fileToUpload.size > 1024 * 1024, // Use multipart for files > 1MB
+        multipart: fileToUpload.size > 1024 * 1024,
         onUploadProgress: (progress) => {
           setUploadProgress(progress.percentage)
         }
       })
 
-      console.log('Image uploaded successfully:', blob.url)
       return blob.url
     } catch (error) {
       console.error('Image upload failed:', error)
@@ -75,7 +72,6 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
   
   const handleSubmit = async (formData: FormData) => {
     try {
-      // Handle image upload first if there's an image
       const imageFile = formData.get('post-image') as File
       let imageUrl = ''
       
@@ -86,7 +82,6 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
         }
       }
 
-      // Create new FormData without the image file (since we uploaded it separately)
       const postData = new FormData()
       postData.append('message', formData.get('message') as string)
       if (imageUrl) {
@@ -101,75 +96,66 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
     }
   }
   
-  const userInitials = currentUser?.name
-    ?.split(' ')
-    .map(name => name.charAt(0))
-    .join('')
-    .toUpperCase() || 'U'
-
-  const placeholder = currentUser?.name 
-    ? `Kaj se dogaja, ${currentUser.name.split(' ')[0]}?`
-    : 'Kaj se dogaja v turnirju...'
+  const placeholder = `Kaj se dogaja, ${currentUser?.name?.split(' ')[0] || 'ti'}?`
 
   return (
-    <Card className="border-0 shadow-sm ">
-      <CardHeader>
-        <CardTitle>Objavi</CardTitle>
-      </CardHeader>
-      <CardContent className="">
-        {/* User info header */}
-       
-
-<div className='flex flex-col gap-4'>
-
-        <form id="post-form" action={handleSubmit} className="space-y-3">
-          <Textarea
-            name="message"
-            placeholder={placeholder}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="min-h-[100px] border-0  rounded-2xl resize-none placeholder: text-base p-4 focus: focus:ring-1 focus:ring-blue-200"
-            required
+    <div className="px-4 py-3">
+      <form id="post-form" action={handleSubmit} className="space-y-4">
+        <div className="flex items-start gap-3">
+          <UserAvatar
+            user={{
+              name: currentUser?.name || 'Uporabnik',
+              profile_image_url: currentUser?.profile_image_url,
+            }}
+            size="md"
+            className="mt-1"
           />
-          
-          <MobileImageInput
-            name="post-image"
-            label="Slika"
-          />
-          
-          {uploadingImage && (
-            <div className="mt-2">
-              <div className="flex items-center gap-2">
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all" 
-                    style={{ width: `${uploadProgress}%` }}
-                  />
-                </div>
-                <span className="text-sm text-gray-600">{Math.round(uploadProgress)}%</span>
+          <div className="flex-1">
+            <Textarea
+              name="message"
+              placeholder={placeholder}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="min-h-[60px] w-full border-0 bg-transparent p-0 text-base shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/60 resize-none"
+              required
+            />
+            
+            <div className="mt-2 flex items-center justify-between border-t border-border/40 pt-3">
+              <div className="flex items-center gap-1">
+                <MobileImageInput
+                  name="post-image"
+                  label="Fotografija"
+                  variant="compact"
+                />
               </div>
-              <p className="text-blue-600 text-sm mt-1">Compressing and uploading image...</p>
+              <Button 
+                type="submit"
+                disabled={!message.trim() || isPending || uploadingImage}
+                size="sm"
+                className="rounded-full bg-primary font-semibold px-6"
+              >
+                {uploadingImage ? 'Nalaganje...' : isPending ? 'Objavljanje...' : 'Objavi'}
+              </Button>
             </div>
-          )}
+          </div>
+        </div>
 
-        </form>
-</div>
-      </CardContent>
-      
-      <CardFooter >
-       
-        <CardAction>
-        <Button 
-          type="submit" 
-          form="post-form"
-          disabled={!message.trim() || isPending || uploadingImage}
-          className='w-full flex'
-        >
-          {uploadingImage ? 'Uploading Image...' : isPending ? 'Objavljam...' : 'Objavi'}
-        </Button>
-
-        </CardAction>
-      </CardFooter>
-    </Card>
+        {uploadingImage && (
+          <div className="rounded-xl bg-muted/50 p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-muted-foreground">Priprava slike...</span>
+              <span className="text-xs font-bold text-primary">{Math.round(uploadProgress)}%</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
+              <div 
+                className="h-full bg-primary transition-all duration-300 ease-out" 
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+      </form>
+    </div>
   )
 }
+

@@ -12,6 +12,7 @@ interface MobileImageInputProps {
   className?: string
   required?: boolean
   key?: string
+  variant?: 'default' | 'compact'
 }
 
 export default function MobileImageInput({ 
@@ -19,7 +20,8 @@ export default function MobileImageInput({
   currentImageUrl, 
   label, 
   className = '',
-  required = false
+  required = false,
+  variant = 'default',
 }: MobileImageInputProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string>('')
@@ -58,6 +60,54 @@ export default function MobileImageInput({
   }
 
   const displayImage = previewUrl || currentImageUrl
+
+  if (variant === 'compact') {
+    return (
+      <div className={`flex items-center gap-2 ${className}`}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={triggerFileInput}
+          className="h-9 w-9 rounded-full bg-secondary/50 hover:bg-secondary text-primary"
+          title={label}
+        >
+          <Camera size={20} />
+        </Button>
+
+        {displayImage && (
+          <div className="relative h-9 w-9 overflow-hidden rounded-lg border border-border bg-muted">
+            <Image
+              src={displayImage}
+              alt="Preview"
+              fill
+              className="object-cover"
+            />
+            {previewUrl && (
+              <button
+                type="button"
+                onClick={clearSelection}
+                className="absolute -top-1 -right-1 rounded-full bg-destructive p-0.5 text-destructive-foreground shadow-sm"
+              >
+                <X size={10} />
+              </button>
+            )}
+          </div>
+        )}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          name={name}
+          accept="image/*"
+          capture="environment"
+          onChange={handleFileSelect}
+          className="hidden"
+          required={required && !currentImageUrl}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className={`space-y-4 ${className}`}>

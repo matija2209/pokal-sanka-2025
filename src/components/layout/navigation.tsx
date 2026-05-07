@@ -5,12 +5,14 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Users, 
-  Trophy, 
-  User, 
+import {
+  Images,
+  Users,
+  Trophy,
+  User,
   RefreshCw,
-  TrendingUp
+  TrendingUp,
+  HelpCircle
 } from 'lucide-react'
 import UserMenu from './user-menu'
 import type { Event, UserWithTeam } from '@/lib/prisma/types'
@@ -27,9 +29,11 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
   const pathname = usePathname()
   
   const navItems = [
+    { href: '/feed', icon: Images, label: 'Feed', active: pathname === '/feed' },
     { href: '/players', icon: Users, label: 'Štart', active: pathname === '/players' },
     { href: '/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/teams' },
     { href: '/stats', icon: TrendingUp, label: 'Statistike', active: pathname === '/stats' },
+    { href: '/trivia/rules', icon: HelpCircle, label: 'Trivia', active: pathname.startsWith('/trivia') },
     { href: '/profile', icon: User, label: 'Profil', active: pathname === '/profile' },
   ]
 
