@@ -13,13 +13,16 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { LogOut, ChevronDown } from 'lucide-react'
 import { logoutAction } from '@/app/actions'
-import type { UserWithTeam } from '@/lib/prisma/types'
+import EventSwitcher from '@/components/events/event-switcher'
+import type { Event, UserWithTeam } from '@/lib/prisma/types'
 
 interface UserMenuProps {
   currentUser: UserWithTeam
+  currentEvent: Event
+  availableEvents: Event[]
 }
 
-export default function UserMenu({ currentUser }: UserMenuProps) {
+export default function UserMenu({ currentUser, currentEvent, availableEvents }: UserMenuProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -73,6 +76,15 @@ export default function UserMenu({ currentUser }: UserMenuProps) {
             <div className="text-xs text-muted-foreground">{currentUser.team.name}</div>
           )}
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <div className="px-2 py-2">
+          <p className="mb-2 text-xs text-muted-foreground">Dogodek</p>
+          <EventSwitcher
+            events={availableEvents}
+            currentEventId={currentEvent.id}
+            className="h-8 w-full"
+          />
+        </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
           onClick={handleLogout}

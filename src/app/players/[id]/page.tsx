@@ -4,6 +4,9 @@ import { redirect, notFound } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout'
 import { UserStats, UserHistory, UserAchievements } from '@/components/users'
 import { sortUsersByScore, getUserRanking } from '@/lib/utils/calculations'
+import { getActiveEvent, getAllEvents } from '@/lib/events'
+
+export const dynamic = 'force-dynamic'
 
 interface PlayerDetailPageProps {
   params: Promise<{ id: string }>
@@ -20,6 +23,15 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
   if (!currentUser.teamId) {
     redirect('/select-team')
   }
+
+  const [currentEvent, availableEvents] = await Promise.all([
+    getActiveEvent(),
+    getAllEvents()
+  ])
+
+  if (!currentEvent) {
+    redirect('/')
+  }
   
   const user = await getUserWithTeamAndDrinksById(resolvedParams.id)
   
@@ -31,7 +43,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
   const userRank = getUserRanking(user.id, allUsers)
   
   return (
-    <DashboardLayout currentUser={currentUser}>
+    <DashboardLayout currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-2">

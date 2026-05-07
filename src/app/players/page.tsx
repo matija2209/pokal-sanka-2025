@@ -5,6 +5,7 @@ import { DashboardLayout } from '@/components/layout'
 import { DrinkLogForm } from '@/components/drinks'
 import { CreatePostForm } from '@/components/timeline'
 import type { Metadata } from 'next'
+import { getActiveEvent, getAllEvents } from '@/lib/events'
 
 export const metadata: Metadata = {
   title: 'Igralci | Pokal Šanka - Matija Edition',
@@ -18,6 +19,8 @@ export const metadata: Metadata = {
   }
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function PlayersPage() {
   const currentUser = await getCurrentUser()
   
@@ -27,6 +30,15 @@ export default async function PlayersPage() {
   
   if (!currentUser.teamId) {
     redirect('/select-team')
+  }
+
+  const [currentEvent, availableEvents] = await Promise.all([
+    getActiveEvent(),
+    getAllEvents()
+  ])
+
+  if (!currentEvent) {
+    redirect('/')
   }
   
   const allUsers = await getAllUsersWithTeamAndDrinks()
@@ -38,7 +50,7 @@ export default async function PlayersPage() {
   }))
   
   return (
-    <DashboardLayout currentUser={currentUser}>
+    <DashboardLayout currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents}>
       <div className="container mx-auto px-4">
 
         

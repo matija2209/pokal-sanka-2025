@@ -1,6 +1,6 @@
 # Pokal Šanka — Matija 2025 Edition
 
-A drink tracking competition system built with Next.js 15. Features real-time leaderboards, team management, AI-powered commentary in Slovenian, and a TV dashboard for tournament events.
+A drink tracking competition system built with Next.js 15. Features real-time leaderboards, team management, AI-powered commentary in Slovenian, a TV dashboard for tournament events, and multi-event storage so separate parties do not share scores or teams.
 
 ## Features
 
@@ -46,7 +46,12 @@ OpenAI GPT-4o-mini generates Slovenian sports commentary for:
 | `/superadmin` | Reset all database data |
 
 ### Auth
-No passwords. Users create an account by entering their name on the entry screen (`/`), or pick an existing user from the list. The server sets an `httpOnly` cookie (`turnir-sanka-user-id`) containing the user's database ID. All pages check this cookie via `getCurrentUser()` — if absent or invalid, the user is redirected to `/`.
+No passwords. Users create an account by entering their name on the entry screen (`/`), or pick an existing user from the list for the currently selected event. The server stores:
+- `turnir-sanka-user-id` — active participant/user record for the selected event
+- `turnir-sanka-person-id` — shared identity across events
+- `turnir-sanka-event-id` — currently active event
+
+All pages check these cookies via `getCurrentUser()` and the active-event helpers. If the event changes and the current person has no participant in that event yet, the app returns to `/`.
 
 ## Tech Stack
 
@@ -84,7 +89,7 @@ BLOB_READ_WRITE_TOKEN="vercel..." # Optional, for image uploads
 ### 3. Database
 ```bash
 npx prisma generate
-npx prisma db push
+npx prisma migrate deploy
 ```
 
 ### 4. Start
@@ -100,47 +105,75 @@ Three storage layers:
 
 | Layer | What | Details |
 |---|---|---|
-| **PostgreSQL** (Neon) | All app data — users, teams, drink logs, commentary, posts | Managed via Prisma ORM. Schema below. |
+| **PostgreSQL** (Neon) | All app data — events, people, event participants, teams, drink logs, commentary, posts | Managed via Prisma ORM. All competition data is scoped by `eventId`. |
 | **Vercel Blob** | User-uploaded images — profile avatars, team logos, post images | Images compressed client-side (canvas API) before upload. Max 10MB per file. |
-| **httpOnly cookies** | User session — `turnir-sanka-user-id` holding the user's database ID | No passwords. Set on login, checked server-side on every page. |
+| **httpOnly cookies** | Active session and event context | `turnir-sanka-user-id`, `turnir-sanka-person-id`, `turnir-sanka-event-id` |
 
 ## Database Schema
 
 ```prisma
+model Event {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Person {
+  id                String   @id @default(cuid())
+  name              String
+  profile_image_url String?
+  createdAt         DateTime @default(now())
+}
+
 model User {
   id               String   @id @default(cuid())
+  personId         String?
+  eventId          String?
   name             String
   teamId           String?
-  createdAt        DateTime @default(now())
   profile_image_url String?
+  createdAt        DateTime @default(now())
 
+  person    Person?     @relation(fields: [personId], references: [id])
+  event     Event?      @relation(fields: [eventId], references: [id])
   team      Team?       @relation(fields: [teamId], references: [id])
   drinkLogs DrinkLog[]
   posts     Post[]
+
+  @@unique([eventId, personId])
 }
 
 model Team {
   id             String   @id @default(cuid())
-  name           String   @unique
+  eventId        String?
+  name           String
   color          String
   logo_image_url String?
   createdAt      DateTime @default(now())
 
+  event Event? @relation(fields: [eventId], references: [id])
   users User[]
+
+  @@unique([eventId, name])
 }
 
 model DrinkLog {
   id        String   @id @default(cuid())
+  eventId   String?
   userId    String
   drinkType String
   points    Int
   createdAt DateTime @default(now())
 
+  event Event? @relation(fields: [eventId], references: [id])
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Commentary {
   id          String   @id @default(cuid())
+  eventId     String?
   type        String
   message     String
   priority    Int
@@ -151,14 +184,36 @@ model Commentary {
 
 model Post {
   id        String   @id @default(cuid())
+  eventId   String?
   userId    String
   message   String
   image_url String?
   createdAt DateTime @default(now())
 
+  event Event? @relation(fields: [eventId], references: [id])
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 ```
+
+## Legacy Data Migration
+
+Existing single-event data is preserved by assigning it to a seeded legacy event:
+- `Birthday Party` (`birthday-party-legacy`)
+
+The repository also ensures a second event exists for new data:
+- `Bachelor Party` (`bachelor-party`)
+
+Run the Prisma migration after pulling the updated repo:
+
+```bash
+npx prisma migrate deploy
+```
+
+The generated Prisma migration:
+- creates `events` and `persons`
+- adds nullable `eventId` / `personId` columns first
+- backfills all existing rows into the legacy birthday event inside the SQL migration
+- adds the new indexes and foreign keys only after the backfill
 
 ## Drink Types
 
@@ -266,7 +321,7 @@ npm run build        # Production build
 npm run start        # Production server
 npm run lint         # ESLint
 npx prisma studio    # Database admin UI
-npx prisma db push   # Push schema to database
+npx prisma migrate deploy   # Apply committed migrations
 ```
 
 ## Commentary Event Types

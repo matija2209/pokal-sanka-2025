@@ -5,6 +5,9 @@ import { DashboardLayout } from '@/components/layout'
 import { TeamStats } from '@/components/teams'
 import { sortTeamsByScore } from '@/lib/utils/calculations'
 import type { User } from '@/lib/prisma/types'
+import { getActiveEvent, getAllEvents } from '@/lib/events'
+
+export const dynamic = 'force-dynamic'
 
 interface TeamDetailPageProps {
   params: Promise<{ id: string }>
@@ -20,6 +23,15 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   
   if (!currentUser.teamId) {
     redirect('/select-team')
+  }
+
+  const [currentEvent, availableEvents] = await Promise.all([
+    getActiveEvent(),
+    getAllEvents()
+  ])
+
+  if (!currentEvent) {
+    redirect('/')
   }
   
   const team = await getTeamWithUsersById(resolvedParams.id)
@@ -44,7 +56,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   const teamWithDrinks = allTeams.find(t => t.id === team.id)
   
   return (
-    <DashboardLayout currentUser={currentUser}>
+    <DashboardLayout currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-2">

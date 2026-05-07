@@ -13,15 +13,17 @@ import {
   TrendingUp
 } from 'lucide-react'
 import UserMenu from './user-menu'
-import type { UserWithTeam } from '@/lib/prisma/types'
+import type { Event, UserWithTeam } from '@/lib/prisma/types'
 
 interface NavigationProps {
   currentUser: UserWithTeam
+  currentEvent: Event
+  availableEvents: Event[]
   onRefresh?: () => void
   isRefreshing?: boolean
 }
 
-export default function Navigation({ currentUser, onRefresh, isRefreshing }: NavigationProps) {
+export default function Navigation({ currentUser, currentEvent, availableEvents, onRefresh, isRefreshing }: NavigationProps) {
   const pathname = usePathname()
   
   const navItems = [
@@ -54,7 +56,7 @@ export default function Navigation({ currentUser, onRefresh, isRefreshing }: Nav
 
           {/* User Info - Responsive */}
           <div className="flex items-center space-x-2 md:space-x-4">
-            <UserMenu currentUser={currentUser} />
+            <UserMenu currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents} />
             
             {onRefresh && (
               <Button

@@ -5,6 +5,7 @@ import { DashboardLayout } from '@/components/layout'
 import { UserProfile } from '@/components/users'
 import { TeamLogoForm } from '@/components/teams'
 import type { Metadata } from 'next'
+import { getActiveEvent, getAllEvents } from '@/lib/events'
 
 export const metadata: Metadata = {
   title: 'Moj Profil | Pokal Šanka - Matija Edition',
@@ -18,17 +19,28 @@ export const metadata: Metadata = {
   }
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function ProfilePage() {
   const currentUser = await getCurrentUser()
   
   if (!currentUser) {
     redirect('/')
   }
+
+  const [currentEvent, availableEvents] = await Promise.all([
+    getActiveEvent(),
+    getAllEvents()
+  ])
+
+  if (!currentEvent) {
+    redirect('/')
+  }
   
   const availableTeams = await getAllTeams()
   
   return (
-    <DashboardLayout currentUser={currentUser}>
+    <DashboardLayout currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Vaš profil</h1>

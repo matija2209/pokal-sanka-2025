@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { EntryScreen } from '@/components/entry'
 import type { Metadata } from 'next'
+import { getActiveEvent, getAllEvents } from '@/lib/events'
+import EventSwitcher from '@/components/events/event-switcher'
 
 export const metadata: Metadata = {
   title: 'Pokal Šanka - Matija Edition',
@@ -34,7 +36,13 @@ export const metadata: Metadata = {
   }
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
+  const [activeEvent, allEvents] = await Promise.all([
+    getActiveEvent(),
+    getAllEvents(),
+  ])
   const currentUser = await getCurrentUser()
   
   if (currentUser?.teamId) {
@@ -75,6 +83,17 @@ export default async function HomePage() {
               Pridružite se turnirju in pokažite svoje spretnosti
             </p>
           </div>
+
+          {activeEvent && allEvents.length > 0 && (
+            <div className="mb-6 rounded-xl bg-black/50 p-4 backdrop-blur">
+              <p className="mb-2 text-sm font-medium text-white/80">Aktivni dogodek</p>
+              <EventSwitcher
+                events={allEvents}
+                currentEventId={activeEvent.id}
+                className="w-full bg-white/95 text-black"
+              />
+            </div>
+          )}
           
           {/* Entry options */}
 

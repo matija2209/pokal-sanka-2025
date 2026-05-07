@@ -25,6 +25,8 @@ export const metadata: Metadata = {
   }
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const [allUsers, allTeams, recentDrinks, unreadCommentaries, recentImages, userProfiles, teamLogos, allRecentPosts] = await Promise.all([
     getAllUsersWithTeamAndDrinks(),

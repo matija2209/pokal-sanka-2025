@@ -11,6 +11,8 @@ export async function resetDatabase() {
     await prisma.drinkLog.deleteMany({})
     await prisma.user.deleteMany({})
     await prisma.team.deleteMany({})
+    await prisma.person.deleteMany({})
+    await prisma.event.deleteMany({})
     
     console.log('Database reset successfully - all tables cleared')
   } catch (error) {

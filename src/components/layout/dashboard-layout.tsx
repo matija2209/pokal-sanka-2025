@@ -3,14 +3,16 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navigation } from '@/components/layout'
-import type { UserWithTeam } from '@/lib/prisma/types'
+import type { Event, UserWithTeam } from '@/lib/prisma/types'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
   currentUser: UserWithTeam
+  currentEvent: Event
+  availableEvents: Event[]
 }
 
-export default function DashboardLayout({ children, currentUser }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, currentUser, currentEvent, availableEvents }: DashboardLayoutProps) {
   const router = useRouter()
   const [isRefreshing, setIsRefreshing] = useState(false)
 
@@ -24,6 +26,8 @@ export default function DashboardLayout({ children, currentUser }: DashboardLayo
     <div className="min-h-screen ">
       <Navigation 
         currentUser={currentUser}
+        currentEvent={currentEvent}
+        availableEvents={availableEvents}
         onRefresh={handleRefresh}
         isRefreshing={isRefreshing}
       />

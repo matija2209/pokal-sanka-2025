@@ -8,6 +8,7 @@ import { CommentaryDisplay } from '@/components/commentary'
 import { TimelineDisplay } from '@/components/timeline'
 import { getUserRanking, sortUsersByScore } from '@/lib/utils/calculations'
 import type { Metadata } from 'next'
+import { getActiveEvent, getAllEvents } from '@/lib/events'
 
 export const metadata: Metadata = {
   title: 'Statistike | Pokal Šanka - Matija Edition',
@@ -21,10 +22,21 @@ export const metadata: Metadata = {
   }
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function StatsPage() {
   const currentUser = await getCurrentUser()
   
   if (!currentUser) {
+    redirect('/')
+  }
+
+  const [currentEvent, availableEvents] = await Promise.all([
+    getActiveEvent(),
+    getAllEvents()
+  ])
+
+  if (!currentEvent) {
     redirect('/')
   }
   
@@ -39,7 +51,7 @@ export default async function StatsPage() {
   const sortedUsers = sortUsersByScore(allUsers)
   
   return (
-    <DashboardLayout currentUser={currentUser}>
+    <DashboardLayout currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Statistike in Lestvice</h1>

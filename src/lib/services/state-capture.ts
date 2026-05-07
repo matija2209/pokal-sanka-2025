@@ -1,5 +1,7 @@
 import 'server-only'
 import { prisma } from '@/lib/prisma/client'
+import { requireActiveEventId } from '@/lib/events'
+import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 
 export interface UserWithStats {
   id: string
@@ -50,10 +52,39 @@ export interface ComprehensiveState {
 
 // Fetch all users with calculated total points and drinks
 export async function fetchAllUsersWithStats(): Promise<UserWithStats[]> {
+  if (!(await isMultiEventSchemaAvailable())) {
+    const users = await prisma.user.findMany({
+      include: {
+        team: true,
+        drinkLogs: true
+      },
+      orderBy: {
+        name: 'asc'
+      }
+    })
+
+    return users.map(user => ({
+      id: user.id,
+      name: user.name,
+      teamId: user.teamId,
+      totalPoints: user.drinkLogs.reduce((sum, log) => sum + log.points, 0),
+      totalDrinks: user.drinkLogs.length,
+      team: user.team ? {
+        id: user.team.id,
+        name: user.team.name,
+        color: user.team.color
+      } : null
+    }))
+  }
+
+  const eventId = await requireActiveEventId()
   const users = await prisma.user.findMany({
+    where: { eventId },
     include: {
       team: true,
-      drinkLogs: true
+      drinkLogs: {
+        where: { eventId }
+      }
     },
     orderBy: {
       name: 'asc'
@@ -76,11 +107,54 @@ export async function fetchAllUsersWithStats(): Promise<UserWithStats[]> {
 
 // Fetch all teams with calculated stats and leading members
 export async function fetchAllTeamsWithStats(): Promise<TeamWithStats[]> {
+  if (!(await isMultiEventSchemaAvailable())) {
+    const teams = await prisma.team.findMany({
+      include: {
+        users: {
+          include: {
+            drinkLogs: true
+          }
+        }
+      },
+      orderBy: {
+        name: 'asc'
+      }
+    })
+
+    return teams.map(team => {
+      const usersWithStats = team.users.map(user => ({
+        id: user.id,
+        name: user.name,
+        points: user.drinkLogs.reduce((sum, log) => sum + log.points, 0)
+      }))
+
+      const totalPoints = usersWithStats.reduce((sum, user) => sum + user.points, 0)
+      const leadingMember = usersWithStats.reduce((leader, user) =>
+        user.points > leader.points ? user : leader,
+        usersWithStats[0] || { id: '', name: '', points: 0 }
+      )
+
+      return {
+        id: team.id,
+        name: team.name,
+        color: team.color,
+        totalPoints,
+        memberCount: team.users.length,
+        leadingMember
+      }
+    })
+  }
+
+  const eventId = await requireActiveEventId()
   const teams = await prisma.team.findMany({
+    where: { eventId },
     include: {
       users: {
+        where: { eventId },
         include: {
-          drinkLogs: true
+          drinkLogs: {
+            where: { eventId }
+          }
         }
       }
     },

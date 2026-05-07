@@ -2,19 +2,21 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { createUser, updateUserTeam, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
-import { createTeam, getAllTeams } from '@/lib/prisma/fetchers/team-fetchers'
+import { createUser, createUserForPerson, updateUserProfile, updateUserTeam, getUserByPersonAndEvent, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
+import { createTeam, getAllTeams, updateTeam } from '@/lib/prisma/fetchers/team-fetchers'
 import { createDrinkLog } from '@/lib/prisma/fetchers/drink-log-fetchers'
-import { setUserCookie, getCurrentUser, clearUserCookie } from '@/lib/utils/cookies'
+import { setUserCookie, getCurrentPersonId, getCurrentUser, clearUserCookie } from '@/lib/utils/cookies'
 import { getNextAvailableColor } from '@/lib/utils/colors'
 import { uploadImage } from '@/lib/utils/image-upload'
 import { generateCommentaryForDrink, generateBulkDrinkCommentary, generateEnhancedCommentaryForDrink, generateEnhancedBulkDrinkCommentary } from '@/lib/services/commentary-generator'
 import { captureCompleteState } from '@/lib/services/state-capture'
-import { compareStates, prioritizeChanges } from '@/lib/services/state-comparator'
+import { compareStates } from '@/lib/services/state-comparator'
 import { createEnhancedLLMContext } from '@/lib/services/llm-preprocessor'
 import { prisma } from '@/lib/prisma/client'
 import { DRINK_TYPES } from '@/lib/prisma/types'
 import { getDrinkPoints, getDrinkLabel } from '@/lib/utils/drinks'
+import { getActiveEvent, getEventById, setActiveEventCookie } from '@/lib/events'
+import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 import type { 
   UserActionState, 
   TeamActionState, 
@@ -47,7 +49,27 @@ export async function createUserAction(
       }
     }
 
-    const user = await createUser(name.trim())
+    const activeEvent = await getActiveEvent()
+    if (!activeEvent) {
+      return {
+        success: false,
+        message: 'No active event found',
+        type: 'error'
+      }
+    }
+
+    const currentPersonId = await getCurrentPersonId()
+    let user = currentPersonId
+      ? await getUserByPersonAndEvent(currentPersonId, activeEvent.id)
+      : null
+
+    if (!user) {
+      const createdUser = currentPersonId
+        ? await createUserForPerson(currentPersonId, name.trim())
+        : await createUser(name.trim())
+
+      user = createdUser ? await getUserWithTeamById(createdUser.id) : null
+    }
 
     if (!user) {
       return {
@@ -57,7 +79,7 @@ export async function createUserAction(
       }
     }
 
-    await setUserCookie(user.id)
+    await setUserCookie(user.id, user.personId ?? undefined)
 
     return {
       success: true,
@@ -104,7 +126,7 @@ export async function selectExistingUserAction(
     }
 
     // Set user cookie
-    await setUserCookie(user.id)
+    await setUserCookie(user.id, user.personId ?? undefined)
 
     // Revalidate paths
     revalidatePath('/')
@@ -128,6 +150,53 @@ export async function selectExistingUserAction(
     return {
       success: false,
       message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+export async function switchActiveEventAction(eventId: string): Promise<UserActionState> {
+  try {
+    const event = await getEventById(eventId)
+    if (!event) {
+      return {
+        success: false,
+        message: 'Event not found',
+        type: 'error'
+      }
+    }
+
+    await setActiveEventCookie(event.id)
+
+    const currentPersonId = await getCurrentPersonId()
+    if (currentPersonId) {
+      const eventUser = await getUserByPersonAndEvent(currentPersonId, event.id)
+      if (eventUser) {
+        await setUserCookie(eventUser.id, currentPersonId)
+      }
+    }
+
+    revalidatePath('/')
+    revalidatePath('/select-team')
+    revalidatePath('/players')
+    revalidatePath('/teams')
+    revalidatePath('/stats')
+    revalidatePath('/profile')
+    revalidatePath('/dashboard')
+
+    return {
+      success: true,
+      message: 'Event switched successfully',
+      type: 'update',
+      data: {
+        redirectUrl: '/'
+      }
+    }
+  } catch (error) {
+    console.error('Error switching active event:', error)
+    return {
+      success: false,
+      message: 'Failed to switch event',
       type: 'error'
     }
   }
@@ -536,7 +605,7 @@ export async function updateUserProfileAction(
       }
     }
 
-    let updateData: any = { name: name.trim() }
+    const updateData: { name: string; teamId?: string | null; profile_image_url?: string } = { name: name.trim() }
     
     if (teamId && teamId !== 'none') {
       updateData.teamId = teamId
@@ -556,10 +625,14 @@ export async function updateUserProfileAction(
       }
     }
 
-    await prisma.user.update({
-      where: { id: currentUser.id },
-      data: updateData
-    })
+    const updatedUser = await updateUserProfile(currentUser.id, updateData)
+    if (!updatedUser) {
+      return {
+        success: false,
+        message: 'Failed to update profile',
+        type: 'error'
+      }
+    }
 
     revalidatePath('/profile')
     revalidatePath('/players')
@@ -616,10 +689,14 @@ export async function updateTeamLogoAction(
     try {
       const imageUrl = await uploadImage(logoImage, 'teams', currentUser.teamId)
       
-      await prisma.team.update({
-        where: { id: currentUser.teamId },
-        data: { logo_image_url: imageUrl }
-      })
+      const updatedTeam = await updateTeam(currentUser.teamId, { logo_image_url: imageUrl })
+      if (!updatedTeam) {
+        return {
+          success: false,
+          message: 'Failed to update team logo',
+          type: 'error'
+        }
+      }
 
       revalidatePath('/profile')
       revalidatePath('/players')
@@ -675,8 +752,19 @@ export async function createPostAction(
       }
     }
     
+    const isMultiEventEnabled = await isMultiEventSchemaAvailable()
+    const activeEvent = isMultiEventEnabled ? await getActiveEvent() : null
+    if (isMultiEventEnabled && !activeEvent) {
+      return {
+        success: false,
+        message: 'No active event found',
+        type: 'error'
+      }
+    }
+
     const post = await prisma.post.create({
       data: {
+        ...(activeEvent ? { eventId: activeEvent.id } : {}),
         userId: currentUser.id,
         message: message.trim(),
         image_url: imageUrl

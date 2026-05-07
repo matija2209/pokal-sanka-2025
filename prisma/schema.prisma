@@ -9,56 +9,78 @@ datasource db {
 
 model User {
   id               String   @id @default(cuid())
+  personId         String?
+  eventId          String?
   name             String
   teamId           String?
   profile_image_url String?
   createdAt        DateTime @default(now())
 
+  person    Person?     @relation(fields: [personId], references: [id], onDelete: SetNull)
+  event     Event?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
   team      Team?       @relation(fields: [teamId], references: [id])
   drinkLogs DrinkLog[]
   posts     Post[]
+
+  @@index([eventId])
+  @@index([personId])
+  @@unique([eventId, personId])
 
   @@map("users")
 }
 
 model Team {
   id             String   @id @default(cuid())
-  name           String   @unique
+  eventId        String?
+  name           String
   color          String
   logo_image_url String?
   createdAt      DateTime @default(now())
 
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   users User[]
+
+  @@index([eventId])
+  @@unique([eventId, name])
 
   @@map("teams")
 }
 
 model DrinkLog {
   id        String   @id @default(cuid())
+  eventId   String?
   userId    String
   drinkType String
   points    Int
   createdAt DateTime @default(now())
 
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
 
   @@map("drink_logs")
 }
 
 model Post {
   id        String   @id @default(cuid())
+  eventId   String?
   userId    String
   message   String
   image_url String?
   createdAt DateTime @default(now())
 
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
 
   @@map("posts")
 }
 
 model Commentary {
   id           String    @id @default(cuid())
+  eventId      String?
   type         String    // 'milestone', 'streak', 'achievement', 'hype', 'team_event'
   message      String    // Generated message text
   priority     Int       @default(1) // 1-5 (5 = highest priority)
@@ -67,5 +89,34 @@ model Commentary {
   createdAt    DateTime  @default(now())
   displayedAt  DateTime?
 
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+
   @@map("commentaries")
+}
+
+model Event {
+  id        String      @id @default(cuid())
+  slug      String      @unique
+  name      String
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  users     User[]
+  teams     Team[]
+  drinkLogs DrinkLog[]
+  posts     Post[]
+  commentary Commentary[]
+
+  @@map("events")
+}
+
+model Person {
+  id               String   @id @default(cuid())
+  name             String
+  profile_image_url String?
+  createdAt        DateTime @default(now())
+  users            User[]
+
+  @@map("persons")
 }

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { DashboardLayout } from '@/components/layout'
 import { TeamLeaderboard } from '@/components/teams'
 import type { Metadata } from 'next'
+import { getActiveEvent, getAllEvents } from '@/lib/events'
 
 export const metadata: Metadata = {
   title: 'Ekipe | Pokal Šanka - Matija Edition',
@@ -17,6 +18,8 @@ export const metadata: Metadata = {
   }
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function TeamsPage() {
   const currentUser = await getCurrentUser()
   
@@ -27,11 +30,20 @@ export default async function TeamsPage() {
   if (!currentUser.teamId) {
     redirect('/select-team')
   }
+
+  const [currentEvent, availableEvents] = await Promise.all([
+    getActiveEvent(),
+    getAllEvents()
+  ])
+
+  if (!currentEvent) {
+    redirect('/')
+  }
   
   const allTeams = await getAllTeamsWithUsersAndDrinks()
   
   return (
-    <DashboardLayout currentUser={currentUser}>
+    <DashboardLayout currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Lestvica ekip</h1>

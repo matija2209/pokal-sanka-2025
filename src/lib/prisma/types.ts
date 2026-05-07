@@ -1,7 +1,7 @@
-import { Prisma, User, Team, DrinkLog } from '@prisma/client'
+import { Prisma, User, Team, DrinkLog, Event, Person, Post, Commentary } from '@prisma/client'
 
 // Re-export base types
-export type { User, Team, DrinkLog, Prisma }
+export type { User, Team, DrinkLog, Event, Person, Post, Commentary, Prisma }
 
 // Drink type constants
 export const DRINK_TYPES = {
@@ -38,31 +38,33 @@ export type DrinkType = typeof DRINK_TYPES[keyof typeof DRINK_TYPES]
 
 // Composite types with relations (using native Prisma types)
 export type UserWithTeam = Prisma.UserGetPayload<{
-  include: { team: true }
+  include: { team: true, event: true, person: true }
 }>
 
 export type UserWithTeamAndDrinks = Prisma.UserGetPayload<{
-  include: { team: true, drinkLogs: true }
+  include: { team: true, event: true, person: true, drinkLogs: true }
 }>
 
 export type TeamWithUsers = Prisma.TeamGetPayload<{
-  include: { users: true }
+  include: { event: true, users: true }
 }>
 
 export type TeamWithUsersAndDrinks = Prisma.TeamGetPayload<{
   include: { 
+    event: true,
     users: {
-      include: { drinkLogs: true }
+      include: { team: true, event: true, person: true, drinkLogs: true }
     }
   }
 }>
 
 export type DrinkLogWithUser = Prisma.DrinkLogGetPayload<{
-  include: { user: true }
+  include: { event: true, user: { include: { team: true, event: true, person: true } } }
 }>
 
 export type DrinkLogWithUserAndTeam = Prisma.DrinkLogGetPayload<{
   include: { 
+    event: true,
     user: {
       include: { team: true }
     }
