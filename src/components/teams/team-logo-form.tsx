@@ -27,8 +27,7 @@ export default function TeamLogoForm({ currentUser }: TeamLogoFormProps) {
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-6">
-          <div className="flex flex-col items-center space-y-4">
-            <TeamLogo team={currentUser.team} size="lg" />
+          <div className="flex flex-col items-center">
             <MobileImageInput
               name="team-logo"
               currentImageUrl={currentUser.team.logo_image_url}
@@ -36,17 +35,19 @@ export default function TeamLogoForm({ currentUser }: TeamLogoFormProps) {
             />
           </div>
 
-          {state.message && !state.success && (
-            <p className="text-red-500 text-sm">{state.message}</p>
-          )}
+          <div className="space-y-4">
+            {state.message && !state.success && (
+              <p className="text-red-500 text-sm font-medium animate-in fade-in slide-in-from-top-1">{state.message}</p>
+            )}
 
-          {state.message && state.success && (
-            <p className="text-green-500 text-sm">{state.message}</p>
-          )}
-          
-          <Button type="submit" disabled={isPending} className="w-full">
-            {isPending ? "Posodabljam..." : "Posodobi logo"}
-          </Button>
+            {state.message && state.success && (
+              <p className="text-green-500 text-sm font-medium animate-in fade-in slide-in-from-top-1">{state.message}</p>
+            )}
+            
+            <Button type="submit" disabled={isPending} className="w-full h-11 font-bold shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+              {isPending ? "Posodabljam..." : "Posodobi logo ekipe"}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

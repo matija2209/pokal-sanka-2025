@@ -28,50 +28,54 @@ export default function UserProfile({ currentUser, availableTeams }: UserProfile
         </CardHeader>
         <CardContent>
           <form action={profileFormAction} className="space-y-6">
-            <div className="flex flex-col items-center space-y-4">
-              <UserAvatar user={currentUser} size="xl" />
+            <div className="flex flex-col items-center pb-4">
               <MobileImageInput
                 name="profile-image"
                 currentImageUrl={currentUser.profile_image_url}
                 label="Slika profila"
+                variant="avatar"
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium  mb-2">
-                Ime
-              </label>
-              <Input
-                name="name"
-                defaultValue={currentUser.name}
-                required
-                minLength={2}
-              />
-            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-muted-foreground mb-1.5 block">
+                  Ime in priimek
+                </label>
+                <Input
+                  name="name"
+                  defaultValue={currentUser.name}
+                  required
+                  minLength={2}
+                  className="h-11 shadow-sm"
+                  placeholder="Vnesite vaše ime"
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium  mb-2">
-                Ekipa
-              </label>
-              <Select name="teamId" defaultValue={currentUser.teamId || 'none'}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Izberite ekipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Brez ekipe</SelectItem>
-                  {availableTeams.map(team => (
-                    <SelectItem key={team.id} value={team.id}>
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className="w-3 h-3 rounded" 
-                          style={{ backgroundColor: team.color }}
-                        />
-                        {team.name}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div>
+                <label className="text-sm font-semibold text-muted-foreground mb-1.5 block">
+                  Vaša ekipa
+                </label>
+                <Select name="teamId" defaultValue={currentUser.teamId || 'none'}>
+                  <SelectTrigger className="h-11 shadow-sm">
+                    <SelectValue placeholder="Izberite ekipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Brez ekipe</SelectItem>
+                    {availableTeams.map(team => (
+                      <SelectItem key={team.id} value={team.id}>
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: team.color }}
+                          />
+                          {team.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {profileState.message && !profileState.success && (

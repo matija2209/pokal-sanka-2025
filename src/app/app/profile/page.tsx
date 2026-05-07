@@ -29,19 +29,25 @@ export default async function ProfilePage() {
   const availableTeams = await getAllTeams()
   
   return (
-    <div className="w-full max-w-none px-0">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold leading-tight mb-2">Vaš profil</h1>
-        <p className="text-sm text-muted-foreground">Upravljajte svoj račun in nastavitve profila.</p>
+    <div className="w-full max-w-2xl mx-auto px-4 py-6">
+      <div className="text-center mb-8 space-y-2">
+        <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">
+          Moj Profil
+        </h1>
+        <p className="text-muted-foreground">
+          Prilagodite svojo izkušnjo in upravljajte nastavitve ekipe.
+        </p>
       </div>
       
-      <div className="w-full space-y-6">
+      <div className="space-y-8">
         <UserProfile 
           currentUser={currentUser}
           availableTeams={availableTeams}
         />
 
-        <TeamLogoForm currentUser={currentUser} />
+        {currentUser.team && (
+          <TeamLogoForm currentUser={currentUser} />
+        )}
       </div>
     </div>
   )
