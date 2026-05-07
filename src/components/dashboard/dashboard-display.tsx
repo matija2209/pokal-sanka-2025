@@ -193,7 +193,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
       {currentMode === 'players' && (
         <div className="space-y-6">
           <SlideHeader 
-            title="Posamezična Lestvica" 
+            title="Posamična Lestvica" 
             icon={<Trophy className="h-12 w-12 text-yellow-400" />} 
           />
           
