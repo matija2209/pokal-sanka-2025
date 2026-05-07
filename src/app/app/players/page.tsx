@@ -39,8 +39,8 @@ export default async function PlayersPage() {
   }))
   
   return (
-    <div className="container mx-auto px-4">
-      <div className="space-y-8 max-w-md mx-auto">
+    <div className="w-full max-w-none px-0">
+      <div className="space-y-6 w-full">
         <DrinkLogForm 
           currentUserId={currentUser.id}
           allUsers={usersForDropdown}

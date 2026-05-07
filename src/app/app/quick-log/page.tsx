@@ -21,10 +21,10 @@ export default async function QuickLogPage() {
   const sortedUsers = sortUsersByScore(allUsers)
   
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Hitro beleže­nje pijače</h1>
-        <p className="">Izberite igralca za hitro beleženje njegove pijače</p>
+    <div className="w-full max-w-none px-0 py-6">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold leading-tight mb-2">Hitro beleženje pijače</h1>
+        <p className="text-sm text-muted-foreground">Izberite igralca za hitro beleženje njegove pijače</p>
       </div>
       
       <PlayerGrid 

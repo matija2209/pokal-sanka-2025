@@ -35,19 +35,19 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   const teamWithDrinks = allTeams.find(t => t.id === team.id)
   
   return (
-    <div className="container mx-auto px-4">
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-3 mb-2">
+    <div className="w-full max-w-none px-0">
+      <div className="text-center mb-6">
+        <div className="flex items-center justify-center gap-2.5 mb-2">
           <div 
-            className="w-8 h-8 rounded" 
+            className="w-7 h-7 shrink-0 rounded" 
             style={{ backgroundColor: team.color }}
           />
-          <h1 className="text-3xl font-bold">{team.name}</h1>
+          <h1 className="text-2xl font-bold leading-tight">{team.name}</h1>
         </div>
-        <p className="">Statistike ekipe in uspešnost članov</p>
+        <p className="text-sm text-muted-foreground">Statistike ekipe in uspešnost članov</p>
       </div>
       
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full">
         {teamWithDrinks && (
           <TeamStats 
             team={teamWithDrinks}

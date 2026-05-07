@@ -49,40 +49,35 @@ export default async function StatsPage() {
   const sortedUsers = sortUsersByScore(allUsers, triviaPointsMap)
   
   return (
-    <div className="container mx-auto px-4">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Statistike in Lestvice</h1>
-        <p className="">Poglejte svojo uvrstitev, dosežke in sledite aktivnosti turnirja.</p>
+    <div className="w-full max-w-none px-0">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold leading-tight mb-2">Statistike in Lestvice</h1>
+        <p className="text-sm text-muted-foreground">Poglejte svojo uvrstitev, dosežke in sledite aktivnosti turnirja.</p>
       </div>
       
-      <div className="space-y-6">
-        {/* Leaderboard */}
+      <div className="space-y-5">
         <Leaderboard 
           users={sortedUsers}
           currentUserId={currentUser.id}
           teamFilter={currentUser.teamId}
         />
 
-        {/* Commentary Section */}
         <CommentaryDisplay 
           commentaries={recentCommentaries}
           limit={8}
           showTitle={true}
         />
 
-        {/* Timeline */}
         <div className="space-y-4">
-          <h2 className="text-xl font-bold">Nedavne objave</h2>
+          <h2 className="text-lg font-bold">Nedavne objave</h2>
           <TimelineDisplay limit={10} />
         </div>
 
-        {/* Recent Activity */}
         <RecentActivity 
           recentDrinks={recentDrinks}
           limit={8}
         />
 
-        {/* Drink History */}
         {currentUserWithDrinks && (
           <UserHistory 
             user={currentUserWithDrinks}

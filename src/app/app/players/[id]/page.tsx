@@ -42,21 +42,21 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
   const userRank = getUserRanking(user.id, allUsers, triviaPointsMap)
   
   return (
-    <div className="container mx-auto px-4">
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-3 mb-2">
+    <div className="w-full max-w-none px-0">
+      <div className="text-center mb-6">
+        <div className="flex items-center justify-center gap-2.5 mb-2">
           {user.team && (
             <div 
-              className="w-8 h-8 rounded" 
+              className="w-7 h-7 shrink-0 rounded" 
               style={{ backgroundColor: user.team.color }}
             />
           )}
-          <h1 className="text-3xl font-bold">{user.name}</h1>
+          <h1 className="text-2xl font-bold leading-tight">{user.name}</h1>
           {user.id === currentUser.id && (
-            <span className="text-lg text-blue-600 font-medium">(Vi)</span>
+            <span className="whitespace-nowrap text-sm font-medium text-blue-600">(Vi)</span>
           )}
         </div>
-        <p className="">
+        <p className="px-0 text-sm text-muted-foreground">
           {user.team ? (
             <>Statistike in uspešnost igralca v ekipi {user.team.name}</>
           ) : (
@@ -65,9 +65,8 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
         </p>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-        {/* Left Column */}
-        <div className="space-y-8">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 w-full">
+        <div className="space-y-6">
           <UserStats 
             user={user}
             allUsers={allUsers}
@@ -80,8 +79,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
             rank={userRank}
           />
         </div>
-        
-        {/* Right Column */}
+
         <div>
           <UserHistory 
             user={user}

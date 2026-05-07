@@ -32,10 +32,10 @@ export default async function SelectTeamPage() {
   const availableTeams = await getAllTeams()
   
   return (
-    <div className="container mx-auto p-8 max-w-2xl">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Izberite svojo ekipo</h1>
-        <p className="">Pridružite se obstoječi ekipi ali ustvarite novo, da začnete tekmovati!</p>
+    <div className="w-full max-w-none px-0 py-6">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold leading-tight mb-2">Izberite svojo ekipo</h1>
+        <p className="text-sm text-muted-foreground">Pridružite se obstoječi ekipi ali ustvarite novo, da začnete tekmovati!</p>
       </div>
       
       <TeamSelectionForm 
