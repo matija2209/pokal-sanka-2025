@@ -9,6 +9,18 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.basemaps.cartocdn.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.tile.openstreetmap.org',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   experimental: {

@@ -1,0 +1,1 @@
+Never use pnpm run build. Always use npx tsc --noEmit to verify the build.

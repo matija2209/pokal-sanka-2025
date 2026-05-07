@@ -7,7 +7,7 @@ Public-facing mobile page for the bachelor party. Strangers scan a QR code on th
 | Route | Description |
 |---|---|
 | `/the-bachelor` | Public landing — hero, stats, map, hype meter, friendship ladder, recent sightings, footer |
-| `/the-bachelor/sighting/new` | Sighting form — photo + GPS + optional name/country/message |
+| `/the-bachelor/sighting/new` | Sighting form — action picker + photo + GPS + optional name/country/message |
 | `/the-bachelor/sighting/[id]/success` | Success screen — points earned, friendship level, upgrade options |
 | `/the-bachelor/timeline` | Full timeline of approved sightings |
 | `/superadmin/bachelor` | Admin — approve/reject sightings, manage hype events |
@@ -17,10 +17,11 @@ Public-facing mobile page for the bachelor party. Strangers scan a QR code on th
 ### Submission flow
 1. User scans QR → lands on `/the-bachelor`
 2. Clicks "Log a sighting" → `/the-bachelor/sighting/new`
-3. Browser GPS acquired (`navigator.geolocation.getCurrentPosition`) with manual fallback
-4. Photo taken via `<input capture="environment">`, compressed client-side (Canvas API), uploaded to Vercel Blob
-5. Server creates `PublicSighting` record — auto-approved, appears immediately
-6. Redirect to success page showing points + friendship level + upgrade options
+3. Picks what happened: spot him, leave a message, say hi, drink together, photo together, or challenge him
+4. Browser GPS acquired (`navigator.geolocation.getCurrentPosition`) with manual fallback
+5. Photo taken via `<input capture="environment">`, compressed client-side (Canvas API), uploaded to Vercel Blob
+6. Server creates `PublicSighting` record — auto-approved, appears immediately
+7. Redirect to success page showing points + friendship level + upgrade options
 
 ### GPS
 - Browser Geolocation API at submission time (not EXIF)
@@ -39,7 +40,8 @@ Public-facing mobile page for the bachelor party. Strangers scan a QR code on th
 | Spot him | 1 | Witness |
 | Leave a message | 2 | Messenger |
 | Say hi | 4 | Acquaintance |
-| Photo together | 7 | Collected Friend |
+| Drink together | 6 | Drinking Buddy |
+| Photo together | 9 | Collected Friend |
 | Challenge him | 17 | Legendary Friend |
 
 ### Admin approval
