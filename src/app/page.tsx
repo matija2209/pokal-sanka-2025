@@ -49,11 +49,11 @@ export default async function HomePage() {
   const currentUser = await getCurrentUser()
   
   if (currentUser?.teamId) {
-    redirect('/players')
+    redirect('/app/feed')
   }
   
   if (currentUser && !currentUser.teamId) {
-    redirect('/select-team')
+    redirect('/app/select-team')
   }
 
   // Fetch existing users for selection

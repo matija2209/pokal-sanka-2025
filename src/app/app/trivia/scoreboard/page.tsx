@@ -12,7 +12,7 @@ export default async function TriviaScoreboardPage() {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-12 max-w-3xl text-center">
-          <Link href="/players" className="text-sm text-muted-foreground hover:text-foreground mb-8 inline-block">
+          <Link href="/app/players" className="text-sm text-muted-foreground hover:text-foreground mb-8 inline-block">
             ← Nazaj na Šank
           </Link>
           <h1 className="text-4xl font-bold mb-4">Trivia Lestvica</h1>
@@ -45,7 +45,7 @@ export default async function TriviaScoreboardPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-12 max-w-3xl">
-        <Link href="/players" className="text-sm text-muted-foreground hover:text-foreground mb-8 inline-block">
+        <Link href="/app/players" className="text-sm text-muted-foreground hover:text-foreground mb-8 inline-block">
           ← Nazaj na Šank
         </Link>
 

@@ -1,11 +1,9 @@
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
-import { DashboardLayout } from '@/components/layout'
 import { DrinkLogForm } from '@/components/drinks'
 import { CreatePostForm } from '@/components/timeline'
 import type { Metadata } from 'next'
-import { getActiveEvent, getAllEvents } from '@/lib/events'
 
 export const metadata: Metadata = {
   title: 'Igralci | Pokal Šanka - Matija Edition',
@@ -29,18 +27,9 @@ export default async function PlayersPage() {
   }
   
   if (!currentUser.teamId) {
-    redirect('/select-team')
+    redirect('/app/select-team')
   }
 
-  const [currentEvent, availableEvents] = await Promise.all([
-    getActiveEvent(),
-    getAllEvents()
-  ])
-
-  if (!currentEvent) {
-    redirect('/')
-  }
-  
   const allUsers = await getAllUsersWithTeamAndDrinks()
   
   const usersForDropdown = allUsers.map(user => ({
@@ -50,19 +39,15 @@ export default async function PlayersPage() {
   }))
   
   return (
-    <DashboardLayout currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents}>
-      <div className="container mx-auto px-4">
-
+    <div className="container mx-auto px-4">
+      <div className="space-y-8 max-w-md mx-auto">
+        <DrinkLogForm 
+          currentUserId={currentUser.id}
+          allUsers={usersForDropdown}
+        />
         
-        <div className="space-y-8 max-w-md mx-auto">
-          <DrinkLogForm 
-            currentUserId={currentUser.id}
-            allUsers={usersForDropdown}
-          />
-          
-          <CreatePostForm currentUser={currentUser} />
-        </div>
+        <CreatePostForm currentUser={currentUser} />
       </div>
-    </DashboardLayout>
+    </div>
   )
 }

@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   Images,
   Users,
@@ -29,12 +28,12 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
   const pathname = usePathname()
   
   const navItems = [
-    { href: '/feed', icon: Images, label: 'Feed', active: pathname === '/feed' },
-    { href: '/players', icon: Users, label: 'Štart', active: pathname === '/players' },
-    { href: '/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/teams' },
-    { href: '/stats', icon: TrendingUp, label: 'Statistike', active: pathname === '/stats' },
-    { href: '/trivia/rules', icon: HelpCircle, label: 'Trivia', active: pathname.startsWith('/trivia') },
-    { href: '/profile', icon: User, label: 'Profil', active: pathname === '/profile' },
+    { href: '/app/feed', icon: Images, label: 'Feed', active: pathname === '/app/feed' },
+    { href: '/app/players', icon: Users, label: 'Štart', active: pathname === '/app/players' },
+    { href: '/app/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/app/teams' },
+    { href: '/app/stats', icon: TrendingUp, label: 'Statistike', active: pathname === '/app/stats' },
+    { href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', active: pathname.startsWith('/app/trivia') },
+    { href: '/app/profile', icon: User, label: 'Profil', active: pathname === '/app/profile' },
   ]
 
   return (
@@ -42,7 +41,7 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo/Brand - Compact on mobile */}
-          <Link href="/players" className="flex items-center space-x-2">
+          <Link href="/app/players" className="flex items-center space-x-2">
             <Image 
               src="/logo-small.png" 
               alt="Pokal Šanka" 
@@ -76,19 +75,19 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
           </div>
         </div>
 
-        {/* Navigation Links - Mobile optimized with labels */}
-        <div className="flex space-x-0.5 md:space-x-1 pb-3 md:pb-4 overflow-x-auto">
+        {/* Navigation Links - Big tap targets for mobile */}
+        <div className="flex gap-1 pb-3 md:pb-4 overflow-x-auto">
           {navItems.map((item) => {
             const Icon = item.icon
             return (
               <Link key={item.href} href={item.href} className="flex-shrink-0">
                 <Button
                   variant={item.active ? "default" : "ghost"}
-                  size="sm"
-                  className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm px-2 md:px-3 min-w-fit"
+                  size="lg"
+                  className="flex items-center gap-1.5 text-sm md:text-base px-4 py-3 min-h-[48px] min-w-fit"
                 >
-                  <Icon className="h-3 w-3 md:h-4 md:w-4" />
-                  <span className="text-xs md:text-sm">{item.label}</span>
+                  <Icon className="h-5 w-5 md:h-5 md:w-5" />
+                  <span className="font-medium">{item.label}</span>
                 </Button>
               </Link>
             )

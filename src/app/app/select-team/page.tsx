@@ -26,7 +26,7 @@ export default async function SelectTeamPage() {
   }
   
   if (currentUser.teamId) {
-    redirect('/players')
+    redirect('/app/players')
   }
   
   const availableTeams = await getAllTeams()

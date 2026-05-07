@@ -12,7 +12,7 @@ export default function TriviaRulesPage() {
       <div className="container mx-auto px-4 py-12 max-w-3xl">
         {/* Back link */}
         <Link
-          href="/players"
+          href="/app/players"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8"
         >
           ← Nazaj na Šank

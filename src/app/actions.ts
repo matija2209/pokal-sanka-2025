@@ -87,7 +87,7 @@ export async function createUserAction(
       type: 'create',
       data: {
         userId: user.id,
-        redirectUrl: '/select-team'
+        redirectUrl: '/app/select-team'
       }
     }
   } catch (error) {
@@ -130,11 +130,11 @@ export async function selectExistingUserAction(
 
     // Revalidate paths
     revalidatePath('/')
-    revalidatePath('/select-team')
-    revalidatePath('/players')
+    revalidatePath('/app/select-team')
+    revalidatePath('/app/players')
 
     // Redirect based on team status
-    const redirectUrl = user.teamId ? '/players' : '/select-team'
+    const redirectUrl = user.teamId ? '/app/players' : '/app/select-team'
 
     return {
       success: true,
@@ -200,15 +200,15 @@ export async function selectExistingPersonAction(
     }
 
     revalidatePath('/')
-    revalidatePath('/select-team')
-    revalidatePath('/players')
+    revalidatePath('/app/select-team')
+    revalidatePath('/app/players')
 
     return {
       success: true,
       message: 'Identity selected successfully!',
       type: 'update',
       data: {
-        redirectUrl: eventUser ? (eventUser.teamId ? '/players' : '/select-team') : '/'
+        redirectUrl: eventUser ? (eventUser.teamId ? '/app/players' : '/app/select-team') : '/'
       }
     }
   } catch (error) {
@@ -243,11 +243,11 @@ export async function switchActiveEventAction(eventId: string): Promise<UserActi
     }
 
     revalidatePath('/')
-    revalidatePath('/select-team')
-    revalidatePath('/players')
-    revalidatePath('/teams')
-    revalidatePath('/stats')
-    revalidatePath('/profile')
+    revalidatePath('/app/select-team')
+    revalidatePath('/app/players')
+    revalidatePath('/app/teams')
+    revalidatePath('/app/stats')
+    revalidatePath('/app/profile')
     revalidatePath('/dashboard')
 
     return {
@@ -294,8 +294,8 @@ export async function updateUserTeamAction(
       }
     }
 
-    revalidatePath('/players')
-    revalidatePath('/profile')
+    revalidatePath('/app/players')
+    revalidatePath('/app/profile')
 
     return {
       success: true,
@@ -363,8 +363,8 @@ export async function createTeamAction(
       }
     }
 
-    revalidatePath('/players')
-    revalidatePath('/teams')
+    revalidatePath('/app/players')
+    revalidatePath('/app/teams')
 
     return {
       success: true,
@@ -372,7 +372,7 @@ export async function createTeamAction(
       type: 'create',
       data: {
         teamId: team.id,
-        redirectUrl: '/players'
+        redirectUrl: '/app/players'
       }
     }
   } catch (error) {
@@ -411,8 +411,8 @@ export async function joinTeamAction(
       }
     }
 
-    revalidatePath('/players')
-    revalidatePath('/teams')
+    revalidatePath('/app/players')
+    revalidatePath('/app/teams')
 
     return {
       success: true,
@@ -420,7 +420,7 @@ export async function joinTeamAction(
       type: 'update',
       data: {
         teamId,
-        redirectUrl: '/players'
+        redirectUrl: '/app/players'
       }
     }
   } catch (error) {
@@ -502,8 +502,9 @@ export async function logDrinkAction(
       })
     }
 
-    revalidatePath('/players')
-    revalidatePath('/teams')
+    revalidatePath('/app/players')
+    revalidatePath('/app/feed')
+    revalidatePath('/app/teams')
     revalidatePath('/quick-log')
     revalidatePath('/dashboard')
 
@@ -612,8 +613,9 @@ export async function logMultipleDrinksAction(
       })
     }
 
-    revalidatePath('/players')
-    revalidatePath('/teams')
+    revalidatePath('/app/players')
+    revalidatePath('/app/feed')
+    revalidatePath('/app/teams')
     revalidatePath('/quick-log')
     revalidatePath('/dashboard')
 
@@ -700,8 +702,9 @@ export async function updateUserProfileAction(
       }
     }
 
-    revalidatePath('/profile')
-    revalidatePath('/players')
+    revalidatePath('/app/profile')
+    revalidatePath('/app/players')
+    revalidatePath('/app/feed')
     revalidatePath('/quick-log')
     revalidatePath('/dashboard')
     revalidatePath('/')
@@ -764,8 +767,9 @@ export async function updateTeamLogoAction(
         }
       }
 
-      revalidatePath('/profile')
-      revalidatePath('/players')
+      revalidatePath('/app/profile')
+      revalidatePath('/app/players')
+      revalidatePath('/app/feed')
       revalidatePath('/dashboard')
       revalidatePath('/quick-log')
       revalidatePath('/')
@@ -837,7 +841,8 @@ export async function createPostAction(
       }
     })
     
-    revalidatePath('/profile')
+    revalidatePath('/app/profile')
+    revalidatePath('/app/feed')
     revalidatePath('/dashboard')
 
     return {
@@ -887,8 +892,8 @@ export async function refreshDashboardAction(): Promise<void> {
   try {
     // Revalidate all dashboard-related paths to clear cache
     revalidatePath('/dashboard')
-    revalidatePath('/players') 
-    revalidatePath('/teams')
+    revalidatePath('/app/players') 
+    revalidatePath('/app/teams')
     revalidatePath('/')
     
     // Force hard refresh by redirecting to current page

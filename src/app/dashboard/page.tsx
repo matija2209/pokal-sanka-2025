@@ -1,5 +1,6 @@
-import { getAllUsersWithTeamAndDrinks, getAllTeams, getRecentDrinkLogsWithTeam, getUnreadCommentaries, getRecentPostsWithImages, getRecentUserProfileImages, getRecentTeamLogos, getRecentPosts } from '@/lib/prisma/fetchers'
-import { sortUsersByScore, getTeamsWithStats } from '@/lib/utils/calculations'
+import { getAllUsersWithTeamAndDrinks, getAllTeams, getRecentDrinkLogsWithTeam, getUnreadCommentaries, getRecentPostsWithImages, getRecentUserProfileImages, getRecentTeamLogos, getRecentPosts, getAllTriviaResults } from '@/lib/prisma/fetchers'
+import { sortUsersByScore, getTeamsWithStats, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
+import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { DashboardDisplay } from '@/components/dashboard'
 import BreakingNewsBanner from '@/components/dashboard/breaking-news-banner'
 import LatestImagesDisplay from '@/components/dashboard/latest-images-display'
@@ -39,8 +40,16 @@ export default async function DashboardPage() {
     getRecentPosts(50)
   ])
 
-  const sortedUsers = sortUsersByScore(allUsers)
-  const teamsWithStats = getTeamsWithStats(allUsers, allTeams)
+  // Trivia score integration
+  const triviaAvailable = await isTriviaAvailable()
+  let triviaPointsMap = new Map<string, number>()
+  if (triviaAvailable) {
+    const triviaResults = await getAllTriviaResults()
+    triviaPointsMap = getAllUsersTriviaPointsMap(triviaResults)
+  }
+
+  const sortedUsers = sortUsersByScore(allUsers, triviaPointsMap)
+  const teamsWithStats = getTeamsWithStats(allUsers, allTeams, triviaPointsMap)
   
   // Prepare image data for LatestImagesDisplay
   const imageData = {

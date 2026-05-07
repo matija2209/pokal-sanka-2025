@@ -1,9 +1,7 @@
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { redirect } from 'next/navigation'
-import { DashboardLayout } from '@/components/layout'
 import { EventFeed } from '@/components/timeline'
 import type { Metadata } from 'next'
-import { getActiveEvent, getAllEvents } from '@/lib/events'
 
 export const metadata: Metadata = {
   title: 'Feed | Pokal Šanka - Matija Edition',
@@ -27,25 +25,10 @@ export default async function FeedPage() {
   }
 
   if (!currentUser.teamId) {
-    redirect('/select-team')
-  }
-
-  const [currentEvent, availableEvents] = await Promise.all([
-    getActiveEvent(),
-    getAllEvents(),
-  ])
-
-  if (!currentEvent) {
-    redirect('/')
+    redirect('/app/select-team')
   }
 
   return (
-    <DashboardLayout
-      currentUser={currentUser}
-      currentEvent={currentEvent}
-      availableEvents={availableEvents}
-    >
-      <EventFeed currentUser={currentUser} />
-    </DashboardLayout>
+    <EventFeed currentUser={currentUser} />
   )
 }

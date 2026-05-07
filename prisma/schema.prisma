@@ -97,18 +97,96 @@ model Commentary {
 }
 
 model Event {
-  id        String      @id @default(cuid())
-  slug      String      @unique
-  name      String
-  isActive  Boolean     @default(true)
-  createdAt DateTime    @default(now())
-  users     User[]
-  teams     Team[]
-  drinkLogs DrinkLog[]
-  posts     Post[]
-  commentary Commentary[]
+  id              String               @id @default(cuid())
+  slug            String               @unique
+  name            String
+  isActive        Boolean              @default(true)
+  createdAt       DateTime             @default(now())
+  users           User[]
+  teams           Team[]
+  drinkLogs       DrinkLog[]
+  posts           Post[]
+  commentary      Commentary[]
+  triviaCategories TriviaCategory[]
+  triviaPowerUsage TriviaPowerUsage[]
 
   @@map("events")
+}
+
+model TriviaCategory {
+  id          String   @id @default(cuid())
+  eventId     String?
+  title       String
+  description String?
+  status      String   @default("draft") // draft, active, completed
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  event     Event?                 @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  questions TriviaQuestion[]
+  results   TriviaCategoryResult[]
+
+  @@index([eventId])
+  @@map("trivia_categories")
+}
+
+model TriviaQuestion {
+  id             String   @id @default(cuid())
+  categoryId     String
+  questionNumber Int      // 1, 2, or 3
+  questionText   String
+  questionType   String   @default("text") // text, numeric
+  correctAnswer  String?
+  numericAnswer  Float?
+  allowClosest   Boolean  @default(false)
+  media          String?
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  category TriviaCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@map("trivia_questions")
+}
+
+model TriviaCategoryResult {
+  id                    String   @id @default(cuid())
+  categoryId            String
+  question1Winner       String?  // userId or null
+  question2Winner       String?  // userId or null
+  question3Winner       String?  // userId or null
+  scenario              String   // Godlike, Two Wins, Steal Yo GF, Single Win, No Score
+  categoryWinner        String?  // userId or null
+  basePoints            Int      @default(0)
+  numericBonus          Int      @default(0)
+  finalPoints           Int      @default(0)
+  manualOverride        Boolean  @default(false)
+  overrideReason        String?
+  publishedToScoreboard Boolean  @default(false)
+  createdAt             DateTime @default(now())
+
+  category TriviaCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@map("trivia_category_results")
+}
+
+model TriviaPowerUsage {
+  id           String   @id @default(cuid())
+  eventId      String?
+  userId       String
+  powerType    String   // Airstrike, Solo Rider, Cockblock, Zadnji v Vrsti
+  cost         Int
+  categoryId   String?  // which category it was applied to
+  targetUserId String?  // for Cockblock
+  note         String?
+  createdAt    DateTime @default(now())
+
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+  @@index([userId])
+  @@map("trivia_power_usage")
 }
 
 model Person {
