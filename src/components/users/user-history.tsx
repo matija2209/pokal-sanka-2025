@@ -87,7 +87,7 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
                 
                 <div className="space-y-2 pl-2">
                   {dayGroup.drinks.map((log) => (
-                    <div key={log.id} className="flex items-center gap-3 p-2  rounded border border-gray-100">
+                    <div key={log.id} className="flex items-center gap-3 rounded border border-border/60 p-2">
                       <div className="text-lg">
                         {getDrinkEmoji(log.drinkType)}
                       </div>
@@ -103,7 +103,7 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
                           </Badge>
                         </div>
                         
-                        <div className="flex items-center gap-2 text-xs  mt-1">
+                        <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
                           <span>{format(new Date(log.createdAt), 'HH:mm')}</span>
                           <span>•</span>
@@ -112,7 +112,7 @@ export default function UserHistory({ user, limit = 20 }: UserHistoryProps) {
                       </div>
                       
                       <div className="text-right">
-                        <div className="text-sm font-semibold text-green-600 score-highlight px-2 py-1 rounded">
+                        <div className="score-highlight rounded bg-primary/10 px-2 py-1 text-sm font-semibold text-primary">
                           +{log.points}
                         </div>
                       </div>

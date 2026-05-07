@@ -41,7 +41,7 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
         ) : (
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {displayDrinks.map((log) => (
-              <div key={log.id} className="flex items-center gap-3 card-mobile  rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+              <div key={log.id} className="card-mobile flex items-center gap-3 rounded-lg border border-border/60 transition-colors hover:border-border hover:bg-muted/30">
                 <Avatar className="h-10 w-10">
                   <AvatarFallback>
                     {log.user.name.charAt(0).toUpperCase()}
@@ -61,7 +61,7 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
                     </Badge>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm ">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Clock className="h-3 w-3" />
                     <span>{formatDistanceToNow(new Date(log.createdAt))} ago</span>
                     <span>•</span>
@@ -70,7 +70,7 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
                 </div>
                 
                 <div className="text-right">
-                  <div className="text-lg font-bold text-green-600 score-highlight px-2 py-1 rounded">
+                  <div className="score-highlight rounded px-2 py-1 text-lg font-bold text-primary">
                     +{log.points}
                   </div>
                 </div>

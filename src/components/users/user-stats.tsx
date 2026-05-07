@@ -10,23 +10,27 @@ import {
   Award,
   Activity
 } from 'lucide-react'
-import { calculateUserScore, calculateUserStreaks } from '@/lib/utils/calculations'
+import { calculateUserScore, calculateUserStreaks, getUserTriviaPoints } from '@/lib/utils/calculations'
 import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
 
 interface UserStatsProps {
   user: UserWithTeamAndDrinks
   allUsers: UserWithTeamAndDrinks[]
   rank?: number
+  triviaPointsMap?: Map<string, number>
 }
 
-export default function UserStats({ user, allUsers, rank }: UserStatsProps) {
-  const score = calculateUserScore(user.drinkLogs)
+export default function UserStats({ user, allUsers, rank, triviaPointsMap }: UserStatsProps) {
+  const score = calculateUserScore(user.drinkLogs, getUserTriviaPoints(user.id, triviaPointsMap))
   const streak = calculateUserStreaks(user.drinkLogs)
   const regularDrinks = user.drinkLogs.filter(log => log.drinkType === 'REGULAR').length
   const shotDrinks = user.drinkLogs.filter(log => log.drinkType === 'SHOT').length
   
   // Calculate position relative to other players
-  const maxScore = Math.max(...allUsers.map(u => calculateUserScore(u.drinkLogs)), 1)
+  const maxScore = Math.max(
+    ...allUsers.map(u => calculateUserScore(u.drinkLogs, getUserTriviaPoints(u.id, triviaPointsMap))),
+    1
+  )
   const progressPercentage = (score / maxScore) * 100
   
   // Recent activity (last 7 days)

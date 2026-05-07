@@ -21,7 +21,7 @@ interface TeamSelectionFormProps {
 export default function TeamSelectionForm({ 
   currentUserId, 
   availableTeams, 
-  redirectUrl = '/players' 
+  redirectUrl = '/app/players' 
 }: TeamSelectionFormProps) {
   const router = useRouter()
   const [joinState, joinFormAction, isJoinPending] = useActionState(joinTeamAction, initialTeamActionState)

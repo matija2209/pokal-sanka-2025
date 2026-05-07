@@ -2,10 +2,11 @@ import {
   getPostsWithUsers,
   getRecentCommentaries,
   getRecentPostsWithImages,
+  getApprovedSightings,
 } from '@/lib/prisma/fetchers'
 import { UserAvatar } from '@/components/users'
 import { TeamLogo } from '@/components/teams'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,10 +22,10 @@ import {
 import {
   Bookmark,
   ChevronDown,
-  Clock3,
   Flame,
   Heart,
   ImageIcon,
+  MapPin,
   MessageCircle,
   MoreHorizontal,
   Plus,
@@ -35,6 +36,8 @@ import { sl } from 'date-fns/locale'
 import Image from 'next/image'
 import Link from 'next/link'
 import CreatePostForm from './create-post-form'
+import { ACTION_LABELS } from '@/lib/utils/bachelor-points'
+import type { ActionType } from '@/lib/utils/bachelor-points'
 
 interface EventFeedProps {
   currentUser: {
@@ -57,6 +60,7 @@ type FeedHighlightGroup = {
 }
 
 type FeedPost = Awaited<ReturnType<typeof getPostsWithUsers>>[number]
+type FeedSighting = Awaited<ReturnType<typeof getApprovedSightings>>[number]
 
 type FeedItem =
   | {
@@ -70,6 +74,12 @@ type FeedItem =
       key: string
       createdAt: Date
       post: FeedPost
+    }
+  | {
+      type: 'sighting'
+      key: string
+      createdAt: Date
+      sighting: FeedSighting
     }
 
 const HIGHLIGHT_PRIORITY_THRESHOLD = 3
@@ -161,7 +171,11 @@ function getPostPoints(drinkLogs: Array<{ points: number }>) {
   return drinkLogs.reduce((sum, log) => sum + log.points, 0)
 }
 
-function getFeedItems(posts: FeedPost[], highlightGroups: FeedHighlightGroup[]): FeedItem[] {
+function getFeedItems(
+  posts: FeedPost[],
+  highlightGroups: FeedHighlightGroup[],
+  sightings: FeedSighting[]
+): FeedItem[] {
   const postItems: FeedItem[] = posts.map(post => ({
     type: 'post',
     key: post.id,
@@ -176,20 +190,28 @@ function getFeedItems(posts: FeedPost[], highlightGroups: FeedHighlightGroup[]):
     group,
   }))
 
-  return [...postItems, ...highlightItems].sort(
+  const sightingItems: FeedItem[] = sightings.map(sighting => ({
+    type: 'sighting',
+    key: sighting.id,
+    createdAt: new Date(sighting.createdAt),
+    sighting,
+  }))
+
+  return [...postItems, ...highlightItems, ...sightingItems].sort(
     (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
   )
 }
 
 export default async function EventFeed({ currentUser }: EventFeedProps) {
-  const [posts, recentCommentaries, recentImagePosts] = await Promise.all([
+  const [posts, recentCommentaries, recentImagePosts, recentSightings] = await Promise.all([
     getPostsWithUsers(24),
     getRecentCommentaries(30),
     getRecentPostsWithImages(10),
+    getApprovedSightings(10, 0),
   ])
 
   const highlightGroups = getGroupedHighlights(recentCommentaries)
-  const feedItems = getFeedItems(posts, highlightGroups)
+  const feedItems = getFeedItems(posts, highlightGroups, recentSightings)
 
   return (
     <div className="w-full">
@@ -239,6 +261,29 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                     </div>
                   </CarouselItem>
                 ))}
+
+                {recentSightings.map(sighting => (
+                  <CarouselItem key={sighting.id} className="basis-auto pl-2">
+                    <div className="flex flex-col items-center gap-1.5 w-[72px]">
+                      <div className="h-[66px] w-[66px] rounded-full bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 p-[2.5px]">
+                        <div className="h-full w-full rounded-full bg-background p-[2px]">
+                          <div className="relative h-full w-full overflow-hidden rounded-full bg-muted">
+                            <Image
+                              src={sighting.photoUrl}
+                              alt={`Bachelor sighting ${sighting.submitterName ?? ''}`.trim()}
+                              fill
+                              sizes="66px"
+                              className="object-cover"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-medium truncate w-full text-center">
+                        Bachelor
+                      </span>
+                    </div>
+                  </CarouselItem>
+                ))}
               </CarouselContent>
             </Carousel>
           </section>
@@ -267,7 +312,6 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
               feedItems.map((item, index) => {
                 if (item.type === 'highlight') {
                   const group = item.group
-                  const topPriority = Math.max(...group.items.map(entry => entry.priority))
 
                   return (
                     <div key={item.key} className="px-4 py-2">
@@ -308,6 +352,69 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                   )
                 }
 
+                if (item.type === 'sighting') {
+                  const sighting = item.sighting
+                  const actionLabel =
+                    ACTION_LABELS[sighting.actionType as ActionType]?.en ?? sighting.actionType
+
+                  return (
+                    <article
+                      key={item.key}
+                      className="bg-card border-y border-border/40 md:border md:rounded-xl overflow-hidden"
+                    >
+                      <div className="flex items-center justify-between px-3 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 text-white">
+                            <MapPin className="h-4 w-4" />
+                          </div>
+                          <div className="flex flex-col -space-y-0.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm font-bold">Bachelor sighting</span>
+                              <Badge variant="outline" className="text-[10px]">
+                                {actionLabel}
+                              </Badge>
+                            </div>
+                            <span className="text-[10px] text-muted-foreground">
+                              {formatDistanceToNow(new Date(sighting.createdAt), {
+                                addSuffix: false,
+                                locale: sl,
+                              })} nazaj
+                            </span>
+                          </div>
+                        </div>
+                        <Badge variant="secondary" className="text-[10px]">
+                          +{sighting.points} pts
+                        </Badge>
+                      </div>
+
+                      <div className="relative aspect-square w-full bg-muted overflow-hidden">
+                        <Image
+                          src={sighting.photoUrl}
+                          alt={`Bachelor sighting by ${sighting.submitterName ?? 'anonymous'}`}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 760px"
+                          className="object-cover"
+                        />
+                      </div>
+
+                      <div className="px-3 py-3 space-y-2.5">
+                        <div className="space-y-1">
+                          <p className="text-sm leading-relaxed">
+                            <span className="font-bold mr-2">
+                              {sighting.submitterName ?? 'Anonymous'}
+                            </span>
+                            {sighting.message || 'New bachelor sighting added to the timeline.'}
+                          </p>
+                          <p className="text-[11px] uppercase tracking-tight text-muted-foreground">
+                            Friendship level: {sighting.friendshipLevel}
+                            {sighting.submitterCountry ? ` • ${sighting.submitterCountry}` : ''}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  )
+                }
+
                 const post = item.post
                 const totalPoints = getPostPoints(post.user.drinkLogs)
                 const drinkCount = post.user.drinkLogs.length
@@ -319,7 +426,7 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                     {/* Post Header */}
                     <div className="flex items-center justify-between px-3 py-3">
                       <div className="flex items-center gap-3">
-                        <Link href={`/players/${post.user.id}`} className="hover:opacity-90 transition-opacity">
+                        <Link href={`/app/players/${post.user.id}`} className="hover:opacity-90 transition-opacity">
                           <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-fuchsia-500 to-orange-400 p-[1.5px]">
                             <div className="h-full w-full rounded-full bg-card p-[1px]">
                               <UserAvatar user={post.user} size="sm" className="h-full w-full border-0" />
@@ -328,7 +435,7 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                         </Link>
                         <div className="flex flex-col -space-y-0.5">
                           <div className="flex items-center gap-1.5">
-                            <Link href={`/players/${post.user.id}`} className="text-sm font-bold hover:text-muted-foreground transition-colors">
+                            <Link href={`/app/players/${post.user.id}`} className="text-sm font-bold hover:text-muted-foreground transition-colors">
                               {post.user.name}
                             </Link>
                             {post.user.team && (
@@ -436,4 +543,3 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
     </div>
   )
 }
-

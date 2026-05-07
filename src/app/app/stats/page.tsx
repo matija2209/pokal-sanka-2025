@@ -54,41 +54,32 @@ export default async function StatsPage() {
   const sortedUsers = sortUsersByScore(allUsers, triviaPointsMap)
   
   return (
-    <div className="w-full max-w-none px-0">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold leading-tight mb-2">Statistike in Lestvice</h1>
-        <p className="text-sm text-muted-foreground">Poglejte svojo uvrstitev, dosežke in sledite aktivnosti turnirja.</p>
+    <div className="w-full max-w-none px-0 text-foreground">
+      <div className="text-center mb-6 border-b border-border pb-6">
+        <h1 className="text-2xl font-bold leading-tight mb-2 text-foreground">Statistike in Lestvice</h1>
+        <p className="text-sm text-muted-foreground">
+          Poglejte svojo uvrstitev, dosežke in sledite aktivnosti turnirja.
+        </p>
       </div>
-      
+
       <div className="space-y-5">
-        <Leaderboard 
+        <Leaderboard
           users={sortedUsers}
           currentUserId={currentUser.id}
           teamFilter={currentUser.teamId}
+          triviaPointsMap={triviaPointsMap}
         />
 
-        <CommentaryDisplay 
-          commentaries={recentCommentaries}
-          limit={8}
-          showTitle={true}
-        />
+        <CommentaryDisplay commentaries={recentCommentaries} limit={8} showTitle={true} />
 
         <div className="space-y-4">
-          <h2 className="text-lg font-bold">Nedavne objave</h2>
+          <h2 className="text-lg font-bold text-foreground">Nedavne objave</h2>
           <TimelineDisplay limit={10} />
         </div>
 
-        <RecentActivity 
-          recentDrinks={recentDrinks}
-          limit={8}
-        />
+        <RecentActivity recentDrinks={recentDrinks} limit={8} />
 
-        {currentUserWithDrinks && (
-          <UserHistory 
-            user={currentUserWithDrinks}
-            limit={15}
-          />
-        )}
+        {currentUserWithDrinks && <UserHistory user={currentUserWithDrinks} limit={15} />}
       </div>
     </div>
   )

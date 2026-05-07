@@ -22,7 +22,7 @@ export function ResetDatabaseForm({ eventName }: ResetDatabaseFormProps) {
     >
       <button
         type="submit"
-        className="w-full sm:w-auto bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-black py-4 px-8 rounded-xl transition-colors text-lg shadow-sm"
+        className="w-full sm:w-auto bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80 font-black py-4 px-8 rounded-xl transition-colors text-lg shadow-sm"
       >
         🗑️ Reset event data
       </button>

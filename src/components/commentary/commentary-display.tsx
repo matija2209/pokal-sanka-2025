@@ -55,11 +55,11 @@ export default function CommentaryDisplay({
   }
 
   const getPriorityColor = (priority: number) => {
-    if (priority >= 5) return 'bg-red-600 hover:bg-red-600 text-white'
-    if (priority >= 4) return 'bg-orange-600 hover:bg-orange-600 text-white'
-    if (priority >= 3) return 'bg-yellow-600 hover:bg-yellow-600 text-white'
-    if (priority >= 2) return 'bg-blue-600 hover:bg-blue-600 text-white'
-    return 'bg-gray-600 hover:bg-gray-600 text-white'
+    if (priority >= 5) return 'bg-primary text-primary-foreground'
+    if (priority >= 4) return 'bg-accent text-accent-foreground'
+    if (priority >= 3) return 'bg-secondary text-secondary-foreground'
+    if (priority >= 2) return 'bg-muted text-muted-foreground'
+    return 'bg-card text-muted-foreground border border-border'
   }
 
   const getPriorityStars = (priority: number) => {
@@ -126,11 +126,10 @@ export default function CommentaryDisplay({
               {/* Priority indicator */}
               <div className="text-right">
                 <div className={`text-lg font-bold ${
-                  commentary.priority >= 5 ? 'text-red-500' :
-                  commentary.priority >= 4 ? 'text-orange-500' :
-                  commentary.priority >= 3 ? 'text-yellow-500' :
-                  commentary.priority >= 2 ? 'text-blue-500' :
-                  'text-gray-500'
+                  commentary.priority >= 5 ? 'text-primary' :
+                  commentary.priority >= 4 ? 'text-accent-foreground' :
+                  commentary.priority >= 3 ? 'text-secondary-foreground' :
+                  'text-muted-foreground'
                 }`}>
                   {getPriorityStars(commentary.priority)}
                 </div>

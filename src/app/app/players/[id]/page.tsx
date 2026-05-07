@@ -71,6 +71,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
             user={user}
             allUsers={allUsers}
             rank={userRank}
+            triviaPointsMap={triviaPointsMap}
           />
           
           <UserAchievements 

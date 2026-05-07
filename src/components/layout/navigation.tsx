@@ -30,6 +30,7 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
   
   const navItems = [
     { href: '/app/feed', icon: Images, label: 'Feed', active: pathname === '/app/feed' },
+    { href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor', active: pathname === '/the-bachelor' },
     { href: '/app/players', icon: Users, label: 'Štart', active: pathname === '/app/players' },
     { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis', active: pathname === '/app/quick-log' },
     { href: '/app/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/app/teams' },
