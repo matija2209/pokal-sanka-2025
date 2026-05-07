@@ -3,6 +3,8 @@ import {
   getRecentCommentaries,
   getRecentPostsWithImages,
   getApprovedSightings,
+  getHypeEvents,
+  getHypeVoteCount,
 } from '@/lib/prisma/fetchers'
 import { UserAvatar } from '@/components/users'
 import { TeamLogo } from '@/components/teams'
@@ -21,15 +23,18 @@ import {
 } from '@/components/ui/collapsible'
 import {
   Bookmark,
+  CheckCircle2,
   ChevronDown,
   Flame,
   Heart,
   ImageIcon,
+  Lock,
   MapPin,
   MessageCircle,
   MoreHorizontal,
   Plus,
   Send,
+  Unlock,
 } from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { sl } from 'date-fns/locale'
@@ -61,6 +66,7 @@ type FeedHighlightGroup = {
 
 type FeedPost = Awaited<ReturnType<typeof getPostsWithUsers>>[number]
 type FeedSighting = Awaited<ReturnType<typeof getApprovedSightings>>[number]
+type FeedHypeEvent = Awaited<ReturnType<typeof getHypeEvents>>[number]
 
 type FeedItem =
   | {
@@ -80,6 +86,12 @@ type FeedItem =
       key: string
       createdAt: Date
       sighting: FeedSighting
+    }
+  | {
+      type: 'hype'
+      key: string
+      createdAt: Date
+      hypeEvent: FeedHypeEvent
     }
 
 const HIGHLIGHT_PRIORITY_THRESHOLD = 3
@@ -174,7 +186,8 @@ function getPostPoints(drinkLogs: Array<{ points: number }>) {
 function getFeedItems(
   posts: FeedPost[],
   highlightGroups: FeedHighlightGroup[],
-  sightings: FeedSighting[]
+  sightings: FeedSighting[],
+  hypeEvents: FeedHypeEvent[]
 ): FeedItem[] {
   const postItems: FeedItem[] = posts.map(post => ({
     type: 'post',
@@ -197,21 +210,30 @@ function getFeedItems(
     sighting,
   }))
 
-  return [...postItems, ...highlightItems, ...sightingItems].sort(
+  const hypeItems: FeedItem[] = hypeEvents.map(hypeEvent => ({
+    type: 'hype',
+    key: hypeEvent.id,
+    createdAt: new Date(hypeEvent.completedAt ?? hypeEvent.unlockedAt ?? hypeEvent.createdAt),
+    hypeEvent,
+  }))
+
+  return [...postItems, ...highlightItems, ...sightingItems, ...hypeItems].sort(
     (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
   )
 }
 
 export default async function EventFeed({ currentUser }: EventFeedProps) {
-  const [posts, recentCommentaries, recentImagePosts, recentSightings] = await Promise.all([
+  const [posts, recentCommentaries, recentImagePosts, recentSightings, hypeEvents, hypeVoteCount] = await Promise.all([
     getPostsWithUsers(24),
     getRecentCommentaries(30),
     getRecentPostsWithImages(10),
     getApprovedSightings(10, 0),
+    getHypeEvents(),
+    getHypeVoteCount(),
   ])
 
   const highlightGroups = getGroupedHighlights(recentCommentaries)
-  const feedItems = getFeedItems(posts, highlightGroups, recentSightings)
+  const feedItems = getFeedItems(posts, highlightGroups, recentSightings, hypeEvents)
 
   return (
     <div className="w-full">
@@ -409,6 +431,71 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                             Friendship level: {sighting.friendshipLevel}
                             {sighting.submitterCountry ? ` • ${sighting.submitterCountry}` : ''}
                           </p>
+                        </div>
+                      </div>
+                    </article>
+                  )
+                }
+
+                if (item.type === 'hype') {
+                  const hypeEvent = item.hypeEvent
+                  const statusIcon =
+                    hypeEvent.status === 'completed' ? (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                    ) : hypeEvent.status === 'unlocked' ? (
+                      <Unlock className="h-5 w-5 text-amber-500" />
+                    ) : (
+                      <Lock className="h-5 w-5 text-muted-foreground" />
+                    )
+                  const eventTime = new Date(
+                    hypeEvent.completedAt ?? hypeEvent.unlockedAt ?? hypeEvent.createdAt
+                  )
+
+                  return (
+                    <article
+                      key={item.key}
+                      className="bg-card border-y border-border/40 md:border md:rounded-xl overflow-hidden"
+                    >
+                      <div className="px-3 py-3 border-b border-border/40 bg-orange-500/5">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 text-white">
+                              <Flame className="h-4 w-4" />
+                            </div>
+                            <div className="flex flex-col -space-y-0.5">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-sm font-bold">Bachelor hype event</span>
+                                <Badge variant="outline" className="text-[10px] uppercase">
+                                  {hypeEvent.status}
+                                </Badge>
+                              </div>
+                              <span className="text-[10px] text-muted-foreground">
+                                {formatDistanceToNow(eventTime, {
+                                  addSuffix: false,
+                                  locale: sl,
+                                })} nazaj
+                              </span>
+                            </div>
+                          </div>
+                          {statusIcon}
+                        </div>
+                      </div>
+
+                      <div className="px-3 py-4 space-y-3">
+                        <div className="space-y-1">
+                          <p className="text-base font-bold leading-tight">{hypeEvent.title}</p>
+                          {hypeEvent.description && (
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {hypeEvent.description}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-tight text-muted-foreground">
+                          <Badge variant="secondary" className="text-[10px]">
+                            {hypeEvent.voteCount}/{hypeEvent.voteThreshold} votes
+                          </Badge>
+                          <span>Current bachelor votes: {hypeVoteCount}</span>
                         </div>
                       </div>
                     </article>

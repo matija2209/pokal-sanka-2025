@@ -30,7 +30,9 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata(): Promise<Metadata> {
   const { eventName, brand } = await getSiteBrandParts();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   return {
+    ...(appUrl ? { metadataBase: new URL(appUrl) } : {}),
     title: {
       default: brand,
       template: `%s | ${brand}`,
