@@ -1,13 +1,18 @@
 import 'server-only'
 import OpenAI from 'openai'
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY environment variable is required')
-}
+let openaiClient: OpenAI | null = null
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+function getOpenAI(): OpenAI {
+  const apiKey = process.env.OPENAI_API_KEY
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY environment variable is required')
+  }
+  if (!openaiClient) {
+    openaiClient = new OpenAI({ apiKey })
+  }
+  return openaiClient
+}
 
 export interface CommentaryContext {
   eventType: 'milestone' | 'streak' | 'achievement' | 'hype' | 'team_event' | 'bulk_hype' |
@@ -300,7 +305,7 @@ export async function generateCommentaryMessage(
       })
     }
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini', // More cost-effective for short messages
       messages: [
         {

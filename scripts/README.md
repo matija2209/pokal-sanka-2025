@@ -25,6 +25,21 @@ Command:
 npm run seed:bachelor
 ```
 
+### `npm run drop:bachelor`
+
+Runs [seed-bachelor-event.mjs](/home/matija/pokal-sanka-2025/scripts/seed-bachelor-event.mjs) in cleanup-only mode.
+
+Purpose:
+- drop bachelor bootstrap data previously inserted by the seed flow
+- keep the `bachelor-party` event row intact
+- keep bachelor `User` participants intact
+
+Command:
+
+```bash
+npm run drop:bachelor
+```
+
 ### `npm run export:person-csv`
 
 Runs [export-person-csvs.mjs](/home/matija/pokal-sanka-2025/scripts/export-person-csvs.mjs).
@@ -86,6 +101,12 @@ Current cleanup behavior on each seed run:
 - remove previously seeded bachelor trivia rows with the same `seedTag`
 - remove previously seeded bachelor sightings, hype votes, and hype events with the same `seedTag`
 - remove legacy v1 bachelor seed rows by matching the old stable content where needed, so older untagged demo rows do not block reruns
+
+The same cleanup path can also be run directly without reseeding:
+
+```bash
+npm run drop:bachelor
+```
 
 Important:
 - `TriviaCategoryResult` and `TriviaQuestion` do not have their own `seedTag`

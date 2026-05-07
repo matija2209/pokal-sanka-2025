@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename)
 
 const DATA_DIR = path.join(__dirname, 'data', 'bachelor-event')
 const SEED_TAG = 'bachelor-bootstrap-v1'
+const DROP_ONLY = process.argv.includes('--drop-only')
 const BACHELOR_EVENT = {
   slug: 'bachelor-party',
   name: 'Bachelor Party',
@@ -157,6 +158,12 @@ async function getOrCreateBachelorEvent() {
       name: BACHELOR_EVENT.name,
       isActive: true,
     },
+  })
+}
+
+async function getBachelorEvent() {
+  return prisma.event.findUnique({
+    where: { slug: BACHELOR_EVENT.slug },
   })
 }
 
@@ -530,9 +537,23 @@ async function main() {
 
   const now = new Date()
   const seedData = await loadSeedData()
-  const bachelorEvent = await getOrCreateBachelorEvent()
+  const bachelorEvent = DROP_ONLY
+    ? await getBachelorEvent()
+    : await getOrCreateBachelorEvent()
+
+  if (!bachelorEvent) {
+    console.log(`Bachelor event "${BACHELOR_EVENT.slug}" does not exist. Nothing to drop.`)
+    return
+  }
 
   await clearSeededBachelorData(bachelorEvent.id, seedData)
+
+  if (DROP_ONLY) {
+    console.log(`Dropped seeded bachelor bootstrap data from: ${bachelorEvent.name} (${bachelorEvent.id})`)
+    console.log(`Seed tag: ${SEED_TAG}`)
+    console.log('Kept bachelor users and the event row intact.')
+    return
+  }
 
   const users = await ensureBachelorUsers(bachelorEvent.id)
   const teams = await seedTeams(bachelorEvent.id, users, seedData.teams)

@@ -7,7 +7,8 @@
     "build": "npx prisma generate && next build --turbopack",
     "start": "next start",
     "export:person-csv": "node scripts/export-person-csvs.mjs",
-    "seed:bachelor": "node scripts/seed-bachelor-event.mjs"
+    "seed:bachelor": "node scripts/seed-bachelor-event.mjs",
+    "drop:bachelor": "node scripts/seed-bachelor-event.mjs --drop-only"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
