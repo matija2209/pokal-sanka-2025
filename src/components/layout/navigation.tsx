@@ -11,6 +11,7 @@ import {
   User,
   RefreshCw,
   TrendingUp,
+  ClipboardList,
   HelpCircle
 } from 'lucide-react'
 import UserMenu from './user-menu'
@@ -30,6 +31,7 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
   const navItems = [
     { href: '/app/feed', icon: Images, label: 'Feed', active: pathname === '/app/feed' },
     { href: '/app/players', icon: Users, label: 'Štart', active: pathname === '/app/players' },
+    { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis', active: pathname === '/app/quick-log' },
     { href: '/app/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/app/teams' },
     { href: '/app/stats', icon: TrendingUp, label: 'Statistike', active: pathname === '/app/stats' },
     { href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', active: pathname.startsWith('/app/trivia') },

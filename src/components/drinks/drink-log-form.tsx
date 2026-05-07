@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
@@ -8,9 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { logDrinkAction, logMultipleDrinksAction } from '@/app/actions'
 import { initialDrinkLogActionState, initialMultiDrinkLogActionState } from '@/lib/types/action-states'
-import { DRINK_TYPES } from '@/lib/prisma/types'
 import { getDrinkLabel, getDrinkPoints } from '@/lib/utils/drinks'
-import DrinkSelectionModal from './drink-selection-modal'
 import { toast } from 'sonner'
 
 interface DrinkLogFormProps {
@@ -26,10 +25,11 @@ interface DrinkLogFormProps {
 }
 
 export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [isMultiMode, setIsMultiMode] = useState(false)
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [selectedDrink, setSelectedDrink] = useState<string>('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
   
   const [singleState, singleFormAction, singleIsPending] = useActionState(logDrinkAction, initialDrinkLogActionState)
   const [multiState, multiFormAction, multiIsPending] = useActionState(logMultipleDrinksAction, initialMultiDrinkLogActionState)
@@ -38,13 +38,25 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
   const formAction = isMultiMode ? multiFormAction : singleFormAction
   const isPending = isMultiMode ? multiIsPending : singleIsPending
 
+  useEffect(() => {
+    const drinkType = searchParams.get('drinkType')
+    const multi = searchParams.get('multi') === '1'
+    const userIds = searchParams.get('userIds')
+
+    if (drinkType) {
+      setSelectedDrink(drinkType)
+    }
+
+    setIsMultiMode(multi)
+
+    if (userIds) {
+      setSelectedUserIds(userIds.split(',').filter(Boolean))
+    }
+  }, [searchParams])
+
   const handleModeToggle = (checked: boolean) => {
     setIsMultiMode(checked)
     setSelectedUserIds([])
-  }
-
-  const handleDrinkSelect = (drinkType: string) => {
-    setSelectedDrink(drinkType)
   }
 
   const handleUserToggle = (userId: string, checked: boolean) => {
@@ -150,18 +162,36 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
 
           
           <div className="space-y-4">
-              <Button 
-                type="button"
-                variant="outline"
-                onClick={() => setIsModalOpen(true)}
-                disabled={isPending}
-                className="w-full justify-start "
-              >
-                {selectedDrink ? 
-                  `${getDrinkLabel(selectedDrink)} (+${getDrinkPoints(selectedDrink)})` : 
-                  "Izberi pijačo"
+            <Button 
+              type="button"
+              variant="outline"
+              onClick={() => {
+                const params = new URLSearchParams()
+
+                if (isMultiMode) {
+                  params.set('multi', '1')
                 }
-              </Button>
+
+                if (selectedUserIds.length > 0) {
+                  params.set('userIds', selectedUserIds.join(','))
+                } else {
+                  params.set('userId', currentUserId)
+                }
+
+                if (selectedDrink) {
+                  params.set('drinkType', selectedDrink)
+                }
+
+                router.push(`/app/quick-log/drink-selection?${params.toString()}`)
+              }}
+              disabled={isPending}
+              className="w-full justify-start "
+            >
+              {selectedDrink ? 
+                `${getDrinkLabel(selectedDrink)} (+${getDrinkPoints(selectedDrink)})` : 
+                "Izberi pijačo"
+              }
+            </Button>
             
             <Button 
               type="submit" 
@@ -181,12 +211,6 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
             </Button>
           </div>
 
-          <DrinkSelectionModal 
-            isOpen={isModalOpen}
-            onOpenChange={setIsModalOpen}
-            onSelectDrink={handleDrinkSelect}
-            selectedDrink={selectedDrink}
-          />
         </form>
       </CardContent>
     </Card>
