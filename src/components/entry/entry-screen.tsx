@@ -57,16 +57,16 @@ export default function EntryScreen({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       {knownPersonName && (
-        <Card className="border-blue-200 bg-blue-50/90 cursor-pointer hover:shadow-lg transition-shadow"
+        <Card className="w-full border-blue-200 bg-blue-50/90 cursor-pointer hover:shadow-lg transition-shadow"
               onClick={() => setViewMode('join')}>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
+          <CardContent className="w-full p-4 sm:p-6">
+            <div className="flex w-full items-center gap-4">
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                 <UserPlus className="h-6 w-6 text-blue-700" />
               </div>
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <h3 className="text-lg font-semibold">Nadaljuj kot {knownPersonName}</h3>
                 <p className="text-sm text-slate-700">
                   {activeEventName
@@ -80,14 +80,14 @@ export default function EntryScreen({
       )}
 
       {/* Create New Account Option */}
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer" 
+      <Card className="w-full hover:shadow-lg transition-shadow cursor-pointer" 
             onClick={() => setViewMode('create')}>
-        <CardContent className="p-6">
-          <div className="flex items-center gap-4">
+        <CardContent className="w-full p-4 sm:p-6">
+          <div className="flex w-full items-center gap-4">
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
               <UserPlus className="h-6 w-6 " />
             </div>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <h3 className="text-lg font-semibold">{knownPersonName ? 'Uporabi drugo osebo' : 'Ustvari nov račun'}</h3>
               <p className="text-sm ">
                 {knownPersonName ? 'Ustvarite ločeno osebo za ta dogodek' : 'Nov igralec v turnirju'}
@@ -99,14 +99,14 @@ export default function EntryScreen({
 
       {/* Select Existing Account Option */}
       {(existingPeople.length > 0 || existingUsers.length > 0) && (
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer"
+        <Card className="w-full hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => setViewMode('existing')}>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
+          <CardContent className="w-full p-4 sm:p-6">
+            <div className="flex w-full items-center gap-4">
               <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                 <Users className="h-6 w-6 text-green-600" />
               </div>
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <h3 className="text-lg font-semibold">
                   {existingPeople.length > 0 ? 'Izberite, kdo ste' : 'Izberite obstoječ račun'}
                 </h3>

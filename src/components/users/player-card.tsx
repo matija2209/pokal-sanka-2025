@@ -18,52 +18,59 @@ export default function PlayerCard({ user, currentUserId, onSelectPlayer }: Play
   
   return (
     <Card 
-      className={`cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] border-2 ${
-        isCurrentUser ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:'
+      className={`relative cursor-pointer transition-all hover:shadow-xl hover:scale-[1.03] border-2 group overflow-hidden ${
+        isCurrentUser ? 'ring-2 ring-primary/40 bg-primary/5 border-primary/50' : 'hover:border-primary/30'
       }`}
-      style={{ borderColor: teamColor }}
+      style={{ borderColor: isCurrentUser ? undefined : teamColor }}
       onClick={() => onSelectPlayer(user)}
     >
-      <CardContent className="p-4">
+      {/* Decorative background element for team color */}
+      <div 
+        className="absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 rounded-full opacity-10 transition-opacity group-hover:opacity-20"
+        style={{ backgroundColor: teamColor }}
+      />
+
+      <CardContent className="p-4 relative z-10">
         <div className="flex flex-col items-center text-center space-y-3">
           {/* Avatar */}
-          <UserAvatar user={user} size="md" />
+          <div className="relative">
+            <UserAvatar user={user} size="md" className="ring-2 ring-background shadow-md" />
+            {isCurrentUser && (
+              <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-tighter shadow-sm">
+                TI
+              </div>
+            )}
+          </div>
           
           {/* User Name */}
-          <div>
-            <h3 className="font-semibold text-sm md:text-base truncate">
+          <div className="w-full">
+            <h3 className="font-bold text-sm md:text-base truncate text-foreground leading-tight">
               {user.name}
-              {isCurrentUser && (
-                <span className="text-blue-600 text-xs ml-1">(You)</span>
-              )}
             </h3>
             
             {/* Team Info */}
             {user.team ? (
-              <div className="flex items-center justify-center gap-1 mt-1">
+              <div className="flex items-center justify-center gap-1.5 mt-1.5">
                 <div 
-                  className="w-2 h-2 rounded-full shadow-sm"
+                  className="w-2.5 h-2.5 rounded-full shadow-inner border border-black/10"
                   style={{ backgroundColor: teamColor }}
                 />
-                <span 
-                  className="text-xs font-medium truncate"
-                  style={{ color: teamColor }}
-                >
+                <span className="text-xs font-bold text-muted-foreground truncate uppercase tracking-tight">
                   {user.team.name}
                 </span>
               </div>
             ) : (
-              <span className="text-xs ">No Team</span>
+              <span className="text-[10px] text-muted-foreground/60 uppercase font-bold tracking-widest mt-1 block">Brez ekipe</span>
             )}
           </div>
           
           {/* Score */}
-          <div className="text-center">
-            <div className="text-lg font-bold ">
+          <div className="pt-1 w-full border-t border-border/40 mt-1">
+            <div className="text-xl font-black text-primary tracking-tighter">
               {userScore}
             </div>
-            <div className="text-xs ">
-              points
+            <div className="text-[10px] uppercase font-bold text-muted-foreground/80 tracking-widest">
+              točk
             </div>
           </div>
         </div>

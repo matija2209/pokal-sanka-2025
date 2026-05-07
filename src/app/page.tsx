@@ -104,7 +104,7 @@ export default async function HomePage() {
       
       {/* Login section at bottom */}
       <div className="relative z-10 min-h-screen flex flex-col justify-end">
-        <div className="p-6 pb-12 max-w-lg mx-auto w-full">
+        <div className="w-full px-4 pb-12 pt-6 sm:px-6 lg:px-8">
           {/* Welcome text */}
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">

@@ -21,16 +21,22 @@ export default async function QuickLogPage() {
   const sortedUsers = sortUsersByScore(allUsers)
   
   return (
-    <div className="w-full max-w-none px-0 py-6">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold leading-tight mb-2">Hitro beleženje pijače</h1>
-        <p className="text-sm text-muted-foreground">Izberite igralca za hitro beleženje njegove pijače</p>
+    <div className="w-full max-w-6xl mx-auto px-4 py-8">
+      <div className="text-center mb-10 space-y-3">
+        <h1 className="text-3xl font-black tracking-tight lg:text-4xl text-foreground">
+          Hitro beleženje
+        </h1>
+        <p className="text-base text-muted-foreground font-medium max-w-md mx-auto">
+          Izberite igralca s seznama, da mu hitro zabeležite pijačo in dodate točke njegovi ekipi.
+        </p>
       </div>
       
-      <PlayerGrid 
-        users={sortedUsers}
-        currentUserId={currentUser.id}
-      />
+      <div className="bg-card/50 backdrop-blur-sm rounded-3xl p-6 border border-border/50 shadow-sm">
+        <PlayerGrid 
+          users={sortedUsers}
+          currentUserId={currentUser.id}
+        />
+      </div>
     </div>
   )
 }
