@@ -53,6 +53,31 @@ No passwords. Users create an account by entering their name on the entry screen
 
 All pages check these cookies via `getCurrentUser()` and the active-event helpers. If the event changes and the current person has no participant in that event yet, the app returns to `/`.
 
+### Invite URLs
+You can deep-link a person into a specific event with:
+
+```text
+/invite/[eventSlug]/[personId]
+```
+
+Example:
+
+```text
+/invite/bachelor-party/cmabc123person456
+```
+
+When someone opens that URL, the server:
+- sets `turnir-sanka-event-id` to the event from `eventSlug`
+- sets `turnir-sanka-person-id` to the invited person
+- sets `turnir-sanka-user-id` too if that person already has a participant record in that event
+
+Redirect behavior:
+- existing participant with team: `/app/feed`
+- existing participant without team: `/app/select-team`
+- person exists but has no participant in that event yet: `/`
+
+That last case is intentional: the entry screen opens with the person already preselected, so creating their participant for the invited event stays a one-tap flow.
+
 ## Tech Stack
 
 - **Next.js 15** (App Router, Server Components, Server Actions, Turbopack)

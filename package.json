@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "npx prisma generate && next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "export:person-csv": "node scripts/export-person-csvs.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

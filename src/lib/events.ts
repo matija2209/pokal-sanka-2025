@@ -50,6 +50,21 @@ export async function getEventById(eventId: string): Promise<Event | null> {
   })
 }
 
+export async function getEventBySlug(slug: string): Promise<Event | null> {
+  if (!slug) {
+    return null
+  }
+
+  if (!(await isMultiEventSchemaAvailable())) {
+    const legacyEvent = getLegacyFallbackEvent()
+    return slug === legacyEvent.slug ? legacyEvent : null
+  }
+
+  return prisma.event.findUnique({
+    where: { slug },
+  })
+}
+
 export async function getOrCreateDefaultEvents(): Promise<Event[]> {
   if (!(await isMultiEventSchemaAvailable())) {
     return [getLegacyFallbackEvent()]
