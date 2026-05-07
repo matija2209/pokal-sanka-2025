@@ -9,8 +9,12 @@ A drink tracking competition system built with Next.js 15. Features real-time le
 - **Team competition** with custom colors, logos, aggregate scoring, and rankings
 - **19 drink types** across 3 tiers: beer/radler (+1pt), spirits & cocktails (+2pt), premium cocktails (+3pt)
 - **Single & multi-user drink logging** — log drinks for yourself or a group
+- **Quick-log grid** — tap any player on the grid to log a drink for them
 - **Real-time leaderboards** — sorted by score with team filter
 - **Player detail pages** with stats, drink history, and achievements
+- **Team detail pages** — view team stats, members, and rankings
+- **Timeline posts** — users can post messages with images, displayed as a scrolling breaking news ticker on the TV dashboard
+- **Image upload** — profile avatars, team logos, and post images via Vercel Blob with client-side canvas compression
 
 ### TV Dashboard
 - **Auto-rotating views** every 15 seconds: Teams > Players > Activity > Commentary
@@ -90,6 +94,16 @@ npm run dev
 
 Open http://localhost:3000. Dashboard at http://localhost:3000/dashboard.
 
+## Storage
+
+Three storage layers:
+
+| Layer | What | Details |
+|---|---|---|
+| **PostgreSQL** (Neon) | All app data — users, teams, drink logs, commentary, posts | Managed via Prisma ORM. Schema below. |
+| **Vercel Blob** | User-uploaded images — profile avatars, team logos, post images | Images compressed client-side (canvas API) before upload. Max 10MB per file. |
+| **httpOnly cookies** | User session — `turnir-sanka-user-id` holding the user's database ID | No passwords. Set on login, checked server-side on every page. |
+
 ## Database Schema
 
 ```prisma
@@ -156,54 +170,93 @@ model Post {
 
 ## Project Structure
 
-```
-src/
-├── app/                   # Next.js App Router pages
-│   ├── actions.ts         # Server actions (log drinks, create user, etc.)
-│   ├── page.tsx           # Entry/onboarding
-│   ├── dashboard/         # TV dashboard
-│   ├── players/           # Main app + detail pages
-│   ├── teams/             # Team leaderboard + detail pages
-│   ├── profile/           # User profile management
-│   ├── quick-log/         # Fast drink logging
-│   ├── select-team/       # Team selection
-│   ├── stats/             # Stats, leaderboard, activity
-│   ├── superadmin/        # Database reset
-│   └── api/upload/        # Vercel Blob upload endpoint
-├── components/
-│   ├── commentary/        # Commentary display
-│   ├── dashboard/         # TV dashboard components
-│   ├── drinks/            # Drink logging forms & dialogs
-│   ├── entry/             # Entry screen components
-│   ├── layout/            # Navigation, dashboard layout
-│   ├── teams/             # Team cards, forms, logos
-│   ├── timeline/          # Post/timeline components
-│   ├── ui/                # shadcn/ui primitives
-│   └── users/             # User forms, avatars, leaderboard, stats
-├── lib/
-│   ├── openai/            # OpenAI client + commentary generation
-│   ├── prisma/
-│   │   ├── client.ts      # Prisma singleton
-│   │   ├── types.ts       # Generated + custom types
-│   │   └── fetchers/      # Database query functions
-│   ├── services/
-│   │   ├── commentary-generator.ts  # Orchestrates commentary logic
-│   │   ├── state-capture.ts         # Snapshot competition state
-│   │   ├── state-comparator.ts      # Diff two states for events
-│   │   ├── ranking-calculator.ts    # Rank calculations with tie handling
-│   │   └── llm-preprocessor.ts      # Context builder for AI
-│   ├── types/
-│   │   └── action-states.ts         # Server action state types
-│   └── utils/
-│       ├── calculations.ts  # Score/ranking/dashboard utilities
-│       ├── cookies.ts       # User session cookie management
-│       ├── colors.ts        # Team color palette
-│       ├── drinks.ts        # Drink config and helpers
-│       ├── image-upload.ts  # Server-side image upload
-│       └── client-image-compression.ts  # Client-side compression
-└── prisma/
-    └── schema.prisma
-```
+### Pages (routing & data loading)
+
+Each page is a Next.js Server Component that fetches its own data and passes it to client components:
+
+| Page | File | What it does |
+|---|---|---|
+| `/` | `src/app/page.tsx` | Entry screen — shows existing users or create-account form |
+| `/select-team` | `src/app/select-team/page.tsx` | Join or create a team (redirects to `/players` if already in a team) |
+| `/players` | `src/app/players/page.tsx` | Main app — drink log form + create post form |
+| `/quick-log` | `src/app/quick-log/page.tsx` | Player grid — tap any player to log a drink for them |
+| `/teams` | `src/app/teams/page.tsx` | Team leaderboard |
+| `/teams/[id]` | `src/app/teams/[id]/page.tsx` | Team detail — stats, members, rank |
+| `/players/[id]` | `src/app/players/[id]/page.tsx` | Player detail — stats, drink history, achievements |
+| `/stats` | `src/app/stats/page.tsx` | Combined leaderboard + commentary + timeline + activity |
+| `/profile` | `src/app/profile/page.tsx` | Edit name, switch team, upload avatar/team logo |
+| `/dashboard` | `src/app/dashboard/page.tsx` | TV-optimized auto-rotating display |
+| `/superadmin` | `src/app/superadmin/page.tsx` | Database reset button |
+
+### Server Actions (form handling & mutations)
+
+| File | Actions | What they do |
+|---|---|---|
+| `src/app/actions.ts` | `createUserAction` | Create a new user, set session cookie |
+| | `loginUserAction` | Log in as existing user, set session cookie |
+| | `createTeamAction` | Create a new team with auto-assigned color |
+| | `joinTeamAction` | Join an existing team |
+| | `updateUserProfileAction` | Change name, switch team, upload avatar |
+| | `logDrinkAction` | Log a drink for a single user + trigger commentary |
+| | `logMultipleDrinksAction` | Log the same drink for multiple users + trigger commentary |
+| | `createPostAction` | Create a timeline post with optional image |
+| | `refreshDashboardAction` | Trigger dashboard data refresh |
+| `src/app/superadmin/actions.ts` | `resetDatabase` | Delete all data (no auth guard) |
+
+### Database (Prisma)
+
+| File | What it manages |
+|---|---|
+| `prisma/schema.prisma` | Schema — 5 models: User, Team, DrinkLog, Commentary, Post |
+| `src/lib/prisma/client.ts` | Prisma singleton with connection logging |
+| `src/lib/prisma/types.ts` | TypeScript types: `UserWithTeam`, `TeamWithStats`, `DrinkLogWithUserAndTeam`, etc. |
+| `src/lib/prisma/fetchers/user-fetchers.ts` | `getUserWithTeamById`, `getAllUsersWithTeamAndDrinks`, `getUserWithTeamAndDrinksById`, `getRecentUserProfileImages` |
+| `src/lib/prisma/fetchers/team-fetchers.ts` | `getAllTeams`, `getTeamWithUsersById`, `getAllTeamsWithUsersAndDrinks`, `getRecentTeamLogos` |
+| `src/lib/prisma/fetchers/drink-log-fetchers.ts` | `getRecentDrinkLogs`, `getRecentDrinkLogsWithTeam`, `getUserDrinkLogs` |
+| `src/lib/prisma/fetchers/commentary-fetchers.ts` | `getRecentCommentaries`, `getUnreadCommentaries`, `createCommentary` |
+| `src/lib/prisma/fetchers/post-fetchers.ts` | `getRecentPosts`, `getRecentPostsWithImages` |
+
+### Business Logic (services)
+
+| File | What it does |
+|---|---|
+| `src/lib/services/commentary-generator.ts` | Orchestrates commentary on drink events — checks for first drink, milestones, team events, generates AI messages, saves to DB |
+| `src/lib/services/state-capture.ts` | Takes a full snapshot of all users, teams, and drink logs at a moment in time |
+| `src/lib/services/state-comparator.ts` | Compares two snapshots — detects leadership changes, rank jumps, team overtakes, position changes |
+| `src/lib/services/ranking-calculator.ts` | Computes global user ranks, team ranks, team-member ranks with tie handling and point-gap statistics |
+| `src/lib/services/llm-preprocessor.ts` | Builds structured context strings for the OpenAI commentary prompt |
+
+### AI Layer
+
+| File | What it does |
+|---|---|
+| `src/lib/openai/index.ts` | OpenAI client (GPT-4o-mini), Slovenian system prompts for each commentary event type, message generation with fallback templates, time formatting helpers |
+
+### Utilities
+
+| File | What it does |
+|---|---|
+| `src/lib/utils/cookies.ts` | Reads/writes/deletes the `turnir-sanka-user-id` session cookie |
+| `src/lib/utils/drinks.ts` | Drink config — 19 types mapped to labels, points, and categories; helper functions `getDrinkPoints()`, `getDrinkLabel()`, `getDrinksByCategory()` |
+| `src/lib/utils/calculations.ts` | Score calculation, team aggregation, leaderboard sorting, ranking, team stats for dashboard |
+| `src/lib/utils/colors.ts` | 15-team color palette, random assignment, next-available-color logic |
+| `src/lib/utils/image-upload.ts` | Server-side upload to Vercel Blob with size validation (10MB) |
+| `src/lib/utils/client-image-compression.ts` | Client-side image resize via Canvas API before upload (1920x1080, 85% quality) |
+| `src/lib/types/action-states.ts` | TypeScript types for server action return states (success/error/data) |
+
+### Components (client-side UI)
+
+| Directory | What it contains |
+|---|---|
+| `src/components/entry/` | `EntryScreen` — choose create-account or existing user |
+| `src/components/users/` | `CreateUserForm`, `SelectExistingUserForm`, `UserProfile`, `UserAvatar`, `Leaderboard`, `UserStats`, `UserHistory`, `UserAchievements`, `PlayerGrid` |
+| `src/components/teams/` | `TeamSelectionForm`, `TeamLogoForm`, `TeamLeaderboard`, `TeamStats`, `TeamLogo` |
+| `src/components/drinks/` | `DrinkLogForm`, `DrinkSelectionDialog`, `DrinkSelectionModal`, `RecentActivity` |
+| `src/components/dashboard/` | `DashboardDisplay` (auto-rotating TV view), `BreakingNewsBanner`, `LatestImagesDisplay` |
+| `src/components/commentary/` | `CommentaryDisplay` — filters by type, shows priority stars |
+| `src/components/timeline/` | `CreatePostForm`, `TimelineDisplay` |
+| `src/components/layout/` | `Navigation` (top nav bar), `DashboardLayout` (nav wrapper with refresh), `UserMenu` |
+| `src/components/ui/` | ~45 shadcn/ui primitives (dialog, card, badge, button, select, etc.) |
 
 ## Scripts
 
