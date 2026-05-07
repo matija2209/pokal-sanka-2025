@@ -64,7 +64,7 @@ export default async function DashboardPage() {
   }
   
   return (
-    <div className="min-h-scree">
+    <div className="min-h-screen">
       <DashboardDisplay 
         teams={teamsWithStats}
         topPlayers={sortedUsers}

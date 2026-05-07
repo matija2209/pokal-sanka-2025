@@ -28,8 +28,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pokal Šanka — Matija 2025 Edition2025",
-  description: "Tekmovanje v pitju piva - Pokal Šanka — Matija 2025 Edition2025",
+  title: "Pokal Šanka — Matija 2025 Edition",
+  description: "Tekmovanje v pitju piva - Pokal Šanka — Matija 2025 Edition",
 };
 
 export default function RootLayout({
