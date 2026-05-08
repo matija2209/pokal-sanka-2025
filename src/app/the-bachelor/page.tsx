@@ -73,6 +73,11 @@ export default async function BachelorPage() {
     <div className="min-h-screen bg-stone-50 pb-20 text-slate-950 [color-scheme:light] sm:pb-0">
       <HeroSection />
 
+      <section id="timeline" className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
+        <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Recent Sightings</h2>
+        <SightingTimeline sightings={sightings} />
+      </section>
+
       <section className="relative overflow-hidden py-3 sm:py-6">
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 bg-gradient-to-r from-stone-50 to-transparent sm:w-24" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-stone-50 to-transparent sm:w-24" />
@@ -231,11 +236,6 @@ export default async function BachelorPage() {
         <section id="ladder" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
           <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Friendship Levels</h2>
           <ParticipationLadder />
-        </section>
-
-        <section id="timeline" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
-          <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Recent Sightings</h2>
-          <SightingTimeline sightings={sightings} />
         </section>
       </div>
 

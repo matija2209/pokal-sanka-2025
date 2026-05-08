@@ -25,7 +25,6 @@ export default function EventSwitcher({ events, currentEventId, className }: Eve
           const result = await switchActiveEventAction(eventId)
           if (result.success) {
             router.push(result.data?.redirectUrl ?? '/')
-            router.refresh()
           }
         })
       }}
@@ -43,4 +42,3 @@ export default function EventSwitcher({ events, currentEventId, className }: Eve
     </Select>
   )
 }
-

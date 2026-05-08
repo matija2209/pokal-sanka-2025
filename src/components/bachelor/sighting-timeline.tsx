@@ -19,7 +19,7 @@ export function SightingTimeline({
 }: SightingTimelineProps) {
   if (sightings.length === 0) {
     return (
-      <Card className="bg-muted/30 border-muted">
+      <Card className="border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
         <CardContent className="p-8 text-center">
           <p className="text-muted-foreground">
             No sightings yet. Be the first to spot BWSK!
@@ -35,7 +35,7 @@ export function SightingTimeline({
         const actionLabel =
           ACTION_LABELS[sighting.actionType as ActionType]?.en ?? sighting.actionType
         return (
-          <Card key={sighting.id} className="bg-muted/20 border-muted overflow-hidden">
+          <Card key={sighting.id} className="border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10 overflow-hidden">
             <CardContent className="p-0">
               <div className="flex flex-col sm:flex-row">
                 {sighting.photoUrl && (
@@ -73,7 +73,7 @@ export function SightingTimeline({
                     <form action={onDeleteSighting.bind(null, sighting.id)} className="mb-2">
                       <button
                         type="submit"
-                        className="text-[10px] font-semibold text-destructive hover:opacity-80 transition-opacity"
+                        className="text-[10px] font-semibold text-destructive hover:opacity-80"
                       >
                         Delete post
                       </button>

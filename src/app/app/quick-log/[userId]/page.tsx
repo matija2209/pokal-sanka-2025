@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers'
+import { getUserWithTeamById } from '@/lib/prisma/fetchers'
 import { redirect, notFound } from 'next/navigation'
 import DrinkSelectionForm from '@/components/drinks/drink-selection-form'
 
@@ -23,7 +23,7 @@ export default async function DrinkSelectionPage({ params }: DrinkSelectionPageP
     redirect('/app/select-team')
   }
 
-  const selectedUser = await getUserWithTeamAndDrinksById(userId)
+  const selectedUser = await getUserWithTeamById(userId)
   
   if (!selectedUser) {
     notFound()

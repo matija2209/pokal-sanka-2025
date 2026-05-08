@@ -46,6 +46,10 @@ export type UserWithTeamAndDrinks = Prisma.UserGetPayload<{
   include: { team: true, event: true, person: true, drinkLogs: true }
 }>
 
+export type UserWithTeamAndScore = UserWithTeam & {
+  score: number
+}
+
 export type TeamWithUsers = Prisma.TeamGetPayload<{
   include: { event: true, users: true }
 }>

@@ -1,18 +1,18 @@
 'use client'
 
 import PlayerCard from './player-card'
-import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
+import type { UserWithTeamAndScore } from '@/lib/prisma/types'
 import { useRouter } from 'next/navigation'
 
 interface PlayerGridProps {
-  users: UserWithTeamAndDrinks[]
+  users: UserWithTeamAndScore[]
   currentUserId: string
 }
 
 export default function PlayerGrid({ users, currentUserId }: PlayerGridProps) {
   const router = useRouter()
 
-  const handleSelectPlayer = (user: UserWithTeamAndDrinks) => {
+  const handleSelectPlayer = (user: UserWithTeamAndScore) => {
     router.push(`/app/quick-log/${user.id}`)
   }
 

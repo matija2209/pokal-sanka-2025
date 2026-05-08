@@ -1,8 +1,7 @@
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
+import { getAllUsersForQuickLog } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import { PlayerGrid } from '@/components/users'
-import { sortUsersByScore } from '@/lib/utils/calculations'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,8 +16,7 @@ export default async function QuickLogPage() {
     redirect('/app/select-team')
   }
 
-  const allUsers = await getAllUsersWithTeamAndDrinks()
-  const sortedUsers = sortUsersByScore(allUsers)
+  const users = await getAllUsersForQuickLog()
   
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8">
@@ -33,7 +31,7 @@ export default async function QuickLogPage() {
       
       <div className="bg-card/50 backdrop-blur-sm rounded-3xl p-6 border border-border/50 shadow-sm">
         <PlayerGrid 
-          users={sortedUsers}
+          users={users}
           currentUserId={currentUser.id}
         />
       </div>

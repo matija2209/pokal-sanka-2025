@@ -133,8 +133,8 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
               required
             />
             
-            <div className="mt-2 flex items-center justify-between border-t border-border/40 pt-3">
-              <div className="flex items-center gap-4">
+            <div className="mt-2 flex flex-col gap-3 border-t border-border/40 pt-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-4">
                 <MobileImageInput
                   name="post-image"
                   label="Fotografija ali video"
@@ -142,7 +142,7 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
                   accept="image/*,video/*"
                   maxSizeBytes={maxUploadSizeBytes}
                 />
-                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
                   <Checkbox
                     checked={isPrivate}
                     onCheckedChange={(checked) => setIsPrivate(checked === true)}
@@ -154,7 +154,7 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
                 type="submit"
                 disabled={!message.trim() || isPending || uploadingMedia}
                 size="sm"
-                className="rounded-full bg-primary font-semibold px-6"
+                className="w-full rounded-full bg-primary px-6 font-semibold sm:w-auto sm:self-center"
               >
                 {uploadingMedia ? 'Nalaganje...' : isPending ? 'Objavljanje...' : 'Objavi'}
               </Button>

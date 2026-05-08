@@ -5,14 +5,14 @@ import { Button } from '@/components/ui/button'
 import { logDrinkAction } from '@/app/actions'
 import { initialDrinkLogActionState } from '@/lib/types/action-states'
 import { getDrinksByCategory } from '@/lib/utils/drinks'
-import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
+import type { UserWithTeam } from '@/lib/prisma/types'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 interface DrinkSelectionFormProps {
-  selectedUser: UserWithTeamAndDrinks
+  selectedUser: UserWithTeam
 }
 
 export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormProps) {
@@ -24,7 +24,6 @@ export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormP
     if (state.success) {
       toast.success(state.message)
       router.push('/app/quick-log')
-      router.refresh()
     } else if (state.message && !state.success && state.type === 'error') {
       toast.error(state.message)
     }

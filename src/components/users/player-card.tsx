@@ -1,19 +1,17 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
-import { calculateUserScore } from '@/lib/utils/calculations'
 import UserAvatar from './user-avatar'
-import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
+import type { UserWithTeamAndScore } from '@/lib/prisma/types'
 
 interface PlayerCardProps {
-  user: UserWithTeamAndDrinks
+  user: UserWithTeamAndScore
   currentUserId: string
-  onSelectPlayer: (user: UserWithTeamAndDrinks) => void
+  onSelectPlayer: (user: UserWithTeamAndScore) => void
 }
 
 export default function PlayerCard({ user, currentUserId, onSelectPlayer }: PlayerCardProps) {
   const isCurrentUser = user.id === currentUserId
-  const userScore = calculateUserScore(user.drinkLogs)
   const teamColor = user.team?.color || '#6B7280'
   
   return (
@@ -67,7 +65,7 @@ export default function PlayerCard({ user, currentUserId, onSelectPlayer }: Play
           {/* Score */}
           <div className="pt-1 w-full border-t border-border/40 mt-1">
             <div className="text-xl font-black text-primary tracking-tighter">
-              {userScore}
+              {user.score}
             </div>
             <div className="text-[10px] uppercase font-bold text-muted-foreground/80 tracking-widest">
               točk

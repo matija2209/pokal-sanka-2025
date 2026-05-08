@@ -13,7 +13,8 @@ import {
   RefreshCw,
   TrendingUp,
   ClipboardList,
-  HelpCircle
+  HelpCircle,
+  ArrowLeft
 } from 'lucide-react'
 import UserMenu from './user-menu'
 import type { Event, UserWithTeam } from '@/lib/prisma/types'
@@ -59,6 +60,17 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
     <nav className=" border-b shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
+          {/* Back to feed — mobile-first, hidden when already on feed */}
+          {pathname !== '/app/feed' && (
+            <Link
+              href="/app/feed"
+              className="flex items-center justify-center w-12 h-12 -ml-2 rounded-xl hover:bg-accent transition-colors"
+              aria-label="Nazaj na feed"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+          )}
+
           {/* Logo/Brand - Compact on mobile */}
           <Link href="/app/players" className="flex items-center space-x-2">
             <Image

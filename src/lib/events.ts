@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 import { prisma } from '@/lib/prisma/client'
 import type { Event } from '@/lib/prisma/types'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
@@ -21,7 +22,7 @@ function getLegacyFallbackEvent(): Event {
   }
 }
 
-export async function getAllEvents(): Promise<Event[]> {
+export const getAllEvents = cache(async (): Promise<Event[]> => {
   if (!(await isMultiEventSchemaAvailable())) {
     return [getLegacyFallbackEvent()]
   }
@@ -33,9 +34,9 @@ export async function getAllEvents(): Promise<Event[]> {
       { name: 'asc' },
     ],
   })
-}
+})
 
-export async function getEventById(eventId: string): Promise<Event | null> {
+export const getEventById = cache(async (eventId: string): Promise<Event | null> => {
   if (!eventId) {
     return null
   }
@@ -48,9 +49,9 @@ export async function getEventById(eventId: string): Promise<Event | null> {
   return prisma.event.findUnique({
     where: { id: eventId },
   })
-}
+})
 
-export async function getEventBySlug(slug: string): Promise<Event | null> {
+export const getEventBySlug = cache(async (slug: string): Promise<Event | null> => {
   if (!slug) {
     return null
   }
@@ -63,7 +64,7 @@ export async function getEventBySlug(slug: string): Promise<Event | null> {
   return prisma.event.findUnique({
     where: { slug },
   })
-}
+})
 
 export async function getOrCreateDefaultEvents(): Promise<Event[]> {
   if (!(await isMultiEventSchemaAvailable())) {
@@ -103,7 +104,7 @@ export async function getOrCreateDefaultEvents(): Promise<Event[]> {
   })
 }
 
-export async function getActiveEvent(): Promise<Event | null> {
+export const getActiveEvent = cache(async (): Promise<Event | null> => {
   const eventCookieStore = await cookies()
   const activeEventId = eventCookieStore.get(ACTIVE_EVENT_COOKIE_NAME)?.value
 
@@ -117,7 +118,7 @@ export async function getActiveEvent(): Promise<Event | null> {
   const events = await getOrCreateDefaultEvents()
   const fallbackEvent = events[0] ?? null
   return fallbackEvent
-}
+})
 
 /** HTML/meta brand line from the active event (for titles and descriptions). */
 export async function getSiteBrandParts(): Promise<{
