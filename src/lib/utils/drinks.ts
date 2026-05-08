@@ -25,6 +25,11 @@ export const DRINK_CONFIG: Record<string, DrinkConfig> = {
     points: 1,
     category: 'beer'
   },
+  [DRINK_TYPES.SPRIC]: {
+    label: 'Špric',
+    points: 1,
+    category: 'beer'
+  },
   
   // 2 point drinks
   [DRINK_TYPES.VODKA]: {

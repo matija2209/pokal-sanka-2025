@@ -7,6 +7,7 @@ export type { User, Team, DrinkLog, Event, Person, Post, Commentary, PublicSight
 export const DRINK_TYPES = {
   // 1 point drinks
   BEER_RADLER: 'BEER_RADLER',
+  SPRIC: 'SPRIC',
   
   // 2 point drinks
   VODKA: 'VODKA',
