@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { compressImage, shouldCompress } from '@/lib/utils/client-image-compression'
 import { Badge } from '@/components/ui/badge'
+import { toast } from 'sonner'
+import { formatFileSize, isImageMimeType, isVideoMimeType } from '@/lib/utils/media'
 
 interface MobileImageInputProps {
   name: string
@@ -14,6 +16,8 @@ interface MobileImageInputProps {
   className?: string
   required?: boolean
   variant?: 'default' | 'compact' | 'avatar'
+  accept?: string
+  maxSizeBytes?: number
 }
 
 export default function MobileImageInput({ 
@@ -23,10 +27,13 @@ export default function MobileImageInput({
   className = '',
   required = false,
   variant = 'default',
+  accept = 'image/*',
+  maxSizeBytes,
 }: MobileImageInputProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string>('')
   const [isCompressing, setIsCompressing] = useState(false)
+  const [previewType, setPreviewType] = useState<'image' | 'video'>('image')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [compressedFile, setCompressedFile] = useState<File | null>(null)
 
@@ -44,15 +51,26 @@ export default function MobileImageInput({
     const file = event.target.files?.[0]
     if (!file) return
 
+    if (maxSizeBytes && file.size > maxSizeBytes) {
+      toast.error(`${label} je prevelik. Največja velikost je ${formatFileSize(maxSizeBytes)}.`)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
+
     setIsCompressing(true)
     try {
       let fileToUse = file
-      if (shouldCompress(file)) {
+      const nextPreviewType = isVideoMimeType(file.type) ? 'video' : 'image'
+
+      if (isImageMimeType(file.type) && shouldCompress(file)) {
         fileToUse = await compressImage(file, { quality: 0.8, maxWidth: 1200, maxHeight: 1200 })
       }
       
       setCompressedFile(fileToUse)
       setFileName(file.name)
+      setPreviewType(nextPreviewType)
       const preview = URL.createObjectURL(fileToUse)
       setPreviewUrl(preview)
     } catch (error) {
@@ -60,6 +78,7 @@ export default function MobileImageInput({
       // Fallback to original file
       setCompressedFile(file)
       setFileName(file.name)
+      setPreviewType(isVideoMimeType(file.type) ? 'video' : 'image')
       setPreviewUrl(URL.createObjectURL(file))
     } finally {
       setIsCompressing(false)
@@ -74,6 +93,7 @@ export default function MobileImageInput({
     setPreviewUrl(null)
     setFileName('')
     setCompressedFile(null)
+    setPreviewType('image')
   }
 
   const triggerFileInput = () => {
@@ -110,19 +130,30 @@ export default function MobileImageInput({
 
         {displayImage && (
           <div className="relative h-10 w-10 overflow-hidden rounded-full border border-border bg-muted">
-            <Image
-              src={displayImage}
-              alt="Preview"
-              fill
-              className="object-cover"
-            />
+            {previewType === 'video' ? (
+              <video
+                src={displayImage}
+                className="h-full w-full object-cover"
+                muted
+                playsInline
+              />
+            ) : (
+              <Image
+                src={displayImage}
+                alt="Preview"
+                fill
+                className="object-cover"
+              />
+            )}
           </div>
         )}
         
         {fileName && (
           <div className="flex flex-col">
             <span className="text-xs font-medium truncate max-w-[100px]">{fileName}</span>
-            <span className="text-[10px] text-muted-foreground">Pripravljeno za prenos</span>
+            <span className="text-[10px] text-muted-foreground">
+              {previewType === 'video' ? 'Video pripravljen' : 'Pripravljeno za prenos'}
+            </span>
           </div>
         )}
 
@@ -130,7 +161,7 @@ export default function MobileImageInput({
           ref={fileInputRef}
           type="file"
           name={name}
-          accept="image/*"
+          accept={accept}
           capture="environment"
           onChange={handleFileSelect}
           className="hidden"
@@ -207,7 +238,7 @@ export default function MobileImageInput({
           ref={fileInputRef}
           type="file"
           name={name}
-          accept="image/*"
+          accept={accept}
           capture="environment"
           onChange={handleFileSelect}
           className="hidden"
@@ -227,18 +258,29 @@ export default function MobileImageInput({
         >
           <div className="relative w-32 h-32 rounded-2xl overflow-hidden border-2 border-dashed border-muted-foreground/25 bg-muted/30 group-hover:border-primary/50 transition-all duration-300">
             {displayImage ? (
-              <Image
-                src={displayImage}
-                alt="Preview"
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+              previewType === 'video' ? (
+                <video
+                  src={displayImage}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  muted
+                  playsInline
+                />
+              ) : (
+                <Image
+                  src={displayImage}
+                  alt="Preview"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              )
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                 <div className="p-3 rounded-full bg-background/50 shadow-sm">
                   <Camera className="h-6 w-6 text-muted-foreground" />
                 </div>
-                <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Dodaj sliko</span>
+                <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                  {accept.includes('video') ? 'Dodaj medij' : 'Dodaj sliko'}
+                </span>
               </div>
             )}
             
@@ -285,7 +327,9 @@ export default function MobileImageInput({
             ) : (
               <Upload className="h-4 w-4" />
             )}
-            {currentImageUrl || previewUrl ? 'Zamenjaj sliko' : 'Izberi sliko'}
+            {currentImageUrl || previewUrl
+              ? accept.includes('video') ? 'Zamenjaj medij' : 'Zamenjaj sliko'
+              : accept.includes('video') ? 'Izberi medij' : 'Izberi sliko'}
           </Button>
 
           {fileName && (
@@ -301,7 +345,7 @@ export default function MobileImageInput({
           ref={fileInputRef}
           type="file"
           name={name}
-          accept="image/*"
+          accept={accept}
           capture="environment"
           onChange={handleFileSelect}
           className="hidden"

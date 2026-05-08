@@ -12,6 +12,7 @@ import { compressImage, shouldCompress } from '@/lib/utils/client-image-compress
 import { toast } from 'sonner'
 import UserAvatar from '@/components/users/user-avatar'
 import { Checkbox } from '@/components/ui/checkbox'
+import { formatFileSize, isImageMimeType } from '@/lib/utils/media'
 
 interface CreatePostFormProps {
   currentUser?: {
@@ -22,9 +23,10 @@ interface CreatePostFormProps {
 }
 
 export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
+  const maxUploadSizeBytes = 100 * 1024 * 1024
   const [message, setMessage] = useState('')
   const [isPrivate, setIsPrivate] = useState(true)
-  const [uploadingImage, setUploadingImage] = useState(false)
+  const [uploadingMedia, setUploadingMedia] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isPending, startTransition] = useTransition()
   const [state, formAction] = useActionState(createPostAction, initialDrinkLogActionState)
@@ -39,13 +41,13 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
     }
   }, [state.success, state.message])
   
-  const handleImageUpload = async (file: File): Promise<string | null> => {
+  const handleMediaUpload = async (file: File): Promise<string | null> => {
     try {
-      setUploadingImage(true)
+      setUploadingMedia(true)
       setUploadProgress(0)
       
       let fileToUpload = file
-      if (shouldCompress(file)) {
+      if (isImageMimeType(file.type) && shouldCompress(file)) {
         fileToUpload = await compressImage(file, {
           maxWidth: 1920,
           maxHeight: 1080,
@@ -64,23 +66,31 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
 
       return blob.url
     } catch (error) {
-      console.error('Image upload failed:', error)
+      console.error('Media upload failed:', error)
       return null
     } finally {
-      setUploadingImage(false)
+      setUploadingMedia(false)
       setUploadProgress(0)
     }
   }
   
   const handleSubmit = async (formData: FormData) => {
     try {
-      const imageFile = formData.get('post-image') as File
+      const mediaFile = formData.get('post-image') as File
       let imageUrl = ''
       
-      if (imageFile && imageFile.size > 0) {
-        const uploadedUrl = await handleImageUpload(imageFile)
+      if (mediaFile && mediaFile.size > 0) {
+        if (mediaFile.size > maxUploadSizeBytes) {
+          toast.error(`Datoteka je prevelika. Največ ${formatFileSize(maxUploadSizeBytes)}.`)
+          return
+        }
+
+        const uploadedUrl = await handleMediaUpload(mediaFile)
         if (uploadedUrl) {
           imageUrl = uploadedUrl
+        } else {
+          toast.error('Nalaganje datoteke ni uspelo.')
+          return
         }
       }
 
@@ -127,8 +137,10 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
               <div className="flex items-center gap-4">
                 <MobileImageInput
                   name="post-image"
-                  label="Fotografija"
+                  label="Fotografija ali video"
                   variant="compact"
+                  accept="image/*,video/*"
+                  maxSizeBytes={maxUploadSizeBytes}
                 />
                 <label className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Checkbox
@@ -140,20 +152,20 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
               </div>
               <Button 
                 type="submit"
-                disabled={!message.trim() || isPending || uploadingImage}
+                disabled={!message.trim() || isPending || uploadingMedia}
                 size="sm"
                 className="rounded-full bg-primary font-semibold px-6"
               >
-                {uploadingImage ? 'Nalaganje...' : isPending ? 'Objavljanje...' : 'Objavi'}
+                {uploadingMedia ? 'Nalaganje...' : isPending ? 'Objavljanje...' : 'Objavi'}
               </Button>
             </div>
           </div>
         </div>
 
-        {uploadingImage && (
+        {uploadingMedia && (
           <div className="rounded-xl bg-muted/50 p-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-muted-foreground">Priprava slike...</span>
+              <span className="text-xs font-medium text-muted-foreground">Priprava datoteke...</span>
               <span className="text-xs font-bold text-primary">{Math.round(uploadProgress)}%</span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
@@ -168,4 +180,3 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
     </div>
   )
 }
-

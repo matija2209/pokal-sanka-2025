@@ -43,6 +43,7 @@ import Link from 'next/link'
 import CreatePostForm from './create-post-form'
 import { ACTION_LABELS } from '@/lib/utils/bachelor-points'
 import type { ActionType } from '@/lib/utils/bachelor-points'
+import { isVideoUrl } from '@/lib/utils/media'
 
 interface EventFeedProps {
   currentUser: {
@@ -269,13 +270,23 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                       <div className="h-[66px] w-[66px] rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] p-[2.5px]">
                         <div className="h-full w-full rounded-full bg-background p-[2px]">
                           <div className="relative h-full w-full overflow-hidden rounded-full bg-muted">
-                            <Image
-                              src={post.image_url!}
-                              alt={`Story ${post.user.name}`}
-                              fill
-                              sizes="66px"
-                              className="object-cover"
-                            />
+                            {isVideoUrl(post.image_url) ? (
+                              <video
+                                src={post.image_url!}
+                                className="h-full w-full object-cover"
+                                muted
+                                playsInline
+                                preload="metadata"
+                              />
+                            ) : (
+                              <Image
+                                src={post.image_url!}
+                                alt={`Story ${post.user.name}`}
+                                fill
+                                sizes="66px"
+                                className="object-cover"
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
@@ -553,14 +564,24 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                     {/* Post Image/Content */}
                     {post.image_url ? (
                       <div className="relative aspect-square w-full bg-muted overflow-hidden">
-                        <Image
-                          src={post.image_url}
-                          alt={`Objava uporabnika ${post.user.name}`}
-                          fill
-                          sizes="(max-width: 1024px) 100vw, 760px"
-                          className="object-cover"
-                          priority={index < 2}
-                        />
+                        {isVideoUrl(post.image_url) ? (
+                          <video
+                            src={post.image_url}
+                            controls
+                            playsInline
+                            preload="metadata"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={post.image_url}
+                            alt={`Objava uporabnika ${post.user.name}`}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 760px"
+                            className="object-cover"
+                            priority={index < 2}
+                          />
+                        )}
                       </div>
                     ) : (
                       <div className="flex min-h-[300px] items-center justify-center bg-gradient-to-br from-secondary/30 via-card to-accent/10 p-10 border-y border-border/30">

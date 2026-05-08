@@ -4,6 +4,7 @@ import { TeamLogo } from '@/components/teams'
 import { formatDistanceToNow } from 'date-fns'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
+import { isVideoUrl } from '@/lib/utils/media'
 
 interface TimelineDisplayProps {
   limit?: number
@@ -50,13 +51,23 @@ export default async function TimelineDisplay({ limit = 10 }: TimelineDisplayPro
                 
                 {post.image_url && (
                   <div className="rounded-lg overflow-hidden max-w-sm">
-                    <Image
-                      src={post.image_url}
-                      alt="Slika objave"
-                      width={400}
-                      height={300}
-                      className="w-full h-auto"
-                    />
+                    {isVideoUrl(post.image_url) ? (
+                      <video
+                        src={post.image_url}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        className="w-full h-auto"
+                      />
+                    ) : (
+                      <Image
+                        src={post.image_url}
+                        alt="Slika objave"
+                        width={400}
+                        height={300}
+                        className="w-full h-auto"
+                      />
+                    )}
                   </div>
                 )}
               </div>

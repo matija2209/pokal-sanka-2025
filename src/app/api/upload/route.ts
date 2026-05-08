@@ -17,9 +17,12 @@ export async function POST(request: Request): Promise<NextResponse> {
             'image/jpeg',
             'image/png', 
             'image/webp',
-            'image/gif'
+            'image/gif',
+            'video/mp4',
+            'video/quicktime',
+            'video/webm'
           ],
-          maximumSizeInBytes: 10 * 1024 * 1024, // 10MB
+          maximumSizeInBytes: 100 * 1024 * 1024, // 100MB
           addRandomSuffix: true,
         }
       },
