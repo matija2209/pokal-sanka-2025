@@ -64,7 +64,7 @@ export default function TeamLeaderboard({ teams, currentUserTeamId }: TeamLeader
               return (
                 <Link 
                   key={team.id} 
-                  href={`/teams/${team.id}`}
+                  href={`/app/teams/${team.id}`}
                   className={`block p-6 rounded-lg border-2 transition-all hover:shadow-lg cursor-pointer ${
                     isCurrentUserTeam 
                       ? 'border-blue-200  shadow-md hover:border-blue-300' 

@@ -539,7 +539,7 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                             {post.user.team && (
                               <div className="flex items-center gap-1">
                                 <span className="text-muted-foreground/50">•</span>
-                                <Link href={`/teams/${post.user.team.id}`} className="flex items-center gap-1 group">
+                                <Link href={`/app/teams/${post.user.team.id}`} className="flex items-center gap-1 group">
                                   <TeamLogo team={post.user.team} size="sm" className="h-3 w-3" />
                                   <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
                                     {post.user.team.name}
