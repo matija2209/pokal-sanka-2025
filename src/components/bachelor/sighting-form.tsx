@@ -391,14 +391,13 @@ export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingForm
         ) : (
           <label className="flex flex-col items-center justify-center h-48 rounded-lg border-2 border-dashed border-muted-foreground/30 cursor-pointer hover:border-primary/50 transition-colors">
             <Camera className="w-8 h-8 text-muted-foreground mb-2" />
-            <span className="text-sm text-muted-foreground">Tap to take a photo</span>
+            <span className="text-sm text-muted-foreground">Tap to add a photo</span>
             <span className="text-xs text-muted-foreground mt-1">
-              Take a respectful public photo of BWSK
+              Choose one from your gallery or take a respectful public photo of BWSK
             </span>
             <input
               type="file"
               accept="image/*"
-              capture="environment"
               onChange={handlePhotoChange}
               className="hidden"
             />

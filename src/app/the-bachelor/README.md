@@ -20,7 +20,7 @@ Public-facing mobile page for the bachelor party. Strangers scan a QR code on th
 3. Quick CTA deep links can preselect `photo_together` or `drink_together` via `/the-bachelor/sighting/new?action=...`
 4. Picks what happened: spot him, leave a message, say hi, drink together, photo together, or challenge him
 5. Browser GPS acquired (`navigator.geolocation.getCurrentPosition`) with manual fallback
-6. Photo taken via `<input capture="environment">`, compressed client-side (Canvas API), uploaded to Vercel Blob
+6. Photo selected via the HTML5 file input (camera or gallery), compressed client-side (Canvas API), uploaded to Vercel Blob
 7. Server creates `PublicSighting` record — auto-approved, appears immediately
 8. Redirect to success page showing points + friendship level + upgrade options
 

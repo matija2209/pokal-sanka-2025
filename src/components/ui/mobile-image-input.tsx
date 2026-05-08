@@ -18,6 +18,7 @@ interface MobileImageInputProps {
   variant?: 'default' | 'compact' | 'avatar'
   accept?: string
   maxSizeBytes?: number
+  capture?: 'user' | 'environment'
 }
 
 export default function MobileImageInput({ 
@@ -29,6 +30,7 @@ export default function MobileImageInput({
   variant = 'default',
   accept = 'image/*',
   maxSizeBytes,
+  capture,
 }: MobileImageInputProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string>('')
@@ -104,7 +106,7 @@ export default function MobileImageInput({
 
   if (variant === 'compact') {
     return (
-      <div className={`flex items-center gap-3 ${className}`}>
+      <div className={`flex min-w-0 items-center gap-3 ${className}`}>
         <div className="relative group">
           <Button
             type="button"
@@ -149,8 +151,8 @@ export default function MobileImageInput({
         )}
         
         {fileName && (
-          <div className="flex flex-col">
-            <span className="text-xs font-medium truncate max-w-[100px]">{fileName}</span>
+          <div className="flex min-w-0 flex-col">
+            <span className="max-w-[100px] truncate text-xs font-medium">{fileName}</span>
             <span className="text-[10px] text-muted-foreground">
               {previewType === 'video' ? 'Video pripravljen' : 'Pripravljeno za prenos'}
             </span>
@@ -162,7 +164,7 @@ export default function MobileImageInput({
           type="file"
           name={name}
           accept={accept}
-          capture="environment"
+          capture={capture}
           onChange={handleFileSelect}
           className="hidden"
           required={required && !currentImageUrl}
@@ -239,7 +241,7 @@ export default function MobileImageInput({
           type="file"
           name={name}
           accept={accept}
-          capture="environment"
+          capture={capture}
           onChange={handleFileSelect}
           className="hidden"
           required={required && !currentImageUrl}
@@ -346,7 +348,7 @@ export default function MobileImageInput({
           type="file"
           name={name}
           accept={accept}
-          capture="environment"
+          capture={capture}
           onChange={handleFileSelect}
           className="hidden"
           required={required && !currentImageUrl}
