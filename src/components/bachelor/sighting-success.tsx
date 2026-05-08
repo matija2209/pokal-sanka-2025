@@ -1,6 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +16,7 @@ interface SightingSuccessProps {
 }
 
 export function SightingSuccess({ sighting }: SightingSuccessProps) {
+  const router = useRouter()
   const currentAction = sighting.actionType as ActionType
   const currentPoints = sighting.points
   const currentLevel = sighting.friendshipLevel
@@ -27,6 +30,15 @@ export function SightingSuccess({ sighting }: SightingSuccessProps) {
       points: ACTION_POINTS[action],
       description: ACTION_DESCRIPTIONS[action],
     }))
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      router.refresh()
+      router.replace('/the-bachelor')
+    }, 1800)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [router])
 
   return (
     <div className="space-y-6 text-center">
@@ -55,6 +67,10 @@ export function SightingSuccess({ sighting }: SightingSuccessProps) {
           <Badge className="ml-auto">+{currentPoints} pts</Badge>
         </CardContent>
       </Card>
+
+      <p className="text-xs text-muted-foreground">
+        Returning to the tracker...
+      </p>
 
       {availableUpgrades.length > 0 && (
         <div className="space-y-3">

@@ -133,6 +133,18 @@ export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingForm
     )
   }
 
+  const requestGpsIfMissing = () => {
+    if (gpsState === 'loading' || gpsState === 'acquired') {
+      return
+    }
+
+    if (latitude !== null && longitude !== null) {
+      return
+    }
+
+    requestGps()
+  }
+
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -141,6 +153,8 @@ export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingForm
       toast.error('Please select an image file.')
       return
     }
+
+    requestGpsIfMissing()
 
     let processedFile = file
     if (shouldCompress(file)) {
