@@ -1,5 +1,6 @@
 export { default as Navigation } from './navigation'
 export { default as PageHeader } from './page-header'
 export { default as DashboardLayout } from './dashboard-layout'
+export { default as NavShell } from './nav-shell'
 export { default as UserMenu } from './user-menu'
 export { default as SuperAdminNav } from './superadmin-nav'
