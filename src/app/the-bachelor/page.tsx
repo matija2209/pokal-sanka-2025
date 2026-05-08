@@ -70,28 +70,28 @@ export default async function BachelorPage() {
   }))
 
   return (
-    <div className="min-h-screen bg-background pb-16 sm:pb-0">
+    <div className="min-h-screen bg-stone-50 pb-20 text-slate-950 [color-scheme:light] sm:pb-0">
       <HeroSection />
 
-      <section className="relative overflow-hidden py-4 sm:py-6">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 sm:w-24 bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 sm:w-24 bg-gradient-to-l from-background to-transparent" />
+      <section className="relative overflow-hidden py-3 sm:py-6">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 bg-gradient-to-r from-stone-50 to-transparent sm:w-24" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-stone-50 to-transparent sm:w-24" />
 
-        <div className="flex w-max gap-4 sm:gap-6 [animation:the-bachelor-gallery-scroll_34s_linear_infinite] motion-reduce:animate-none">
+        <div className="flex w-max gap-3 pl-4 sm:gap-6 sm:pl-0 [animation:the-bachelor-gallery-scroll_34s_linear_infinite] motion-reduce:animate-none">
           {[...bachelorGallery, ...bachelorGallery].map((image, index) => (
             <div
               key={`${image.alt}-${index}`}
-              className="relative h-48 w-36 sm:h-64 sm:w-48 md:h-80 md:w-60 shrink-0 overflow-hidden rounded-[1.75rem] border border-primary/15 bg-muted/30 shadow-xl shadow-primary/10"
+              className="relative h-40 w-28 shrink-0 overflow-hidden rounded-[1.25rem] border border-amber-200/70 bg-white shadow-lg shadow-amber-950/10 sm:h-64 sm:w-48 sm:rounded-[1.75rem] sm:shadow-xl md:h-80 md:w-60"
             >
               <Image
                 src={image.src}
                 alt={image.alt}
                 fill
-                sizes="(max-width: 640px) 144px, (max-width: 768px) 192px, 240px"
+                sizes="(max-width: 640px) 112px, (max-width: 768px) 192px, 240px"
                 className="object-cover"
                 priority={index < bachelorGallery.length}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-50/40 via-transparent to-transparent" />
             </div>
           ))}
         </div>
@@ -119,21 +119,21 @@ export default async function BachelorPage() {
         `}</style>
       </section>
 
-      <div className="space-y-4 sm:space-y-0">
-        <section className="px-4 max-w-5xl mx-auto -mt-2 sm:-mt-6 relative z-10">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card className="bg-muted/20 border-primary/20 shadow-lg shadow-primary/5">
-              <CardContent className="p-6 sm:p-7">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20">
-                    <Camera className="h-6 w-6 text-primary" />
+      <div className="space-y-6 sm:space-y-0">
+        <section className="relative z-10 mx-auto -mt-1 max-w-5xl px-4 sm:-mt-6">
+          <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+            <Card className="border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
+              <CardContent className="p-4 sm:p-7">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-amber-300/70 bg-amber-100/80 sm:h-12 sm:w-12">
+                    <Camera className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   </div>
                   <div className="space-y-3">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary/80">
                         Collector Move
                       </p>
-                      <h2 className="text-2xl font-lucky leading-tight">Take a photo with him</h2>
+                      <h2 className="text-xl font-lucky leading-tight sm:text-2xl">Take a photo with him</h2>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       Meet BWSK, snap a proper photo together, and lock in top-tier friendship points.
@@ -148,18 +148,18 @@ export default async function BachelorPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-muted/20 border-primary/20 shadow-lg shadow-primary/5">
-              <CardContent className="p-6 sm:p-7">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20">
-                    <Beer className="h-6 w-6 text-primary" />
+            <Card className="border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
+              <CardContent className="p-4 sm:p-7">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-amber-300/70 bg-amber-100/80 sm:h-12 sm:w-12">
+                    <Beer className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
                   </div>
                   <div className="space-y-3">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary/80">
                         Friendship Upgrade
                       </p>
-                      <h2 className="text-2xl font-lucky leading-tight">Take a drink with him</h2>
+                      <h2 className="text-xl font-lucky leading-tight sm:text-2xl">Take a drink with him</h2>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       Share a drink with the groom, capture the moment, and submit it straight into the tracker.
@@ -176,24 +176,24 @@ export default async function BachelorPage() {
           </div>
         </section>
 
-        <section id="stats" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
+        <section id="stats" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
           <StatsCards stats={stats} hypeVotes={hypeVoteCount} />
         </section>
 
-        <section id="map" className="py-8 sm:py-12 px-4 max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Malta Sighting Map</h2>
+        <section id="map" className="mx-auto max-w-6xl px-4 py-6 sm:py-12">
+          <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Malta Sighting Map</h2>
           <MaltaMap sightings={mapSightings} />
         </section>
 
-        <section id="hype" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Hype the Groom</h2>
+        <section id="hype" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
+          <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Hype the Groom</h2>
           <HypeMeter voteCount={hypeVoteCount} events={hypeEvents} votes={hypeVotes} />
         </section>
 
-        <section id="public-posts" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Public Posts</h2>
+        <section id="public-posts" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
+          <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Public Posts</h2>
           {publicPosts.length === 0 ? (
-            <Card className="bg-muted/20 border-primary/20 shadow-lg shadow-primary/5">
+            <Card className="border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
               <CardContent className="p-6 text-center text-muted-foreground">
                 No public posts yet.
               </CardContent>
@@ -201,20 +201,20 @@ export default async function BachelorPage() {
           ) : (
             <div className="space-y-4">
               {publicPosts.map((post: PublicPost) => (
-                <Card key={post.id} className="bg-muted/20 border-primary/20 shadow-lg shadow-primary/5 overflow-hidden">
+                <Card key={post.id} className="overflow-hidden border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
                   {post.image_url && (
-                    <div className="relative h-72 sm:h-80">
+                    <div className="relative h-56 sm:h-80">
                       <Image
                         src={post.image_url}
                         alt={`Public post by ${post.user.name}`}
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 768px"
+                        sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 768px) 100vw, 768px"
                       />
                     </div>
                   )}
-                  <CardContent className="p-4">
-                    <div className="mb-2 flex items-center justify-between gap-2">
+                  <CardContent className="p-4 sm:p-5">
+                    <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
                       <p className="text-sm font-semibold">{post.user.name}</p>
                       <p className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
@@ -228,13 +228,13 @@ export default async function BachelorPage() {
           )}
         </section>
 
-        <section id="ladder" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Friendship Levels</h2>
+        <section id="ladder" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
+          <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Friendship Levels</h2>
           <ParticipationLadder />
         </section>
 
-        <section id="timeline" className="py-8 sm:py-12 px-4 max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-lucky text-center mb-6">Recent Sightings</h2>
+        <section id="timeline" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
+          <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Recent Sightings</h2>
           <SightingTimeline sightings={sightings} />
         </section>
       </div>
