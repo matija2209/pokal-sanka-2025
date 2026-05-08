@@ -20,7 +20,7 @@ const MapContent = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-[400px] rounded-xl bg-muted/30 border flex items-center justify-center">
+      <div className="w-full h-[400px] rounded-xl border border-amber-200/80 bg-white/95 flex items-center justify-center">
         <Skeleton className="w-full h-full rounded-xl" />
       </div>
     ),

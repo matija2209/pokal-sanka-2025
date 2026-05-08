@@ -1,8 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { Toaster } from '@/components/ui/sonner'
-import { Button } from '@/components/ui/button'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import '@/app/globals.css'
 
@@ -34,12 +40,19 @@ export default async function BachelorLayout({
         {currentUser ? (
           <div className="sticky top-0 z-50 border-b border-primary/10 bg-background/95 backdrop-blur">
             <div className="mx-auto flex max-w-6xl items-center px-4 py-3">
-              <Button asChild variant="ghost" className="gap-2 px-0 text-sm font-medium">
-                <Link href="/app">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to app
-                </Link>
-              </Button>
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link href="/app/feed">Feed</Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>The Bachelor</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
             </div>
           </div>
         ) : null}

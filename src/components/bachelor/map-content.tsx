@@ -67,7 +67,7 @@ export function MapContent({ sightings }: MapContentProps) {
   const MALTA_CENTER: [number, number] = [35.9375, 14.3754]
 
   return (
-    <div className="relative w-full h-[400px] sm:h-[500px] rounded-2xl overflow-hidden border shadow-inner bg-muted/10 group">
+    <div className="relative w-full h-[400px] sm:h-[500px] rounded-2xl overflow-hidden border border-amber-200/80 shadow-lg shadow-amber-950/10 group">
       {sightings.length === 0 && <NoSightingsOverlay />}
       
       <div className="absolute top-3 left-3 z-[1000] sm:hidden">
@@ -86,7 +86,7 @@ export function MapContent({ sightings }: MapContentProps) {
       >
         <TileLayer
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         {sightings.map((s) => {
           const actionLabel = ACTION_LABELS[s.actionType as ActionType]?.en ?? s.actionType
