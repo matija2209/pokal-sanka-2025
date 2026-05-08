@@ -17,11 +17,11 @@ export const dynamic = 'force-dynamic'
 
 export default async function BwskEntryPage() {
   const bachelorGallery = [
-    { src: bachelorImage1, alt: 'Bostjan Pecar bachelor weekend portrait 1' },
-    { src: bachelorImage2, alt: 'Bostjan Pecar bachelor weekend portrait 2' },
-    { src: bachelorImage3, alt: 'Bostjan Pecar bachelor weekend portrait 3' },
-    { src: bachelorImage4, alt: 'Bostjan Pecar bachelor weekend portrait 4' },
-    { src: bachelorImage5, alt: 'Bostjan Pecar bachelor weekend portrait 5' },
+    { src: bachelorImage1, alt: 'Portret Boštjana Pečarja za fantovščino 1' },
+    { src: bachelorImage2, alt: 'Portret Boštjana Pečarja za fantovščino 2' },
+    { src: bachelorImage3, alt: 'Portret Boštjana Pečarja za fantovščino 3' },
+    { src: bachelorImage4, alt: 'Portret Boštjana Pečarja za fantovščino 4' },
+    { src: bachelorImage5, alt: 'Portret Boštjana Pečarja za fantovščino 5' },
   ]
 
   const bachelorEvent = await getEventBySlug(DEFAULT_BACHELOR_EVENT_SLUG)
@@ -160,12 +160,12 @@ export default async function BwskEntryPage() {
               </div>
 
               <div className="space-y-2">
-              <p className="text-sm font-semibold uppercase tracking-wide text-primary">Already Logged In</p>
-              <h2 className="text-2xl font-bold text-foreground">You are already logged in as {currentUser.name}</h2>
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary">Že prijavljen</p>
+              <h2 className="text-2xl font-bold text-foreground">Trenutno si prijavljen kot {currentUser.name}</h2>
               <p className="text-muted-foreground">
                 {currentUser.teamId
-                  ? 'Your player is ready. Continue into the bachelor event feed.'
-                  : 'Your player is ready, but you still need to pick a team before entering the full app.'}
+                  ? 'Tvoj igralec je pripravljen. Nadaljuj v dogajanje fantovščine.'
+                  : 'Tvoj igralec je pripravljen, vendar moraš pred vstopom v aplikacijo izbrati ekipo.'}
               </p>
             </div>
             </div>
@@ -175,7 +175,7 @@ export default async function BwskEntryPage() {
                 href={currentUser.teamId ? '/app/feed' : '/app/select-team'}
                 className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                Pridruzi se
+                Pridruži se
               </Link>
             </div>
           </div>

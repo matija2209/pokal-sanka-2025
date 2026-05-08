@@ -71,7 +71,10 @@ export default function EntryScreen({
                 <UserPlus className="h-6 w-6 text-blue-700" />
               </div>
               <div className="min-w-0 flex-1">
-                <h3 className="text-lg font-semibold">Nadaljuj kot {knownPersonName}</h3>
+                <h3 className="text-lg font-semibold">Nadaljuj kot</h3>
+                <p className="mt-1 inline-flex max-w-full rounded-full bg-blue-700 px-3 py-1 text-base font-bold text-white sm:text-lg">
+                  <span className="truncate">{knownPersonName}</span>
+                </p>
                 <p className="text-sm text-slate-700">
                   {activeEventName
                     ? `Vaša oseba je prepoznana, vendar se dogodku ${activeEventName} še niste pridružili.`
