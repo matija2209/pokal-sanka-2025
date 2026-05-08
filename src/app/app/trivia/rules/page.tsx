@@ -31,6 +31,21 @@ export default function TriviaRulesPage() {
           Kako deluje trivia kviz v Pokal Šanka — kategorije, vprašanja, točkovanje in posebne moči.
         </p>
 
+        <div className="flex flex-wrap gap-3 mb-8">
+          <Link
+            href="/app/trivia/conduct"
+            className="inline-flex items-center rounded-lg bg-primary text-primary-foreground px-4 py-2.5 text-sm font-semibold hover:bg-primary/90"
+          >
+            Začni vodenje trivia
+          </Link>
+          <Link
+            href="/app/trivia/scoreboard"
+            className="inline-flex items-center rounded-lg border border-border px-4 py-2.5 text-sm font-semibold hover:bg-accent/50"
+          >
+            Poglej lestvico
+          </Link>
+        </div>
+
         <section className="mb-8">
           <h2 className="text-xl font-bold mb-3">Kategorije</h2>
           <p className="text-sm text-muted-foreground mb-3">

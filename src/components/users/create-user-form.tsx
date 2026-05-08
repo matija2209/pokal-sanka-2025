@@ -37,7 +37,7 @@ export default function CreateUserForm({ onBack, knownPersonName, activeEventNam
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>
-          {isKnownPersonJoin ? 'Pridružitev dogodku' : 'Dobrodošli v Pokal Šanka — Matija 2025 Edition!'}
+          {isKnownPersonJoin ? 'Pridružitev dogodku' : 'Dobrodošli v Bwšk Bachelor 2026!'}
         </CardTitle>
       </CardHeader>
       <CardContent>

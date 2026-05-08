@@ -175,7 +175,7 @@ Phase 4 focuses on completing the application's user interface with advanced fea
 
 ## 🚀 Application Ready for Production
 
-The Pokal Šanka — Matija 2025 Edition(Tournament Drink) application is now complete and ready for deployment. All four phases have been successfully implemented:
+The Bwšk Bachelor 2026(Tournament Drink) application is now complete and ready for deployment. All four phases have been successfully implemented:
 
 - **Phase 1**: Project structure and foundation ✅
 - **Phase 2**: Database and data layer with Prisma ✅  

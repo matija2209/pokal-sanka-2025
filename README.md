@@ -1,4 +1,4 @@
-# Pokal Šanka — Matija 2025 Edition
+# Bwšk Bachelor 2026
 
 A drink tracking competition system built with Next.js 15. Features real-time leaderboards, team management, AI-powered commentary in Slovenian, a TV dashboard for tournament events, and multi-event storage so separate parties do not share scores or teams.
 

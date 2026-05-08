@@ -53,7 +53,7 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
               className="w-12 h-12 md:w-6 md:h-6 object-contain"
             />
             <span className="text-lg md:text-xl font-bold  hidden sm:block">
-              Pokal Šanka — Matija 2025 Edition
+              Bwšk Bachelor 2026
             </span>
             <span className="text-lg font-bold  sm:hidden">
               Šanka
