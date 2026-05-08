@@ -19,7 +19,8 @@ export default function DashboardLayout({ children, currentUser, currentEvent, a
   const handleRefresh = async () => {
     setIsRefreshing(true)
     router.refresh()
-    setTimeout(() => setIsRefreshing(false), 1000) // Visual feedback
+    // router.refresh() is fire-and-forget — reset after a short spin
+    setTimeout(() => setIsRefreshing(false), 400)
   }
 
   return (

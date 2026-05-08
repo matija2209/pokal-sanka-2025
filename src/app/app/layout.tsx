@@ -10,18 +10,18 @@ export default async function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const currentUser = await getCurrentUser()
-
-  if (!currentUser) {
-    redirect('/')
-  }
-
   const [currentEvent, availableEvents] = await Promise.all([
     getActiveEvent(),
     getAllEvents(),
   ])
 
   if (!currentEvent) {
+    redirect('/')
+  }
+
+  const currentUser = await getCurrentUser(currentEvent.id)
+
+  if (!currentUser) {
     redirect('/')
   }
 

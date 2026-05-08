@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -17,6 +18,24 @@ import {
 import UserMenu from './user-menu'
 import type { Event, UserWithTeam } from '@/lib/prisma/types'
 
+type NavItem = {
+  href: string
+  icon: typeof Images
+  label: string
+  matchPrefix?: string
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { href: '/app/feed', icon: Images, label: 'Feed' },
+  { href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor' },
+  { href: '/app/players', icon: Users, label: 'Štart' },
+  { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
+  { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
+  { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
+  { href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' },
+  { href: '/app/profile', icon: User, label: 'Profil' },
+]
+
 interface NavigationProps {
   currentUser: UserWithTeam
   currentEvent: Event
@@ -27,17 +46,14 @@ interface NavigationProps {
 
 export default function Navigation({ currentUser, currentEvent, availableEvents, onRefresh, isRefreshing }: NavigationProps) {
   const pathname = usePathname()
-  
-  const navItems = [
-    { href: '/app/feed', icon: Images, label: 'Feed', active: pathname === '/app/feed' },
-    { href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor', active: pathname === '/the-bachelor' },
-    { href: '/app/players', icon: Users, label: 'Štart', active: pathname === '/app/players' },
-    { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis', active: pathname === '/app/quick-log' },
-    { href: '/app/teams', icon: Trophy, label: 'Ekipe', active: pathname === '/app/teams' },
-    { href: '/app/stats', icon: TrendingUp, label: 'Statistike', active: pathname === '/app/stats' },
-    { href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', active: pathname.startsWith('/app/trivia') },
-    { href: '/app/profile', icon: User, label: 'Profil', active: pathname === '/app/profile' },
-  ]
+
+  const navItems = useMemo(
+    () => NAV_ITEMS.map(item => ({
+      ...item,
+      active: item.matchPrefix ? pathname.startsWith(item.matchPrefix) : pathname === item.href,
+    })),
+    [pathname],
+  )
 
   return (
     <nav className=" border-b shadow-sm">
@@ -45,12 +61,13 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo/Brand - Compact on mobile */}
           <Link href="/app/players" className="flex items-center space-x-2">
-            <Image 
-              src="/logo-small.png" 
-              alt="Pokal Šanka" 
-              width={24} 
-              height={24}
+            <Image
+              src="/logo-small.png"
+              alt="Pokal Šanka"
+              width={48}
+              height={48}
               className="w-12 h-12 md:w-6 md:h-6 object-contain"
+              priority
             />
             <span className="text-lg md:text-xl font-bold  hidden sm:block">
               Bwšk Bachelor 2026

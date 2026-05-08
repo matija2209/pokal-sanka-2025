@@ -5,6 +5,7 @@ import type {
   User,
   UserWithTeam,
   UserWithTeamAndDrinks,
+  UserWithTeamAndScore,
 } from '../types'
 
 function withLegacyRelations<T extends { team?: any }>(user: T) {
@@ -166,7 +167,7 @@ export async function deleteUser(id: string): Promise<boolean> {
   }
 }
 
-export async function getUserWithTeamById(id: string): Promise<UserWithTeam | null> {
+export async function getUserWithTeamById(id: string, eventId?: string): Promise<UserWithTeam | null> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const user = await prisma.user.findUnique({
@@ -178,9 +179,9 @@ export async function getUserWithTeamById(id: string): Promise<UserWithTeam | nu
 
       return user ? withLegacyRelations(user) as UserWithTeam : null
     }
-    const eventId = await requireActiveEventId()
+    const resolvedEventId = eventId ?? await requireActiveEventId()
     return await prisma.user.findFirst({
-      where: { id, eventId },
+      where: { id, eventId: resolvedEventId },
       include: {
         team: true,
         event: true,
@@ -292,6 +293,76 @@ export async function getAllUsersWithTeamAndDrinks(): Promise<UserWithTeamAndDri
     })
   } catch (error) {
     console.error('Error fetching all users with relations:', error)
+    return []
+  }
+}
+
+export async function getAllUsersForQuickLog(): Promise<UserWithTeamAndScore[]> {
+  try {
+    if (!(await isMultiEventSchemaAvailable())) {
+      const [users, scoreRows] = await Promise.all([
+        prisma.user.findMany({
+          include: {
+            team: true,
+          },
+          orderBy: {
+            name: 'asc',
+          },
+        }),
+        prisma.drinkLog.groupBy({
+          by: ['userId'],
+          _sum: {
+            points: true,
+          },
+        }),
+      ])
+
+      const scoresByUserId = new Map(
+        scoreRows.map((row) => [row.userId, row._sum.points ?? 0])
+      )
+
+      return users
+        .map((user) => ({
+          ...withLegacyRelations(user),
+          score: scoresByUserId.get(user.id) ?? 0,
+        }) as UserWithTeamAndScore)
+        .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+    }
+
+    const eventId = await requireActiveEventId()
+    const [users, scoreRows] = await Promise.all([
+      prisma.user.findMany({
+        where: { eventId },
+        include: {
+          team: true,
+          event: true,
+          person: true,
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      }),
+      prisma.drinkLog.groupBy({
+        by: ['userId'],
+        where: { eventId },
+        _sum: {
+          points: true,
+        },
+      }),
+    ])
+
+    const scoresByUserId = new Map(
+      scoreRows.map((row) => [row.userId, row._sum.points ?? 0])
+    )
+
+    return users
+      .map((user) => ({
+        ...user,
+        score: scoresByUserId.get(user.id) ?? 0,
+      }))
+      .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+  } catch (error) {
+    console.error('Error fetching users for quick log:', error)
     return []
   }
 }

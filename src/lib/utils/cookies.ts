@@ -1,29 +1,28 @@
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 import { getUserWithTeamById } from '@/lib/prisma/fetchers'
 import type { UserWithTeam } from '@/lib/prisma/types'
-import { ACTIVE_EVENT_COOKIE_NAME, getActiveEvent } from '@/lib/events'
+import { ACTIVE_EVENT_COOKIE_NAME } from '@/lib/events'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 
 const USER_COOKIE_NAME = 'turnir-sanka-user-id'
 const PERSON_COOKIE_NAME = 'turnir-sanka-person-id'
 
-export async function getCurrentUser(): Promise<UserWithTeam | null> {
+export const getCurrentUser = cache(async (eventId?: string): Promise<UserWithTeam | null> => {
   try {
     const cookieStore = await cookies()
     const userCookie = cookieStore.get(USER_COOKIE_NAME)
-    const activeEvent = await getActiveEvent()
-    const isMultiEventEnabled = await isMultiEventSchemaAvailable()
-    
-    if (!userCookie?.value || !activeEvent) {
+
+    if (!userCookie?.value) {
       return null
     }
-    
-    const user = await getUserWithTeamById(userCookie.value)
+
+    const user = await getUserWithTeamById(userCookie.value, eventId)
     if (!user) {
       return null
     }
 
-    if (isMultiEventEnabled && user.eventId !== activeEvent.id) {
+    if ((await isMultiEventSchemaAvailable()) && !user.eventId) {
       return null
     }
 
@@ -32,7 +31,7 @@ export async function getCurrentUser(): Promise<UserWithTeam | null> {
     console.error('Error getting current user:', error)
     return null
   }
-}
+})
 
 export async function setUserCookie(userId: string, personId?: string): Promise<void> {
   try {
