@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   Images,
-  Users,
   Trophy,
   User,
   RefreshCw,
@@ -29,7 +28,6 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { href: '/app/feed', icon: Images, label: 'Feed' },
   { href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor' },
-  { href: '/app/players', icon: Users, label: 'Štart' },
   { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
   { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
   { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
