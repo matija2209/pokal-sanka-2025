@@ -1,0 +1,424 @@
+[
+  {
+    "category_id": "bridges_engineering_ego",
+    "category_name": "Mostovi & Engineering Ego",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "How long is the longest bridge in the world, the Danyang-Kunshan Grand Bridge?",
+        "answer": 164.8,
+        "unit": "km",
+        "display_answer": "164.8 km",
+        "acceptance": "Closest wins. Exact bonus if 164.8 km or 165 km.",
+        "source_key": "DANYANG_LENGTH"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "What is the total length of the Golden Gate Bridge including approaches?",
+        "answer": 2737,
+        "unit": "m",
+        "display_answer": "2,737 m",
+        "acceptance": "Closest wins. Exact bonus if 2,737 m or 2.737 km.",
+        "source_key": "GOLDEN_GATE_LENGTH"
+      },
+      {
+        "question_no": 3,
+        "type": "numeric",
+        "question": "What is the main stone arch span of the Solkan Bridge?",
+        "answer": 85,
+        "unit": "m",
+        "display_answer": "85 m",
+        "acceptance": "Closest wins. Exact bonus if 85 m.",
+        "source_key": "SOLKAN_SPAN"
+      }
+    ]
+  },
+  {
+    "category_id": "oil_tankers_absurd_volumes",
+    "category_name": "Ladje, Nafta & Absurdne Količine",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "How many litres are in one barrel of crude oil?",
+        "answer": 158.987,
+        "unit": "L",
+        "display_answer": "158.987 L, accept 159 L",
+        "acceptance": "Closest wins. Exact bonus if 158.987 L or 159 L.",
+        "source_key": "OIL_BARREL"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "A VLCC tanker carrying 2 million barrels of crude carries roughly how many litres?",
+        "answer": 317974000,
+        "unit": "L",
+        "display_answer": "About 318 million litres",
+        "acceptance": "Closest wins. Exact bonus if within 1 million L.",
+        "source_key": "VLCC_CAPACITY_CALC"
+      },
+      {
+        "question_no": 3,
+        "type": "numeric",
+        "question": "Roughly how thick is the side-shell steel on a modern VLCC tanker?",
+        "answer": 22,
+        "unit": "mm",
+        "display_answer": "About 19 to 24.5 mm, use 22 mm as target",
+        "acceptance": "Closest wins. Exact bonus if answer is inside 19 to 24.5 mm.",
+        "source_key": "VLCC_HULL_THICKNESS"
+      }
+    ]
+  },
+  {
+    "category_id": "money_physics",
+    "category_name": "Denar & Fizika",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "How much does one €50 banknote weigh?",
+        "answer": 0.9,
+        "unit": "g",
+        "display_answer": "0.9 g",
+        "acceptance": "Closest wins. Exact bonus if 0.9 g.",
+        "source_key": "EUR50_WEIGHT"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "What are the dimensions of a €50 banknote?",
+        "answer": null,
+        "unit": "mm",
+        "display_answer": "140 × 77 × 0.12 mm",
+        "acceptance": "Text/numeric hybrid. Exact bonus if width and height are correct.",
+        "source_key": "EUR50_DIMENSIONS"
+      },
+      {
+        "question_no": 3,
+        "type": "numeric",
+        "question": "How many €50 banknotes weigh 1 kg?",
+        "answer": 1111,
+        "unit": "notes",
+        "display_answer": "About 1,111 notes, worth €55,550",
+        "acceptance": "Closest wins. Exact bonus if 1,111 or 1,112 notes.",
+        "source_key": "EUR50_WEIGHT_CALC"
+      }
+    ]
+  },
+  {
+    "category_id": "slovenia_water_fruit",
+    "category_name": "Slovenija: Voda, Jabolka & Realnost",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "What is the average discharge of the Ljubljanica near Ljubljana/Moste?",
+        "answer": 55.4,
+        "unit": "m3/s",
+        "display_answer": "About 55 m³/s",
+        "acceptance": "Closest wins. Exact bonus if 55, 55.4, or 55.6 m³/s.",
+        "source_key": "LJUBLJANICA_FLOW"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "How many tonnes of apples were produced in Slovenian orchard plantations in 2024?",
+        "answer": 50600,
+        "unit": "tonnes",
+        "display_answer": "More than 50,600 tonnes",
+        "acceptance": "Closest wins. Exact bonus if within 500 tonnes.",
+        "source_key": "SLOVENIA_APPLES_2024"
+      },
+      {
+        "question_no": 3,
+        "type": "numeric",
+        "question": "How many 0.5 L beers are in a standard 50 L keg?",
+        "answer": 100,
+        "unit": "beers",
+        "display_answer": "100 beers",
+        "acceptance": "Closest wins. Exact bonus if 100.",
+        "source_key": "KEG_CALC"
+      }
+    ]
+  },
+  {
+    "category_id": "farm_heavy_machinery",
+    "category_name": "Kmetija & Heavy Machinery",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "At peak/mid-lactation, roughly how many litres of milk can a dairy cow produce per day?",
+        "answer": 35,
+        "unit": "L/day",
+        "display_answer": "About 35 L/day at peak; typical daily range can be lower",
+        "acceptance": "Closest wins. Exact bonus if 35 L.",
+        "source_key": "DAIRY_COW_MILK"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "How much does a mature Holstein-Friesian dairy cow weigh?",
+        "answer": 725,
+        "unit": "kg",
+        "display_answer": "Up to about 725 kg; common range roughly 680 to 770 kg",
+        "acceptance": "Closest wins. Exact bonus if within 680 to 770 kg.",
+        "source_key": "HOLSTEIN_WEIGHT"
+      },
+      {
+        "question_no": 3,
+        "type": "text",
+        "question": "Which is normally built to generate more low-speed pulling torque: a tractor engine or a car engine?",
+        "answer": "Tractor engine",
+        "display_answer": "Tractor engine",
+        "acceptance": "Exact concept required: tractor.",
+        "source_key": "TRACTOR_TORQUE"
+      }
+    ]
+  },
+  {
+    "category_id": "hunting_section",
+    "category_name": "Lovska Sekcija",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "How fast can a wild boar run at maximum speed?",
+        "answer": 40,
+        "unit": "km/h",
+        "display_answer": "About 40 km/h",
+        "acceptance": "Closest wins. Exact bonus if 40 km/h.",
+        "source_key": "WILD_BOAR_SPEED"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "What is a normal weight range for a fully grown male red deer/stag in Europe?",
+        "answer": 175,
+        "unit": "kg",
+        "display_answer": "Roughly 150 to 200 kg, depending on region",
+        "acceptance": "Closest wins. Exact bonus if inside 150 to 200 kg.",
+        "source_key": "RED_DEER_WEIGHT"
+      },
+      {
+        "question_no": 3,
+        "type": "text",
+        "question": "Which animal is generally more dangerous to surprise at close range: roe deer, fox, or wild boar?",
+        "answer": "Wild boar",
+        "display_answer": "Wild boar",
+        "acceptance": "Exact concept required: wild boar.",
+        "source_key": "WILD_BOAR_COMMON"
+      }
+    ]
+  },
+  {
+    "category_id": "fishing_water",
+    "category_name": "Ribičija & Voda",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "text",
+        "question": "Which fish is more associated with clean, cold, oxygen-rich water: trout or carp?",
+        "answer": "Trout",
+        "display_answer": "Trout",
+        "acceptance": "Exact concept required: trout.",
+        "source_key": "TROUT_HABITAT"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "A very large European wels catfish can exceed roughly what weight?",
+        "answer": 100,
+        "unit": "kg",
+        "display_answer": "Over 100 kg; exceptional authenticated examples exceed this",
+        "acceptance": "Closest wins. Exact bonus if 100 kg or above 100 kg.",
+        "source_key": "WELS_CATFISH_WEIGHT"
+      },
+      {
+        "question_no": 3,
+        "type": "numeric",
+        "question": "What is the average discharge of the Ljubljanica at Vrhnika/source area?",
+        "answer": 25,
+        "unit": "m3/s",
+        "display_answer": "About 25 m³/s",
+        "acceptance": "Closest wins. Exact bonus if 24 to 25 m³/s.",
+        "source_key": "LJUBLJANICA_SOURCE_FLOW"
+      }
+    ]
+  },
+  {
+    "category_id": "chainsaw_forest",
+    "category_name": "Motorka & Gozd",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "Roughly how fast does a petrol chainsaw chain move?",
+        "answer": 20,
+        "unit": "m/s",
+        "display_answer": "About 20 m/s for many petrol chainsaws",
+        "acceptance": "Closest wins. Exact bonus if 20 m/s.",
+        "source_key": "CHAINSAW_SPEED"
+      },
+      {
+        "question_no": 2,
+        "type": "text",
+        "question": "Which wood is generally harder: oak or spruce?",
+        "answer": "Oak",
+        "display_answer": "Oak",
+        "acceptance": "Exact concept required: oak.",
+        "source_key": "WOOD_HARDNESS"
+      },
+      {
+        "question_no": 3,
+        "type": "numeric",
+        "question": "How tall can a mature Norway spruce typically get in a large open landscape?",
+        "answer": 20,
+        "unit": "m",
+        "display_answer": "Roughly 15 to 23 m in many landscape references; wild/forest specimens can be taller",
+        "acceptance": "Closest wins. Exact bonus if inside 15 to 23 m.",
+        "source_key": "SPRUCE_HEIGHT"
+      }
+    ]
+  },
+  {
+    "category_id": "biology_at_the_bar",
+    "category_name": "Biologija za Šankom",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "How many bones does a typical adult human skeleton have?",
+        "answer": 206,
+        "unit": "bones",
+        "display_answer": "206",
+        "acceptance": "Closest wins. Exact bonus if 206.",
+        "source_key": "HUMAN_BONES"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "How many chambers does a mammal heart have?",
+        "answer": 4,
+        "unit": "chambers",
+        "display_answer": "4",
+        "acceptance": "Closest wins. Exact bonus if 4.",
+        "source_key": "MAMMAL_HEART_COMMON"
+      },
+      {
+        "question_no": 3,
+        "type": "text",
+        "question": "Are fungi more closely related to plants or animals?",
+        "answer": "Animals",
+        "display_answer": "Animals",
+        "acceptance": "Exact concept required: animals.",
+        "source_key": "FUNGI_ANIMALS"
+      }
+    ]
+  },
+  {
+    "category_id": "developer_wizards",
+    "category_name": "Developerji in Ostali Čarovniki",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "How many bits are in one byte?",
+        "answer": 8,
+        "unit": "bits",
+        "display_answer": "8 bits",
+        "acceptance": "Closest wins. Exact bonus if 8.",
+        "source_key": "BYTE_COMMON"
+      },
+      {
+        "question_no": 2,
+        "type": "text",
+        "question": "What does HTTP stand for?",
+        "answer": "Hypertext Transfer Protocol",
+        "display_answer": "Hypertext Transfer Protocol",
+        "acceptance": "Exact concept required; small spelling mistakes acceptable.",
+        "source_key": "HTTP_COMMON"
+      },
+      {
+        "question_no": 3,
+        "type": "text",
+        "question": "What is the decimal number 10 written in binary?",
+        "answer": "1010",
+        "display_answer": "1010",
+        "acceptance": "Exact answer: 1010.",
+        "source_key": "BINARY_COMMON"
+      }
+    ]
+  },
+  {
+    "category_id": "safari_bad_decisions",
+    "category_name": "Safari, Smrt & Slabe Odločitve",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "numeric",
+        "question": "How fast can a lion sprint in short bursts?",
+        "answer": 80,
+        "unit": "km/h",
+        "display_answer": "About 80 km/h",
+        "acceptance": "Closest wins. Exact bonus if 80 km/h.",
+        "source_key": "LION_SPEED"
+      },
+      {
+        "question_no": 2,
+        "type": "numeric",
+        "question": "How much does an adult male African savanna elephant weigh on average?",
+        "answer": 6000,
+        "unit": "kg",
+        "display_answer": "About 6,000 kg",
+        "acceptance": "Closest wins. Exact bonus if 6,000 kg.",
+        "source_key": "ELEPHANT_WEIGHT"
+      },
+      {
+        "question_no": 3,
+        "type": "text",
+        "question": "On safari, which animal is commonly treated as more dangerous to humans: lion or hippopotamus?",
+        "answer": "Hippopotamus",
+        "display_answer": "Hippopotamus",
+        "acceptance": "Exact concept required: hippo/hippopotamus.",
+        "source_key": "HIPPO_DANGER"
+      }
+    ]
+  },
+  {
+    "category_id": "debate_engineering",
+    "category_name": "Okna, Vrata & Neumna Vprašanja",
+    "questions": [
+      {
+        "question_no": 1,
+        "type": "text",
+        "question": "Are there more windows or doors in the world?",
+        "answer": "Host judged; suggested answer: windows",
+        "display_answer": "No official answer. Host judged debate question.",
+        "acceptance": "Debate round. Award winner by best argument or host decision.",
+        "source_key": "DEBATE"
+      },
+      {
+        "question_no": 2,
+        "type": "text",
+        "question": "Are there more wheels or doors in the world?",
+        "answer": "Host judged; suggested answer: wheels",
+        "display_answer": "No official answer. Host judged debate question.",
+        "acceptance": "Debate round. Award winner by best argument or host decision.",
+        "source_key": "DEBATE"
+      },
+      {
+        "question_no": 3,
+        "type": "numeric",
+        "question": "How many windows do you estimate exist in the world?",
+        "answer": null,
+        "unit": "windows",
+        "display_answer": "No official answer. Host sets target before answers or closest to group median wins.",
+        "acceptance": "Estimation round. Host must define target rule before reveal.",
+        "source_key": "DEBATE"
+      }
+    ]
+  }
+]

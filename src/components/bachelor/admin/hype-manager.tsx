@@ -8,14 +8,23 @@ import { Badge } from '@/components/ui/badge'
 import {
   createHypeEventAction,
   triggerHypeEventAction,
+  deleteHypeEventAction,
 } from '@/app/superadmin/bachelor/actions'
 import { initialBachelorActionState } from '@/lib/types/action-states'
 import { Lock, Unlock, CheckCircle2, Plus } from 'lucide-react'
 import { toast } from 'sonner'
-import type { HypeEvent } from '@prisma/client'
+
+type HypeEventItem = {
+  id: string
+  title: string
+  description: string | null
+  status: string
+  voteCount: number
+  voteThreshold: number
+}
 
 interface HypeManagerProps {
-  events: HypeEvent[]
+  events: HypeEventItem[]
 }
 
 export function HypeManager({ events }: HypeManagerProps) {
@@ -34,6 +43,15 @@ export function HypeManager({ events }: HypeManagerProps) {
 
   const handleTrigger = async (eventId: string, status: string) => {
     const result = await triggerHypeEventAction(eventId, status)
+    if (result.success) {
+      toast.success(result.message)
+    } else {
+      toast.error(result.message)
+    }
+  }
+
+  const handleDelete = async (eventId: string) => {
+    const result = await deleteHypeEventAction(eventId)
     if (result.success) {
       toast.success(result.message)
     } else {
@@ -183,6 +201,13 @@ export function HypeManager({ events }: HypeManagerProps) {
                         MISSION ACCOMPLISHED
                       </div>
                     )}
+                    <Button
+                      variant="destructive"
+                      className="flex-1 font-black rounded-2xl h-12 px-6 transition-all active:scale-95"
+                      onClick={() => handleDelete(event.id)}
+                    >
+                      DELETE EVENT
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

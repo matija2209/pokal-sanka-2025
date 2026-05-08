@@ -3,8 +3,14 @@
 import { revalidatePath } from 'next/cache'
 import { uploadImage } from '@/lib/utils/image-upload'
 import { createSighting, getSightingById } from '@/lib/prisma/fetchers/sighting-fetchers'
-import { createHypeVote, getHypeVoteCount, getNextLockedHypeEvent, incrementHypeEventVoteCount } from '@/lib/prisma/fetchers/hype-fetchers'
-import { ACTION_POINTS, ACTION_FRIENDSHIP, ACTION_TYPES, HYPE_VOTE_THRESHOLD, isActionType } from '@/lib/utils/bachelor-points'
+import {
+  createHypeVote,
+  getHypeEventById,
+  getHypeVoteCount,
+  incrementHypeEventVoteCount,
+  updateHypeEventStatus,
+} from '@/lib/prisma/fetchers/hype-fetchers'
+import { ACTION_POINTS, ACTION_FRIENDSHIP, ACTION_TYPES, isActionType } from '@/lib/utils/bachelor-points'
 import type { BachelorActionState } from '@/lib/types/action-states'
 
 export async function submitSightingAction(
@@ -115,8 +121,27 @@ export async function submitHypeVoteAction(
   formData: FormData
 ): Promise<BachelorActionState> {
   try {
+    const hypeEventId = formData.get('hypeEventId') as string
     const suggestion = (formData.get('suggestion') as string) || undefined
     const voterName = (formData.get('voterName') as string) || undefined
+    const selectedEvent = hypeEventId ? await getHypeEventById(hypeEventId) : null
+
+    if (!selectedEvent) {
+      return {
+        success: false,
+        message: 'Pick a hype event to vote for.',
+        type: 'error',
+        errors: { hypeEventId: ['Hype event is required'] },
+      }
+    }
+
+    if (selectedEvent.status !== 'locked') {
+      return {
+        success: false,
+        message: 'That hype event is no longer accepting votes.',
+        type: 'error',
+      }
+    }
 
     const vote = await createHypeVote({ suggestion, voterName })
 
@@ -128,30 +153,27 @@ export async function submitHypeVoteAction(
       }
     }
 
-    const totalVotes = await getHypeVoteCount()
-    const nextEvent = await getNextLockedHypeEvent()
+    const updatedEvent = await incrementHypeEventVoteCount(selectedEvent.id)
 
-    if (nextEvent) {
-      const votesSinceLastUnlock = totalVotes % HYPE_VOTE_THRESHOLD
-      const votesNeeded = HYPE_VOTE_THRESHOLD - votesSinceLastUnlock
-
-      if (votesSinceLastUnlock === 0) {
-        await incrementHypeEventVoteCount(nextEvent.id)
-
-        revalidatePath('/the-bachelor')
-        return {
-          success: true,
-          message: `Hype Event unlocked: "${nextEvent.title}"!`,
-          type: 'update',
-          data: { hypeVoteCount: totalVotes },
-        }
+    if (!updatedEvent) {
+      return {
+        success: false,
+        message: 'Vote saved, but failed to update hype progress.',
+        type: 'error',
       }
+    }
+
+    const totalVotes = await getHypeVoteCount()
+    const votesNeeded = Math.max(0, updatedEvent.voteThreshold - updatedEvent.voteCount)
+
+    if (updatedEvent.voteCount >= updatedEvent.voteThreshold) {
+      await updateHypeEventStatus(updatedEvent.id, 'unlocked')
 
       revalidatePath('/the-bachelor')
       return {
         success: true,
-        message: `Vote recorded! ${votesNeeded} more votes until next Hype Event.`,
-        type: 'create',
+        message: `Hype Event unlocked: "${updatedEvent.title}"!`,
+        type: 'update',
         data: { hypeVoteCount: totalVotes },
       }
     }
@@ -159,7 +181,7 @@ export async function submitHypeVoteAction(
     revalidatePath('/the-bachelor')
     return {
       success: true,
-      message: 'Vote recorded!',
+      message: `Vote recorded for "${updatedEvent.title}"! ${votesNeeded} more vote${votesNeeded === 1 ? '' : 's'} to unlock it.`,
       type: 'create',
       data: { hypeVoteCount: totalVotes },
     }

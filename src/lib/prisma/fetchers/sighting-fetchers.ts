@@ -154,6 +154,18 @@ export async function updateSightingPoints(id: string, points: number) {
   }
 }
 
+export async function deleteSighting(id: string) {
+  try {
+    const eventId = await requireBachelorEventId()
+    return await prisma.publicSighting.deleteMany({
+      where: { id, eventId },
+    })
+  } catch (error) {
+    console.error('Error deleting sighting:', error)
+    return null
+  }
+}
+
 export async function getSightingStats() {
   try {
     const eventId = await requireBachelorEventId()

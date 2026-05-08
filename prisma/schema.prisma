@@ -70,6 +70,7 @@ model Post {
   userId    String
   message   String
   image_url String?
+  isPrivate Boolean  @default(true)
   createdAt DateTime @default(now())
 
   event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)

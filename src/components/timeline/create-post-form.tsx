@@ -11,7 +11,7 @@ import { upload } from '@vercel/blob/client'
 import { compressImage, shouldCompress } from '@/lib/utils/client-image-compression'
 import { toast } from 'sonner'
 import UserAvatar from '@/components/users/user-avatar'
-import { Sparkles } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface CreatePostFormProps {
   currentUser?: {
@@ -23,6 +23,7 @@ interface CreatePostFormProps {
 
 export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
   const [message, setMessage] = useState('')
+  const [isPrivate, setIsPrivate] = useState(true)
   const [uploadingImage, setUploadingImage] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isPending, startTransition] = useTransition()
@@ -32,6 +33,7 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
     if (state.success) {
       toast.success(state.message || 'Objava uspešno ustvarjena!')
       setMessage('')
+      setIsPrivate(true)
     } else if (state.message && !state.success) {
       toast.error(state.message)
     }
@@ -84,6 +86,7 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
 
       const postData = new FormData()
       postData.append('message', formData.get('message') as string)
+      postData.append('isPrivate', String(isPrivate))
       if (imageUrl) {
         postData.append('imageUrl', imageUrl)
       }
@@ -121,12 +124,19 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
             />
             
             <div className="mt-2 flex items-center justify-between border-t border-border/40 pt-3">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-4">
                 <MobileImageInput
                   name="post-image"
                   label="Fotografija"
                   variant="compact"
                 />
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Checkbox
+                    checked={isPrivate}
+                    onCheckedChange={(checked) => setIsPrivate(checked === true)}
+                  />
+                  Private
+                </label>
               </div>
               <Button 
                 type="submit"

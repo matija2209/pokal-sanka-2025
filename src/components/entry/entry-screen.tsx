@@ -19,6 +19,7 @@ interface EntryScreenProps {
   existingPeople?: ExistingPersonOption[]
   knownPersonName?: string | null
   activeEventName?: string | null
+  returnTo?: string
 }
 
 type ViewMode = 'selection' | 'create' | 'existing' | 'join'
@@ -27,12 +28,13 @@ export default function EntryScreen({
   existingUsers,
   existingPeople = [],
   knownPersonName,
-  activeEventName
+  activeEventName,
+  returnTo,
 }: EntryScreenProps) {
   const [viewMode, setViewMode] = useState<ViewMode>(knownPersonName ? 'join' : 'selection')
 
   if (viewMode === 'create') {
-    return <CreateUserForm onBack={() => setViewMode('selection')} />
+    return <CreateUserForm onBack={() => setViewMode('selection')} returnTo={returnTo} />
   }
 
   if (viewMode === 'join' && knownPersonName) {
@@ -40,6 +42,7 @@ export default function EntryScreen({
       <CreateUserForm
         knownPersonName={knownPersonName}
         activeEventName={activeEventName}
+        returnTo={returnTo}
         onBack={() => setViewMode('selection')}
       />
     )
@@ -51,6 +54,7 @@ export default function EntryScreen({
         users={existingUsers}
         people={existingPeople}
         mode={existingPeople.length > 0 ? 'people' : 'users'}
+        returnTo={returnTo}
         onBack={() => setViewMode('selection')} 
       />
     )

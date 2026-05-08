@@ -18,8 +18,9 @@ export function HeroSection() {
         </h1>
 
         <p className="text-base sm:text-xl text-muted-foreground mb-8 max-w-xl mx-auto leading-relaxed px-2">
-          BWSK is on his bachelor weekend in Malta. Help us track the groom,
-          hype him up, and become part of his Friend Collection.
+          Our friend Boštjan from Slovenia is getting married, and we are here in Malta on
+          his bachelor trip. Help us keep track of the groom and, if you are feeling daring,
+          approach him in the wild.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
@@ -38,11 +39,9 @@ export function HeroSection() {
 
         <div className="mt-8 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-muted/30 border border-primary/10 max-w-lg mx-auto backdrop-blur-sm">
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            <strong className="text-foreground">Meet BWSK.</strong> Future husband. Weekend
-            legend. He is roaming Malta
-            with one mission: collect memories, collect
-            friends, and prove he is ready for marriage. If you found him, you are now
-            part of the story.
+            <strong className="text-foreground">Fun fact:</strong> Boštjan is famously
+            "great" at estimating distances and how long anything will take. If you spot
+            him roaming Malta, you are officially part of the experiment now.
           </p>
         </div>
       </div>

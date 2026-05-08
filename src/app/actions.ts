@@ -161,6 +161,7 @@ export async function selectExistingPersonAction(
 ): Promise<UserActionState> {
   try {
     const personId = formData.get('personId') as string
+    const returnTo = formData.get('returnTo') as string | null
 
     if (!personId) {
       return {
@@ -208,7 +209,9 @@ export async function selectExistingPersonAction(
       message: 'Identity selected successfully!',
       type: 'update',
       data: {
-        redirectUrl: eventUser ? (eventUser.teamId ? '/app/players' : '/app/select-team') : '/'
+        redirectUrl: eventUser
+          ? (eventUser.teamId ? '/app/players' : '/app/select-team')
+          : (returnTo?.trim() || '/')
       }
     }
   } catch (error) {
@@ -505,7 +508,7 @@ export async function logDrinkAction(
     revalidatePath('/app/players')
     revalidatePath('/app/feed')
     revalidatePath('/app/teams')
-    revalidatePath('/quick-log')
+    revalidatePath('/app/quick-log')
     revalidatePath('/dashboard')
 
     return {
@@ -616,7 +619,7 @@ export async function logMultipleDrinksAction(
     revalidatePath('/app/players')
     revalidatePath('/app/feed')
     revalidatePath('/app/teams')
-    revalidatePath('/quick-log')
+    revalidatePath('/app/quick-log')
     revalidatePath('/dashboard')
 
     return {
@@ -705,7 +708,7 @@ export async function updateUserProfileAction(
     revalidatePath('/app/profile')
     revalidatePath('/app/players')
     revalidatePath('/app/feed')
-    revalidatePath('/quick-log')
+    revalidatePath('/app/quick-log')
     revalidatePath('/dashboard')
     revalidatePath('/')
 
@@ -771,7 +774,7 @@ export async function updateTeamLogoAction(
       revalidatePath('/app/players')
       revalidatePath('/app/feed')
       revalidatePath('/dashboard')
-      revalidatePath('/quick-log')
+      revalidatePath('/app/quick-log')
       revalidatePath('/')
 
       return {
@@ -813,6 +816,7 @@ export async function createPostAction(
     
     const message = formData.get('message') as string
     const imageUrl = formData.get('imageUrl') as string | null
+    const isPrivateValue = formData.get('isPrivate') as string | null
     
     if (!message || !message.trim()) {
       return {
@@ -837,12 +841,14 @@ export async function createPostAction(
         ...(activeEvent ? { eventId: activeEvent.id } : {}),
         userId: currentUser.id,
         message: message.trim(),
-        image_url: imageUrl
+        image_url: imageUrl,
+        isPrivate: isPrivateValue !== 'false'
       }
     })
     
     revalidatePath('/app/profile')
     revalidatePath('/app/feed')
+    revalidatePath('/the-bachelor')
     revalidatePath('/dashboard')
 
     return {

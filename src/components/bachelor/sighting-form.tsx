@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { upload } from '@vercel/blob/client'
 import { compressImage, shouldCompress } from '@/lib/utils/client-image-compression'
 import {
@@ -37,6 +38,41 @@ interface SightingFormProps {
   initialAction?: ActionType
 }
 
+const COUNTRY_OPTIONS = [
+  'Slovenia',
+  'Croatia',
+  'Serbia',
+  'Bosnia and Herzegovina',
+  'Montenegro',
+  'North Macedonia',
+  'Austria',
+  'Italy',
+  'Germany',
+  'France',
+  'Spain',
+  'Portugal',
+  'Netherlands',
+  'Belgium',
+  'Switzerland',
+  'United Kingdom',
+  'Ireland',
+  'Sweden',
+  'Norway',
+  'Denmark',
+  'Finland',
+  'Poland',
+  'Czech Republic',
+  'Hungary',
+  'Romania',
+  'Greece',
+  'Turkey',
+  'United States',
+  'Canada',
+  'Australia',
+  'New Zealand',
+  'Other',
+] as const
+
 export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingFormProps) {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(
@@ -51,6 +87,7 @@ export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingForm
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [selectedAction, setSelectedAction] = useState<ActionType>(initialAction)
+  const [selectedCountry, setSelectedCountry] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
 
@@ -153,7 +190,7 @@ export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingForm
       formData.set('actionType', selectedAction)
 
       const submitterName = formRef.current?.submitterName?.value
-      const submitterCountry = formRef.current?.submitterCountry?.value
+      const submitterCountry = selectedCountry
       const message = formRef.current?.message?.value
 
       if (submitterName) formData.set('submitterName', submitterName)
@@ -368,11 +405,19 @@ export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingForm
           placeholder="Your name or nickname (optional)"
           className="h-10 text-sm"
         />
-        <Input
-          name="submitterCountry"
-          placeholder="Your country (optional)"
-          className="h-10 text-sm"
-        />
+        <input type="hidden" name="submitterCountry" value={selectedCountry} />
+        <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+          <SelectTrigger className="h-10 w-full text-sm">
+            <SelectValue placeholder="Your country (optional)" />
+          </SelectTrigger>
+          <SelectContent>
+            {COUNTRY_OPTIONS.map((country) => (
+              <SelectItem key={country} value={country}>
+                {country}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Textarea
           name="message"
           placeholder="Leave a message for BWSK... (optional)"

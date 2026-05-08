@@ -28,6 +28,12 @@ export default function SuperAdminLayout({
             <Link href="/superadmin/trivia/powers" className={navLinkClass}>
               Powers
             </Link>
+            <Link href="/superadmin/bachelor" className={navLinkClass}>
+              Bachelor
+            </Link>
+            <Link href="/superadmin/posts" className={navLinkClass}>
+              Posts
+            </Link>
             <Link
               href="/app"
               className="rounded-md border border-primary/30 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"

@@ -1,61 +1,290 @@
 [
   {
-    "title": "Airport Intelligence",
-    "description": "Travel chaos, timing, and first-contact predictions.",
-    "status": "completed",
+    "title": "Mostovi & Engineering Ego",
+    "description": "Imported from bridges_engineering_ego",
+    "status": "draft",
     "questions": [
-      { "text": "Who first guessed the correct departure delay?", "type": "text", "answer": "Tajsss" },
-      { "text": "Who nailed the gate change before the announcement?", "type": "text", "answer": "Davor" },
-      { "text": "Who predicted the groom would miss breakfast?", "type": "text", "answer": "Tajsss" }
-    ],
-    "winners": [0, 1, 0],
-    "hasNumericBonus": false,
-    "publishedToScoreboard": true
-  },
-  {
-    "title": "Malta Forecast",
-    "description": "Weather, sunburn, and tactical optimism.",
-    "status": "completed",
-    "questions": [
-      { "text": "Who guessed the exact midday temperature?", "type": "numeric", "numericAnswer": 27, "allowClosest": false },
-      { "text": "Who called the first sunscreen failure?", "type": "text", "answer": "Larson" },
-      { "text": "Who correctly predicted the windy boat segment?", "type": "text", "answer": "Matija" }
-    ],
-    "winners": [5, 10, 17],
-    "hasNumericBonus": true,
-    "publishedToScoreboard": true
-  },
-  {
-    "title": "Night Shift Tactics",
-    "description": "Bar order, stamina, and timing under pressure.",
-    "status": "completed",
-    "questions": [
-      { "text": "Who identified the strongest opening bar move?", "type": "text", "answer": "Optimus prime" },
-      { "text": "Who guessed the exact minute of the first regroup?", "type": "numeric", "numericAnswer": 23, "allowClosest": true },
-      { "text": "Who predicted the final taxi debate winner?", "type": "text", "answer": "Zoja" }
-    ],
-    "winners": [20, 20, 20],
-    "hasNumericBonus": true,
-    "publishedToScoreboard": false
-  },
-  {
-    "title": "Wedding Propaganda",
-    "description": "Active round waiting to be scored live.",
-    "status": "active",
-    "questions": [
-      { "text": "Who writes the strongest fake best-man speech opening line?", "type": "text" },
-      { "text": "Who estimates the exact toast count before midnight?", "type": "numeric", "numericAnswer": 14, "allowClosest": true },
-      { "text": "Who picks the groom walkout song correctly?", "type": "text" }
+      {
+        "text": "How long is the longest bridge in the world, the Danyang-Kunshan Grand Bridge?",
+        "type": "numeric",
+        "numericAnswer": 164.8,
+        "allowClosest": true
+      },
+      {
+        "text": "What is the total length of the Golden Gate Bridge including approaches?",
+        "type": "numeric",
+        "numericAnswer": 2737,
+        "allowClosest": true
+      },
+      {
+        "text": "What is the main stone arch span of the Solkan Bridge?",
+        "type": "numeric",
+        "numericAnswer": 85,
+        "allowClosest": true
+      }
     ]
   },
   {
-    "title": "Recovery Economics",
-    "description": "Draft category for the morning after.",
+    "title": "Ladje, Nafta & Absurdne Količine",
+    "description": "Imported from oil_tankers_absurd_volumes",
     "status": "draft",
     "questions": [
-      { "text": "Who predicts the first breakfast order?", "type": "text" },
-      { "text": "Who gets closest to total coffees consumed?", "type": "numeric", "numericAnswer": 31, "allowClosest": true },
-      { "text": "Who names the first person to ask for a nap?", "type": "text" }
+      {
+        "text": "How many litres are in one barrel of crude oil?",
+        "type": "numeric",
+        "numericAnswer": 158.987,
+        "allowClosest": true
+      },
+      {
+        "text": "A VLCC tanker carrying 2 million barrels of crude carries roughly how many litres?",
+        "type": "numeric",
+        "numericAnswer": 317974000,
+        "allowClosest": true
+      },
+      {
+        "text": "Roughly how thick is the side-shell steel on a modern VLCC tanker?",
+        "type": "numeric",
+        "numericAnswer": 22,
+        "allowClosest": true
+      }
+    ]
+  },
+  {
+    "title": "Denar & Fizika",
+    "description": "Imported from money_physics",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "How much does one €50 banknote weigh?",
+        "type": "numeric",
+        "numericAnswer": 0.9,
+        "allowClosest": true
+      },
+      {
+        "text": "What are the dimensions of a €50 banknote?",
+        "type": "numeric",
+        "allowClosest": true
+      },
+      {
+        "text": "How many €50 banknotes weigh 1 kg?",
+        "type": "numeric",
+        "numericAnswer": 1111,
+        "allowClosest": true
+      }
+    ]
+  },
+  {
+    "title": "Slovenija: Voda, Jabolka & Realnost",
+    "description": "Imported from slovenia_water_fruit",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "What is the average discharge of the Ljubljanica near Ljubljana/Moste?",
+        "type": "numeric",
+        "numericAnswer": 55.4,
+        "allowClosest": true
+      },
+      {
+        "text": "How many tonnes of apples were produced in Slovenian orchard plantations in 2024?",
+        "type": "numeric",
+        "numericAnswer": 50600,
+        "allowClosest": true
+      },
+      {
+        "text": "How many 0.5 L beers are in a standard 50 L keg?",
+        "type": "numeric",
+        "numericAnswer": 100,
+        "allowClosest": true
+      }
+    ]
+  },
+  {
+    "title": "Kmetija & Heavy Machinery",
+    "description": "Imported from farm_heavy_machinery",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "At peak/mid-lactation, roughly how many litres of milk can a dairy cow produce per day?",
+        "type": "numeric",
+        "numericAnswer": 35,
+        "allowClosest": true
+      },
+      {
+        "text": "How much does a mature Holstein-Friesian dairy cow weigh?",
+        "type": "numeric",
+        "numericAnswer": 725,
+        "allowClosest": true
+      },
+      {
+        "text": "Which is normally built to generate more low-speed pulling torque: a tractor engine or a car engine?",
+        "type": "text",
+        "answer": "Tractor engine"
+      }
+    ]
+  },
+  {
+    "title": "Lovska Sekcija",
+    "description": "Imported from hunting_section",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "How fast can a wild boar run at maximum speed?",
+        "type": "numeric",
+        "numericAnswer": 40,
+        "allowClosest": true
+      },
+      {
+        "text": "What is a normal weight range for a fully grown male red deer/stag in Europe?",
+        "type": "numeric",
+        "numericAnswer": 175,
+        "allowClosest": true
+      },
+      {
+        "text": "Which animal is generally more dangerous to surprise at close range: roe deer, fox, or wild boar?",
+        "type": "text",
+        "answer": "Wild boar"
+      }
+    ]
+  },
+  {
+    "title": "Ribičija & Voda",
+    "description": "Imported from fishing_water",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "Which fish is more associated with clean, cold, oxygen-rich water: trout or carp?",
+        "type": "text",
+        "answer": "Trout"
+      },
+      {
+        "text": "A very large European wels catfish can exceed roughly what weight?",
+        "type": "numeric",
+        "numericAnswer": 100,
+        "allowClosest": true
+      },
+      {
+        "text": "What is the average discharge of the Ljubljanica at Vrhnika/source area?",
+        "type": "numeric",
+        "numericAnswer": 25,
+        "allowClosest": true
+      }
+    ]
+  },
+  {
+    "title": "Motorka & Gozd",
+    "description": "Imported from chainsaw_forest",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "Roughly how fast does a petrol chainsaw chain move?",
+        "type": "numeric",
+        "numericAnswer": 20,
+        "allowClosest": true
+      },
+      {
+        "text": "Which wood is generally harder: oak or spruce?",
+        "type": "text",
+        "answer": "Oak"
+      },
+      {
+        "text": "How tall can a mature Norway spruce typically get in a large open landscape?",
+        "type": "numeric",
+        "numericAnswer": 20,
+        "allowClosest": true
+      }
+    ]
+  },
+  {
+    "title": "Biologija za Šankom",
+    "description": "Imported from biology_at_the_bar",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "How many bones does a typical adult human skeleton have?",
+        "type": "numeric",
+        "numericAnswer": 206,
+        "allowClosest": true
+      },
+      {
+        "text": "How many chambers does a mammal heart have?",
+        "type": "numeric",
+        "numericAnswer": 4,
+        "allowClosest": true
+      },
+      {
+        "text": "Are fungi more closely related to plants or animals?",
+        "type": "text",
+        "answer": "Animals"
+      }
+    ]
+  },
+  {
+    "title": "Developerji in Ostali Čarovniki",
+    "description": "Imported from developer_wizards",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "How many bits are in one byte?",
+        "type": "numeric",
+        "numericAnswer": 8,
+        "allowClosest": true
+      },
+      {
+        "text": "What does HTTP stand for?",
+        "type": "text",
+        "answer": "Hypertext Transfer Protocol"
+      },
+      {
+        "text": "What is the decimal number 10 written in binary?",
+        "type": "text",
+        "answer": "1010"
+      }
+    ]
+  },
+  {
+    "title": "Safari, Smrt & Slabe Odločitve",
+    "description": "Imported from safari_bad_decisions",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "How fast can a lion sprint in short bursts?",
+        "type": "numeric",
+        "numericAnswer": 80,
+        "allowClosest": true
+      },
+      {
+        "text": "How much does an adult male African savanna elephant weigh on average?",
+        "type": "numeric",
+        "numericAnswer": 6000,
+        "allowClosest": true
+      },
+      {
+        "text": "On safari, which animal is commonly treated as more dangerous to humans: lion or hippopotamus?",
+        "type": "text",
+        "answer": "Hippopotamus"
+      }
+    ]
+  },
+  {
+    "title": "Okna, Vrata & Neumna Vprašanja",
+    "description": "Imported from debate_engineering",
+    "status": "draft",
+    "questions": [
+      {
+        "text": "Are there more windows or doors in the world?",
+        "type": "text",
+        "answer": "Host judged; suggested answer: windows"
+      },
+      {
+        "text": "Are there more wheels or doors in the world?",
+        "type": "text",
+        "answer": "Host judged; suggested answer: wheels"
+      },
+      {
+        "text": "How many windows do you estimate exist in the world?",
+        "type": "numeric",
+        "allowClosest": true
+      }
     ]
   }
 ]

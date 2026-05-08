@@ -21,13 +21,15 @@ interface SelectExistingUserFormProps {
   people?: ExistingPersonOption[]
   onBack: () => void
   mode?: 'users' | 'people'
+  returnTo?: string
 }
 
 export default function SelectExistingUserForm({
   users = [],
   people = [],
   onBack,
-  mode = 'users'
+  mode = 'users',
+  returnTo,
 }: SelectExistingUserFormProps) {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(
@@ -60,6 +62,7 @@ export default function SelectExistingUserForm({
           {mode === 'people' ? people.map((person) => (
             <form key={person.id} action={formAction}>
               <input type="hidden" name="personId" value={person.id} />
+              {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
               <Button
                 type="submit"
                 variant="outline"
@@ -98,6 +101,7 @@ export default function SelectExistingUserForm({
           )) : users.map((user) => (
             <form key={user.id} action={formAction}>
               <input type="hidden" name="userId" value={user.id} />
+              {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
               <Button
                 type="submit"
                 variant="outline"

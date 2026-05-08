@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getEventBySlug, setActiveEventCookie } from '@/lib/events'
+import { DEFAULT_BACHELOR_EVENT_SLUG, getEventBySlug, setActiveEventCookie } from '@/lib/events'
 import { setPersonCookie, setUserCookie, clearActiveUserCookie } from '@/lib/utils/cookies'
 import { getUserByPersonAndEvent } from '@/lib/prisma/fetchers/user-fetchers'
 import { prisma } from '@/lib/prisma/client'
@@ -14,6 +14,7 @@ type InviteRouteContext = {
 
 export async function GET(_request: Request, context: InviteRouteContext) {
   const { eventSlug, personId } = await context.params
+  const entryRedirectPath = eventSlug === DEFAULT_BACHELOR_EVENT_SLUG ? '/bwsk/enter' : '/'
 
   if (!(await isMultiEventSchemaAvailable())) {
     return NextResponse.redirect(new URL('/', _request.url))
@@ -38,10 +39,12 @@ export async function GET(_request: Request, context: InviteRouteContext) {
   if (eventUser) {
     await setUserCookie(eventUser.id, person.id)
 
-    const redirectPath = eventUser.teamId ? '/app/feed' : '/app/select-team'
+    const redirectPath = eventSlug === DEFAULT_BACHELOR_EVENT_SLUG
+      ? '/bwsk/enter'
+      : (eventUser.teamId ? '/app/feed' : '/app/select-team')
     return NextResponse.redirect(new URL(redirectPath, _request.url))
   }
 
   await clearActiveUserCookie()
-  return NextResponse.redirect(new URL('/', _request.url))
+  return NextResponse.redirect(new URL(entryRedirectPath, _request.url))
 }

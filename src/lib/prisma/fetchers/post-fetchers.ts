@@ -36,6 +36,108 @@ export async function getRecentPosts(limit: number = 10) {
   })
 }
 
+export async function getPublicPosts(limit: number = 10) {
+  if (!(await isMultiEventSchemaAvailable())) {
+    return await prisma.post.findMany({
+      where: {
+        isPrivate: false,
+      },
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          include: {
+            team: true,
+          },
+        },
+      },
+    })
+  }
+
+  const eventId = await requireActiveEventId()
+
+  return await prisma.post.findMany({
+    where: {
+      eventId,
+      isPrivate: false,
+    },
+    take: limit,
+    orderBy: { createdAt: 'desc' },
+    include: {
+      event: true,
+      user: {
+        include: {
+          team: true,
+          event: true,
+          person: true,
+        },
+      },
+    },
+  })
+}
+
+export async function getPostsForSuperadmin(limit: number = 100) {
+  if (!(await isMultiEventSchemaAvailable())) {
+    return await prisma.post.findMany({
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          include: {
+            team: true,
+          },
+        },
+      },
+    })
+  }
+
+  const eventId = await requireActiveEventId()
+
+  return await prisma.post.findMany({
+    where: { eventId },
+    take: limit,
+    orderBy: { createdAt: 'desc' },
+    include: {
+      event: true,
+      user: {
+        include: {
+          team: true,
+          event: true,
+          person: true,
+        },
+      },
+    },
+  })
+}
+
+export async function deletePostForSuperadmin(postId: string) {
+  if (!(await isMultiEventSchemaAvailable())) {
+    return await prisma.post.delete({
+      where: { id: postId },
+    })
+  }
+
+  const eventId = await requireActiveEventId()
+
+  const post = await prisma.post.findFirst({
+    where: {
+      id: postId,
+      eventId,
+    },
+    select: {
+      id: true,
+    },
+  })
+
+  if (!post) {
+    return null
+  }
+
+  return await prisma.post.delete({
+    where: { id: postId },
+  })
+}
+
 export async function getPostsWithUsers(limit: number = 20) {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.post.findMany({

@@ -43,7 +43,7 @@ OpenAI GPT-4o-mini generates Slovenian sports commentary for:
 | `/stats` | Leaderboard, commentary, timeline, activity |
 | `/profile` | Edit name, switch team, upload avatar/team logo |
 | `/dashboard` | TV-optimized auto-rotating display |
-| `/superadmin` | Reset all database data |
+| `/superadmin` | Superadmin overview, person/player management, and event reset controls |
 
 ### Auth
 No passwords. Users create an account by entering their name on the entry screen (`/`), or pick an existing user from the list for the currently selected event. The server stores:
@@ -266,7 +266,8 @@ Each page is a Next.js Server Component that fetches its own data and passes it 
 | `/stats` | `src/app/stats/page.tsx` | Combined leaderboard + commentary + timeline + activity |
 | `/profile` | `src/app/profile/page.tsx` | Edit name, switch team, upload avatar/team logo |
 | `/dashboard` | `src/app/dashboard/page.tsx` | TV-optimized auto-rotating display |
-| `/superadmin` | `src/app/superadmin/page.tsx` | Database reset button |
+| `/superadmin` | `src/app/superadmin/page.tsx` | Superadmin overview, active event controls, person/player CRUD, event reset |
+| `/superadmin/bachelor` | `src/app/superadmin/bachelor/page.tsx` | Bachelor moderation, hype management, bachelor-event reset |
 
 ### Server Actions (form handling & mutations)
 
@@ -281,7 +282,8 @@ Each page is a Next.js Server Component that fetches its own data and passes it 
 | | `logMultipleDrinksAction` | Log the same drink for multiple users + trigger commentary |
 | | `createPostAction` | Create a timeline post with optional image |
 | | `refreshDashboardAction` | Trigger dashboard data refresh |
-| `src/app/superadmin/actions.ts` | `resetDatabase` | Delete all data (no auth guard) |
+| `src/app/superadmin/actions.ts` | `resetActiveEventData`, `updateActiveEventName`, `createPersonAction`, `updatePersonAction`, `deletePersonAction`, `createPlayerForPersonAction`, `updatePlayerAction`, `deletePlayerAction` | Reset the active event, rename it, and manage people plus active-event players |
+| `src/app/superadmin/bachelor/actions.ts` | `approveSightingAction`, `rejectSightingAction`, `createHypeEventAction`, `triggerHypeEventAction`, `resetBachelorEventData` | Bachelor moderation, hype management, bachelor-event reset |
 
 ### Database (Prisma)
 

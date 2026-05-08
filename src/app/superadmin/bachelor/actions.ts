@@ -1,18 +1,24 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import {
   approveSighting,
   rejectSighting,
   updateSightingLocation,
   getAllSightings,
+  deleteSighting,
 } from '@/lib/prisma/fetchers/sighting-fetchers'
 import {
   createHypeEvent,
   updateHypeEventStatus,
+  deleteHypeEvent,
+  deleteHypeVote,
 } from '@/lib/prisma/fetchers/hype-fetchers'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import type { BachelorActionState } from '@/lib/types/action-states'
+import { requireBachelorEventId } from '@/lib/events'
+import { resetEventDataById } from '@/app/superadmin/actions'
 
 async function requireAdmin() {
   const user = await getCurrentUser()
@@ -215,6 +221,39 @@ export async function triggerHypeEventAction(
   }
 }
 
+export async function deleteHypeEventAction(
+  eventId: string
+): Promise<BachelorActionState> {
+  try {
+    await requireAdmin()
+
+    const result = await deleteHypeEvent(eventId)
+    if (!result || result.count === 0) {
+      return {
+        success: false,
+        message: 'Hype event not found.',
+        type: 'error',
+      }
+    }
+
+    revalidatePath('/the-bachelor')
+    revalidatePath('/superadmin/bachelor')
+
+    return {
+      success: true,
+      message: 'Hype event deleted.',
+      type: 'delete',
+    }
+  } catch (error) {
+    console.error('Error deleting hype event:', error)
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred',
+      type: 'error',
+    }
+  }
+}
+
 export async function getPendingSightingsCount(): Promise<number> {
   try {
     const sightings = await getAllSightings('pending')
@@ -222,4 +261,93 @@ export async function getPendingSightingsCount(): Promise<number> {
   } catch {
     return 0
   }
+}
+
+export async function deleteSightingAction(
+  sightingId: string
+): Promise<BachelorActionState> {
+  try {
+    await requireAdmin()
+
+    const result = await deleteSighting(sightingId)
+    if (!result || result.count === 0) {
+      return {
+        success: false,
+        message: 'Sighting not found.',
+        type: 'error',
+      }
+    }
+
+    revalidatePath('/the-bachelor')
+    revalidatePath('/the-bachelor/timeline')
+    revalidatePath('/superadmin/bachelor')
+
+    return {
+      success: true,
+      message: 'Sighting deleted.',
+      type: 'delete',
+    }
+  } catch (error) {
+    console.error('Error deleting sighting:', error)
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred',
+      type: 'error',
+    }
+  }
+}
+
+export async function deleteHypeVoteAction(
+  voteId: string
+): Promise<BachelorActionState> {
+  try {
+    await requireAdmin()
+
+    const result = await deleteHypeVote(voteId)
+    if (!result || result.count === 0) {
+      return {
+        success: false,
+        message: 'Hype vote not found.',
+        type: 'error',
+      }
+    }
+
+    revalidatePath('/the-bachelor')
+    revalidatePath('/superadmin/bachelor')
+
+    return {
+      success: true,
+      message: 'Hype vote deleted.',
+      type: 'delete',
+    }
+  } catch (error) {
+    console.error('Error deleting hype vote:', error)
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred',
+      type: 'error',
+    }
+  }
+}
+
+export async function resetBachelorEventData() {
+  let redirectTarget = '/superadmin/bachelor?reset=success'
+
+  try {
+    await requireAdmin()
+
+    const eventId = await requireBachelorEventId()
+    await resetEventDataById(eventId)
+
+    revalidatePath('/the-bachelor')
+    revalidatePath('/the-bachelor/timeline')
+    revalidatePath('/superadmin')
+    revalidatePath('/superadmin/bachelor')
+    revalidatePath('/superadmin/trivia')
+  } catch (error) {
+    console.error('Error resetting bachelor event data:', error)
+    redirectTarget = '/superadmin/bachelor?reset=error'
+  }
+
+  redirect(redirectTarget)
 }

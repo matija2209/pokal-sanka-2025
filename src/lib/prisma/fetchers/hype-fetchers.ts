@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma/client'
 import { requireBachelorEventId } from '@/lib/events'
+import type { HypeVote } from '@prisma/client'
 
 export async function createHypeVote(data: {
   suggestion?: string
@@ -19,7 +20,11 @@ export async function createHypeVote(data: {
 export async function getHypeVoteCount() {
   try {
     const eventId = await requireBachelorEventId()
-    return await prisma.hypeVote.count({ where: { eventId } })
+    const aggregate = await prisma.hypeEvent.aggregate({
+      where: { eventId },
+      _sum: { voteCount: true },
+    })
+    return aggregate._sum.voteCount ?? 0
   } catch (error) {
     console.error('Error getting hype vote count:', error)
     return 0
@@ -47,6 +52,31 @@ export async function getHypeEvents() {
     })
   } catch (error) {
     console.error('Error getting hype events:', error)
+    return []
+  }
+}
+
+export async function getHypeEventById(id: string) {
+  try {
+    const eventId = await requireBachelorEventId()
+    return await prisma.hypeEvent.findFirst({
+      where: { id, eventId },
+    })
+  } catch (error) {
+    console.error('Error getting hype event by id:', error)
+    return null
+  }
+}
+
+export async function getHypeVotes(): Promise<HypeVote[]> {
+  try {
+    const eventId = await requireBachelorEventId()
+    return await prisma.hypeVote.findMany({
+      where: { eventId },
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    console.error('Error getting hype votes:', error)
     return []
   }
 }
@@ -108,6 +138,30 @@ export async function incrementHypeEventVoteCount(eventId: string) {
     })
   } catch (error) {
     console.error('Error incrementing hype event vote count:', error)
+    return null
+  }
+}
+
+export async function deleteHypeEvent(id: string) {
+  try {
+    const eventId = await requireBachelorEventId()
+    return await prisma.hypeEvent.deleteMany({
+      where: { id, eventId },
+    })
+  } catch (error) {
+    console.error('Error deleting hype event:', error)
+    return null
+  }
+}
+
+export async function deleteHypeVote(id: string) {
+  try {
+    const eventId = await requireBachelorEventId()
+    return await prisma.hypeVote.deleteMany({
+      where: { id, eventId },
+    })
+  } catch (error) {
+    console.error('Error deleting hype vote:', error)
     return null
   }
 }

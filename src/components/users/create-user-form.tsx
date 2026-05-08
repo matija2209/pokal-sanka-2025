@@ -14,9 +14,10 @@ interface CreateUserFormProps {
   onBack?: () => void
   knownPersonName?: string | null
   activeEventName?: string | null
+  returnTo?: string
 }
 
-export default function CreateUserForm({ onBack, knownPersonName, activeEventName }: CreateUserFormProps) {
+export default function CreateUserForm({ onBack, knownPersonName, activeEventName, returnTo }: CreateUserFormProps) {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(createUserAction, initialUserActionState)
   const [name, setName] = useState(knownPersonName ?? '')
@@ -41,6 +42,7 @@ export default function CreateUserForm({ onBack, knownPersonName, activeEventNam
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
+          {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
           {isKnownPersonJoin ? (
             <>
               <input type="hidden" name="name" value={name} />

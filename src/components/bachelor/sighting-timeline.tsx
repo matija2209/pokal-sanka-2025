@@ -8,9 +8,15 @@ import Image from 'next/image'
 
 interface SightingTimelineProps {
   sightings: PublicSighting[]
+  canDelete?: boolean
+  onDeleteSighting?: (sightingId: string) => Promise<void>
 }
 
-export function SightingTimeline({ sightings }: SightingTimelineProps) {
+export function SightingTimeline({
+  sightings,
+  canDelete = false,
+  onDeleteSighting,
+}: SightingTimelineProps) {
   if (sightings.length === 0) {
     return (
       <Card className="bg-muted/30 border-muted">
@@ -62,6 +68,17 @@ export function SightingTimeline({ sightings }: SightingTimelineProps) {
                       {formatDistanceToNow(sighting.createdAt, { addSuffix: true })}
                     </span>
                   </div>
+
+                  {canDelete && onDeleteSighting && (
+                    <form action={onDeleteSighting.bind(null, sighting.id)} className="mb-2">
+                      <button
+                        type="submit"
+                        className="text-[10px] font-semibold text-destructive hover:opacity-80 transition-opacity"
+                      >
+                        Delete post
+                      </button>
+                    </form>
+                  )}
 
                   {sighting.submitterName && (
                     <p className="font-bold text-sm">
