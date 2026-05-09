@@ -10,7 +10,7 @@ import { Camera, Loader2, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
 
 type GpsState = 'idle' | 'loading' | 'acquired' | 'error'
-type FlowState = 'idle' | 'waiting_gps' | 'uploading' | 'submitting'
+type FlowState = 'idle' | 'uploading' | 'waiting_gps' | 'submitting'
 
 interface QuickPhotoCaptureProps {
   actionType: 'photo_together' | 'drink_together'
@@ -22,7 +22,7 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(submitSightingAction, initialBachelorActionState)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const pendingFileRef = useRef<File | null>(null)
+  const pendingBlobUrlRef = useRef<string | null>(null)
   const pendingSubmitRef = useRef(false)
 
   const [gpsState, setGpsState] = useState<GpsState>('idle')
@@ -71,30 +71,17 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
     )
   }, [])
 
-  const submitSighting = useCallback(async (file: File, lat: number, lng: number) => {
-    setFlowState('uploading')
+  const doSubmit = useCallback((blobUrl: string, lat: number, lng: number) => {
+    setFlowState('submitting')
 
-    try {
-      const blobResult = await upload(file.name, file, {
-        access: 'public',
-        handleUploadUrl: '/api/upload',
-        multipart: file.size > 1024 * 1024,
-      })
+    const formData = new FormData()
+    formData.set('photoUrl', blobUrl)
+    formData.set('latitude', lat.toString())
+    formData.set('longitude', lng.toString())
+    formData.set('actionType', actionType)
 
-      setFlowState('submitting')
-
-      const formData = new FormData()
-      formData.set('photoUrl', blobResult.url)
-      formData.set('latitude', lat.toString())
-      formData.set('longitude', lng.toString())
-      formData.set('actionType', actionType)
-
-      pendingSubmitRef.current = true
-      formAction(formData)
-    } catch {
-      setFlowState('idle')
-      toast.error('Failed to upload photo. Please try again.')
-    }
+    pendingSubmitRef.current = true
+    formAction(formData)
   }, [actionType, formAction])
 
   const handleClick = () => {
@@ -127,27 +114,41 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
       return
     }
 
-    if (latitude !== null && longitude !== null) {
-      await submitSighting(processedFile, latitude, longitude)
-    } else {
-      pendingFileRef.current = processedFile
-      setFlowState('waiting_gps')
+    setFlowState('uploading')
+
+    try {
+      const blobResult = await upload(processedFile.name, processedFile, {
+        access: 'public',
+        handleUploadUrl: '/api/upload',
+        multipart: processedFile.size > 1024 * 1024,
+      })
+
+      if (latitude !== null && longitude !== null) {
+        doSubmit(blobResult.url, latitude, longitude)
+      } else {
+        pendingBlobUrlRef.current = blobResult.url
+        if (gpsState !== 'loading') {
+          requestGps()
+        }
+        setFlowState('waiting_gps')
+      }
+    } catch {
+      setFlowState('idle')
+      toast.error('Failed to upload photo. Please try again.')
     }
   }
 
   useEffect(() => {
-    if (pendingFileRef.current && gpsState === 'acquired' && latitude !== null && longitude !== null) {
-      const file = pendingFileRef.current
-      pendingFileRef.current = null
-      submitSighting(file, latitude, longitude)
+    if (pendingBlobUrlRef.current && gpsState === 'acquired' && latitude !== null && longitude !== null) {
+      const blobUrl = pendingBlobUrlRef.current
+      pendingBlobUrlRef.current = null
+      doSubmit(blobUrl, latitude, longitude)
     }
-  }, [gpsState, latitude, longitude, submitSighting])
+  }, [gpsState, latitude, longitude, doSubmit])
 
   useEffect(() => {
-    if (pendingFileRef.current && gpsState === 'error') {
-      pendingFileRef.current = null
-      setFlowState('idle')
-      toast.error('Location failed. Please retry.')
+    if (pendingBlobUrlRef.current && gpsState === 'error') {
+      setFlowState('waiting_gps')
     }
   }, [gpsState])
 
@@ -180,14 +181,14 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
         ) : (
           <Camera className="w-5 h-5 mr-2" />
         )}
-        {flowState === 'waiting_gps'
-          ? 'Waiting for GPS...'
-          : gpsState === 'loading'
-            ? 'Getting location...'
-            : flowState === 'uploading'
-              ? 'Uploading photo...'
-              : flowState === 'submitting'
-                ? 'Submitting...'
+        {flowState === 'uploading'
+          ? 'Uploading photo...'
+          : flowState === 'waiting_gps'
+            ? 'Waiting for GPS...'
+            : flowState === 'submitting'
+              ? 'Submitting...'
+              : gpsState === 'loading'
+                ? 'Getting location...'
                 : children || 'Take photo with him'}
       </button>
 
