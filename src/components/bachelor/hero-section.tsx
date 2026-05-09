@@ -1,7 +1,5 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Camera } from 'lucide-react'
 import Image from 'next/image'
+import { QuickPhotoCapture } from '@/components/bachelor/quick-photo-capture'
 import bachelorImage1 from '@/app/the-bachelor/bostjan-pecar.jpg'
 import bachelorImage2 from '@/app/the-bachelor/bostjan-pecar-2.jpg'
 import bachelorImage3 from '@/app/the-bachelor/bostjan-pecar-3.jpg'
@@ -18,7 +16,7 @@ const gallery = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-end pb-12 sm:pb-20 overflow-hidden">
+    <section className="relative flex min-h-[88svh] flex-col items-center justify-end overflow-hidden pb-8 sm:min-h-screen sm:pb-20">
       {/* Rotating gallery background */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-stone-50 to-transparent sm:w-24" />
@@ -45,27 +43,27 @@ export function HeroSection() {
       </div>
 
       {/* Content overlay */}
-      <div className="relative z-20 w-full max-w-2xl mx-auto px-4 text-center">
-        <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs sm:text-sm font-medium mb-4">
+      <div className="relative z-20 mx-auto w-full max-w-2xl px-4 text-center">
+        <span className="mb-3 inline-block rounded-full bg-primary/20 px-3 py-1 text-sm font-medium text-primary sm:mb-4 sm:text-sm">
           He's getting married
         </span>
 
-        <h1 className="text-5xl sm:text-7xl font-lucky mb-3 tracking-tight leading-tight">
+        <h1 className="mb-2 text-6xl font-lucky leading-none tracking-tight sm:mb-3 sm:text-7xl">
           Boštjan
         </h1>
 
-        <p className="text-base sm:text-xl text-muted-foreground mb-8 max-w-md mx-auto leading-relaxed">
+        <p className="mx-auto mb-5 max-w-md text-lg leading-snug text-muted-foreground sm:mb-8 sm:text-xl sm:leading-relaxed">
           Our friend from Slovenia is getting married, and we're in Malta for his bachelor trip.
           Spot him, snap a photo, and join the fun.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild size="lg" className="text-lg px-8 py-6 h-auto w-full sm:w-auto shadow-xl">
-            <Link href="/the-bachelor/sighting/new?action=photo_together">
-              <Camera className="w-5 h-5 mr-2" />
-              Take photo with him
-            </Link>
-          </Button>
+        <div className="flex justify-center gap-3">
+          <QuickPhotoCapture
+            actionType="photo_together"
+            className="inline-flex items-center justify-center h-auto w-full px-6 py-4 text-xl font-medium shadow-xl sm:w-auto sm:px-8 sm:py-6 sm:text-lg rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-60"
+          >
+            Take photo with him
+          </QuickPhotoCapture>
         </div>
       </div>
 
