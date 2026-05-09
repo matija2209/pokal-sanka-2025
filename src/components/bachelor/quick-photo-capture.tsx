@@ -85,6 +85,10 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
   }, [actionType, formAction])
 
   const handleClick = () => {
+    if (pendingBlobUrlRef.current) {
+      requestGps()
+      return
+    }
     setFlowState('idle')
     requestGps()
     fileInputRef.current?.click()
@@ -127,9 +131,7 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
         doSubmit(blobResult.url, latitude, longitude)
       } else {
         pendingBlobUrlRef.current = blobResult.url
-        if (gpsState !== 'loading') {
-          requestGps()
-        }
+        requestGps()
         setFlowState('waiting_gps')
       }
     } catch {
