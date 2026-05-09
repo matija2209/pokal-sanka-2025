@@ -393,11 +393,12 @@ export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingForm
             <Camera className="w-8 h-8 text-muted-foreground mb-2" />
             <span className="text-sm text-muted-foreground">Tap to add a photo</span>
             <span className="text-xs text-muted-foreground mt-1">
-              Choose one from your gallery or take a respectful public photo of BWSK
+              Take a photo with BWSK
             </span>
             <input
               type="file"
               accept="image/*"
+              capture="environment"
               onChange={handlePhotoChange}
               className="hidden"
             />

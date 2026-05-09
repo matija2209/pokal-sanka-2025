@@ -1,11 +1,9 @@
 import { getApprovedSightings, getSightingStats } from '@/lib/prisma/fetchers/sighting-fetchers'
-import { getHypeVoteCount, getHypeEvents, getHypeVotes } from '@/lib/prisma/fetchers/hype-fetchers'
+import { getHypeVoteCount } from '@/lib/prisma/fetchers/hype-fetchers'
 import { getPublicPosts } from '@/lib/prisma/fetchers/post-fetchers'
 import { HeroSection } from '@/components/bachelor/hero-section'
 import { StatsCards } from '@/components/bachelor/stats-cards'
 import { MaltaMap } from '@/components/bachelor/malta-map'
-import { HypeMeter } from '@/components/bachelor/hype-meter'
-import { ParticipationLadder } from '@/components/bachelor/participation-ladder'
 import { SightingTimeline } from '@/components/bachelor/sighting-timeline'
 import { Footer } from '@/components/bachelor/footer'
 import { BachelorMobileNav } from '@/components/bachelor/mobile-nav'
@@ -16,11 +14,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Camera, Beer } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { requireBachelorEventId } from '@/lib/events'
-import bachelorImage1 from './bostjan-pecar.jpg'
-import bachelorImage2 from './bostjan-pecar-2.jpg'
-import bachelorImage3 from './bostjan-pecar-3.jpg'
-import bachelorImage4 from './bostjan-pecar-4.jpg'
-import bachelorImage5 from './bostjan-pecar-5.jpg'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,20 +36,10 @@ type PublicPost = Awaited<ReturnType<typeof getPublicPosts>>[number]
 export default async function BachelorPage() {
   const bachelorEventId = await requireBachelorEventId()
 
-  const bachelorGallery = [
-    { src: bachelorImage1, alt: 'Bostjan Pecar bachelor weekend portrait 1' },
-    { src: bachelorImage2, alt: 'Bostjan Pecar bachelor weekend portrait 2' },
-    { src: bachelorImage3, alt: 'Bostjan Pecar bachelor weekend portrait 3' },
-    { src: bachelorImage4, alt: 'Bostjan Pecar bachelor weekend portrait 4' },
-    { src: bachelorImage5, alt: 'Bostjan Pecar bachelor weekend portrait 5' },
-  ]
-
-  const [sightings, stats, hypeVoteCount, hypeEvents, hypeVotes, publicPosts] = await Promise.all([
+  const [sightings, stats, hypeVoteCount, publicPosts] = await Promise.all([
     getApprovedSightings(10, 0),
     getSightingStats(),
     getHypeVoteCount(),
-    getHypeEvents(),
-    getHypeVotes(),
     getPublicPosts(8, bachelorEventId),
   ])
 
@@ -79,52 +62,6 @@ export default async function BachelorPage() {
       <section id="timeline" className="mx-auto max-w-4xl px-4 py-6 sm:py-8">
         <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Recent Sightings</h2>
         <SightingTimeline sightings={sightings} />
-      </section>
-
-      <section className="relative overflow-hidden py-3 sm:py-6">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 bg-gradient-to-r from-stone-50 to-transparent sm:w-24" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-stone-50 to-transparent sm:w-24" />
-
-        <div className="flex w-max gap-3 pl-4 sm:gap-6 sm:pl-0 [animation:the-bachelor-gallery-scroll_34s_linear_infinite] motion-reduce:animate-none">
-          {[...bachelorGallery, ...bachelorGallery].map((image, index) => (
-            <div
-              key={`${image.alt}-${index}`}
-              className="relative h-40 w-28 shrink-0 overflow-hidden rounded-[1.25rem] border border-amber-200/70 bg-white shadow-lg shadow-amber-950/10 sm:h-64 sm:w-48 sm:rounded-[1.75rem] sm:shadow-xl md:h-80 md:w-60"
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                sizes="(max-width: 640px) 112px, (max-width: 768px) 192px, 240px"
-                className="object-cover"
-                priority={index < bachelorGallery.length}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-50/40 via-transparent to-transparent" />
-            </div>
-          ))}
-        </div>
-
-        <style>{`
-          @keyframes the-bachelor-gallery-scroll {
-            from {
-              transform: translate3d(0, 0, 0);
-            }
-            to {
-              transform: translate3d(calc(-50% - 0.5rem), 0, 0);
-            }
-          }
-
-          @media (min-width: 640px) {
-            @keyframes the-bachelor-gallery-scroll {
-              from {
-                transform: translate3d(0, 0, 0);
-              }
-              to {
-                transform: translate3d(calc(-50% - 0.75rem), 0, 0);
-              }
-            }
-          }
-        `}</style>
       </section>
 
       <div className="space-y-6 sm:space-y-0">
@@ -193,11 +130,6 @@ export default async function BachelorPage() {
           <MaltaMap sightings={mapSightings} />
         </section>
 
-        <section id="hype" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
-          <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Hype the Groom</h2>
-          <HypeMeter voteCount={hypeVoteCount} events={hypeEvents} votes={hypeVotes} />
-        </section>
-
         <section id="public-posts" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
           <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Public Posts</h2>
           {publicPosts.length === 0 ? (
@@ -234,11 +166,6 @@ export default async function BachelorPage() {
               ))}
             </div>
           )}
-        </section>
-
-        <section id="ladder" className="mx-auto max-w-4xl px-4 py-6 sm:py-12">
-          <h2 className="mb-4 text-center font-lucky text-xl sm:mb-6 sm:text-3xl">Friendship Levels</h2>
-          <ParticipationLadder />
         </section>
       </div>
 
