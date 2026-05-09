@@ -24,6 +24,9 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
   const fileInputRef = useRef<HTMLInputElement>(null)
   const pendingBlobUrlRef = useRef<string | null>(null)
   const pendingSubmitRef = useRef(false)
+  const latRef = useRef<number | null>(null)
+  const lngRef = useRef<number | null>(null)
+  const gpsStateRef = useRef<GpsState>('idle')
 
   const [gpsState, setGpsState] = useState<GpsState>('idle')
   const [latitude, setLatitude] = useState<number | null>(null)
@@ -33,21 +36,27 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
 
   const requestGps = useCallback(() => {
     if (!navigator.geolocation) {
+      gpsStateRef.current = 'error'
       setGpsState('error')
       setGpsError('Geolocation not supported by your browser.')
       return
     }
 
+    gpsStateRef.current = 'loading'
     setGpsState('loading')
     setGpsError('')
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        latRef.current = position.coords.latitude
+        lngRef.current = position.coords.longitude
+        gpsStateRef.current = 'acquired'
         setLatitude(position.coords.latitude)
         setLongitude(position.coords.longitude)
         setGpsState('acquired')
       },
       (error) => {
+        gpsStateRef.current = 'error'
         setGpsState('error')
         switch (error.code) {
           case error.PERMISSION_DENIED:
@@ -71,7 +80,7 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
     )
   }, [])
 
-  const doSubmit = useCallback((blobUrl: string, lat: number, lng: number) => {
+  const submitWithCoords = useCallback((blobUrl: string, lat: number, lng: number) => {
     setFlowState('submitting')
 
     const formData = new FormData()
@@ -127,8 +136,11 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
         multipart: processedFile.size > 1024 * 1024,
       })
 
-      if (latitude !== null && longitude !== null) {
-        doSubmit(blobResult.url, latitude, longitude)
+      const lat = latRef.current
+      const lng = lngRef.current
+
+      if (lat !== null && lng !== null) {
+        submitWithCoords(blobResult.url, lat, lng)
       } else {
         pendingBlobUrlRef.current = blobResult.url
         requestGps()
@@ -141,18 +153,15 @@ export function QuickPhotoCapture({ actionType, className, children }: QuickPhot
   }
 
   useEffect(() => {
-    if (pendingBlobUrlRef.current && gpsState === 'acquired' && latitude !== null && longitude !== null) {
-      const blobUrl = pendingBlobUrlRef.current
-      pendingBlobUrlRef.current = null
-      doSubmit(blobUrl, latitude, longitude)
-    }
-  }, [gpsState, latitude, longitude, doSubmit])
+    const blobUrl = pendingBlobUrlRef.current
+    const lat = latRef.current
+    const lng = lngRef.current
 
-  useEffect(() => {
-    if (pendingBlobUrlRef.current && gpsState === 'error') {
-      setFlowState('waiting_gps')
+    if (blobUrl && gpsState === 'acquired' && lat !== null && lng !== null) {
+      pendingBlobUrlRef.current = null
+      submitWithCoords(blobUrl, lat, lng)
     }
-  }, [gpsState])
+  }, [gpsState, submitWithCoords])
 
   useEffect(() => {
     if (!pendingSubmitRef.current) return
