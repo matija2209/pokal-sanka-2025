@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Camera, Beer } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { requireBachelorEventId } from '@/lib/events'
 import bachelorImage1 from './bostjan-pecar.jpg'
 import bachelorImage2 from './bostjan-pecar-2.jpg'
 import bachelorImage3 from './bostjan-pecar-3.jpg'
@@ -40,6 +41,8 @@ type BachelorMapSighting = {
 type PublicPost = Awaited<ReturnType<typeof getPublicPosts>>[number]
 
 export default async function BachelorPage() {
+  const bachelorEventId = await requireBachelorEventId()
+
   const bachelorGallery = [
     { src: bachelorImage1, alt: 'Bostjan Pecar bachelor weekend portrait 1' },
     { src: bachelorImage2, alt: 'Bostjan Pecar bachelor weekend portrait 2' },
@@ -54,7 +57,7 @@ export default async function BachelorPage() {
     getHypeVoteCount(),
     getHypeEvents(),
     getHypeVotes(),
-    getPublicPosts(8),
+    getPublicPosts(8, bachelorEventId),
   ])
 
   const mapSightings = sightings.map((s: BachelorMapSighting) => ({

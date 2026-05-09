@@ -36,7 +36,7 @@ export async function getRecentPosts(limit: number = 10) {
   })
 }
 
-export async function getPublicPosts(limit: number = 10) {
+export async function getPublicPosts(limit: number = 10, eventIdOverride?: string) {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.post.findMany({
       where: {
@@ -54,7 +54,7 @@ export async function getPublicPosts(limit: number = 10) {
     })
   }
 
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? await requireActiveEventId()
 
   return await prisma.post.findMany({
     where: {
