@@ -33,7 +33,7 @@ OpenAI GPT-4o-mini generates Slovenian sports commentary for:
 ### Pages
 | Route | Description |
 |---|---|
-| `/` | Entry screen — create account or select existing |
+| `/` | Entry screen — create a new account |
 | `/select-team` | Join or create a team |
 | `/players` | Main app — log drinks, create posts |
 | `/quick-log` | Fast drink logging via player grid |
@@ -43,6 +43,7 @@ OpenAI GPT-4o-mini generates Slovenian sports commentary for:
 | `/stats` | Leaderboard, commentary, timeline, activity |
 | `/profile` | Edit name, switch team, upload avatar/team logo |
 | `/dashboard` | TV-optimized auto-rotating display |
+| `/invite/[eventSlug]/[personId]/claim` | Invite landing page for joining an event or claiming a Better Auth account |
 | `/superadmin` | Superadmin overview, person/player management, and event reset controls |
 
 ### Auth
@@ -67,10 +68,12 @@ BETTER_AUTH_URL=http://localhost:3000
 Tables: `user` (auth identity with role/ban fields), `session`, `account`, `verification` — separate from the game data models.
 
 **Player authentication (cookie-based):**
-No passwords. Users create an account by entering their name on the entry screen (`/`), or pick an existing user from the list for the currently selected event. The server stores:
+No passwords are required for normal play. Users create an account by entering their name on the entry screen (`/`), or continue from a person-specific invite link. The server stores:
 - `turnir-sanka-user-id` — active participant/user record for the selected event
 - `turnir-sanka-person-id` — shared identity across events
 - `turnir-sanka-event-id` — currently active event
+
+Public entry no longer exposes existing-person selection. Existing `Person` identities are resolved through invite URLs / QR codes instead.
 
 **Role summary:**
 
@@ -99,6 +102,28 @@ To make the very first superadmin after a fresh database:
 2. Run the seed script: `npx tsx scripts/promote-superadmin.ts <your-email>`
 3. Restart or reload — that account is now superadmin
 
+### Self-Claiming a Person Account
+
+Players can now claim their own `Person` into a Better Auth account from an invite link.
+
+Flow:
+1. Open `/invite/[eventSlug]/[personId]`
+2. If that person already has an event participant (`User`) for the event, the app behaves as before and sends them into the event
+3. If the person does not yet have an event participant, the app redirects to `/invite/[eventSlug]/[personId]/claim`
+4. On the claim page they can either:
+   - continue without login and create/join their event participant as before
+   - create or sign into a Better Auth account with email/password and link it to that `Person`
+
+After a successful claim:
+- the Better Auth session is established
+- `AuthUser.personId` is linked to the invited `Person`
+- the app restores `turnir-sanka-person-id`
+- if an event participant already exists, `turnir-sanka-user-id` is restored too
+
+Important constraint:
+- if the email already belongs to an auth account linked to a different `Person`, the claim is rejected
+- public home/entry flows do not allow choosing an existing `Person`; invite links are the intended self-claim mechanism
+
 ### Seed & Admin Scripts
 ```bash
 # Promote a Better Auth user to superadmin by email
@@ -126,9 +151,9 @@ When someone opens that URL, the server:
 Redirect behavior:
 - existing participant with team: `/app/feed`
 - existing participant without team: `/app/select-team`
-- person exists but has no participant in that event yet: `/`
+- person exists but has no participant in that event yet: `/invite/[eventSlug]/[personId]/claim`
 
-That last case is intentional: the entry screen opens with the person already preselected, so creating their participant for the invited event stays a one-tap flow.
+That last case is intentional: the claim page keeps the lightweight join flow available, but also lets the invited person create or sign into a Better Auth account and permanently link it to their `Person`.
 
 ## Tech Stack
 

@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { EntryScreen } from '@/components/entry'
 import { getCurrentPersonId, getCurrentUser } from '@/lib/utils/cookies'
 import { DEFAULT_BACHELOR_EVENT_SLUG, getActiveEvent, getEventBySlug } from '@/lib/events'
-import { getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 import { prisma } from '@/lib/prisma/client'
 import bachelorImage1 from '../../the-bachelor/bostjan-pecar.jpg'
@@ -36,7 +35,6 @@ export default async function BwskEntryPage() {
   }
 
   const currentUser = await getCurrentUser()
-  const existingUsers = await getAllUsersWithTeamAndDrinks()
   const currentPersonId = await getCurrentPersonId()
   const multiEventEnabled = await isMultiEventSchemaAvailable()
   const knownPerson = multiEventEnabled && currentPersonId
@@ -44,24 +42,6 @@ export default async function BwskEntryPage() {
         where: { id: currentPersonId },
       })
     : null
-
-  const existingPeople = multiEventEnabled
-    ? await prisma.person.findMany({
-        include: {
-          users: {
-            where: { eventId: bachelorEvent.id },
-            include: { team: true },
-            take: 1,
-          },
-        },
-        orderBy: { name: 'asc' },
-      }).then(people => people.map(person => ({
-        id: person.id,
-        name: person.name,
-        teamName: person.users[0]?.team?.name ?? null,
-        teamColor: person.users[0]?.team?.color ?? null,
-      })))
-    : []
 
   return (
     <div className="min-h-screen overflow-hidden bg-background text-foreground pb-10">
@@ -181,8 +161,6 @@ export default async function BwskEntryPage() {
           </div>
         ) : (
           <EntryScreen
-            existingUsers={existingUsers}
-            existingPeople={existingPeople}
             knownPersonName={knownPerson?.name ?? null}
             activeEventName={bachelorEvent.name}
             returnTo="/bwsk/enter"

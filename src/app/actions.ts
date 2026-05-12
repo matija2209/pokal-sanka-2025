@@ -15,7 +15,8 @@ import { createEnhancedLLMContext } from '@/lib/services/llm-preprocessor'
 import { prisma } from '@/lib/prisma/client'
 import { DRINK_TYPES } from '@/lib/prisma/types'
 import { getDrinkPoints, getDrinkLabel } from '@/lib/utils/drinks'
-import { getActiveEvent, getEventById, setActiveEventCookie } from '@/lib/events'
+import { getActiveEvent, getEventById, getEventBySlug, getEventEntryPathBySlug, setActiveEventCookie } from '@/lib/events'
+import { getAuthSession } from '@/lib/auth-utils'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 import type { 
   UserActionState, 
@@ -267,6 +268,108 @@ export async function switchActiveEventAction(eventId: string): Promise<UserActi
       success: false,
       message: 'Failed to switch event',
       type: 'error'
+    }
+  }
+}
+
+export async function finalizePersonClaimAction(
+  eventSlug: string,
+  personId: string,
+): Promise<UserActionState> {
+  try {
+    if (!eventSlug || !personId) {
+      return {
+        success: false,
+        message: 'Missing claim context',
+        type: 'error',
+      }
+    }
+
+    const [session, currentPersonId, event, person] = await Promise.all([
+      getAuthSession(),
+      getCurrentPersonId(),
+      getEventBySlug(eventSlug),
+      prisma.person.findUnique({ where: { id: personId } }),
+    ])
+
+    if (!session) {
+      return {
+        success: false,
+        message: 'Not authenticated',
+        type: 'error',
+      }
+    }
+
+    if (!event || !person) {
+      return {
+        success: false,
+        message: 'Invite is no longer valid',
+        type: 'error',
+      }
+    }
+
+    if (currentPersonId !== personId) {
+      return {
+        success: false,
+        message: 'Claim session expired. Open your invite link again.',
+        type: 'error',
+      }
+    }
+
+    const authUser = await prisma.authUser.findUnique({
+      where: { id: session.user.id },
+      select: { personId: true },
+    })
+
+    if (authUser?.personId && authUser.personId !== personId) {
+      return {
+        success: false,
+        message: 'This account is already linked to another person.',
+        type: 'error',
+      }
+    }
+
+    if (!authUser?.personId) {
+      await prisma.authUser.update({
+        where: { id: session.user.id },
+        data: { personId },
+      })
+    }
+
+    await setActiveEventCookie(event.id)
+    await setPersonCookie(personId)
+
+    const eventUser = await getUserByPersonAndEvent(personId, event.id)
+
+    if (eventUser) {
+      await setUserCookie(eventUser.id, personId)
+    } else {
+      await clearActiveUserCookie()
+    }
+
+    revalidatePath('/')
+    revalidatePath('/app/select-team')
+    revalidatePath('/app/players')
+    revalidatePath('/app/feed')
+    revalidatePath('/app/profile')
+    revalidatePath('/bwsk/enter')
+
+    return {
+      success: true,
+      message: 'Account claimed successfully!',
+      type: 'update',
+      data: {
+        redirectUrl: eventUser
+          ? (eventUser.teamId ? '/app/feed' : '/app/select-team')
+          : getEventEntryPathBySlug(eventSlug),
+      },
+    }
+  } catch (error) {
+    console.error('Error finalizing person claim:', error)
+    return {
+      success: false,
+      message: 'Failed to finish account claim',
+      type: 'error',
     }
   }
 }

@@ -12,6 +12,10 @@ export const DEFAULT_LEGACY_EVENT_NAME = 'Birthday Party'
 export const DEFAULT_BACHELOR_EVENT_SLUG = 'bachelor-party'
 export const DEFAULT_BACHELOR_EVENT_NAME = 'Bachelor Party'
 
+export function getEventEntryPathBySlug(eventSlug: string): string {
+  return eventSlug === DEFAULT_BACHELOR_EVENT_SLUG ? '/bwsk/enter' : '/'
+}
+
 function getLegacyFallbackEvent(): Event {
   return {
     id: 'legacy-single-event',

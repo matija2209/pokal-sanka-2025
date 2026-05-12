@@ -3,8 +3,12 @@ import { headers } from "next/headers";
 
 const ADMIN_ROLES = ["superadmin", "eventAdmin"];
 
+export async function getAuthSession() {
+  return auth.api.getSession({ headers: await headers() });
+}
+
 export async function requireAuth() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getAuthSession();
   if (!session) throw new Error("Not authenticated");
   return session;
 }

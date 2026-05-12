@@ -3,30 +3,18 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { UserPlus, Users } from 'lucide-react'
-import { CreateUserForm, SelectExistingUserForm } from '@/components/users'
-import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
-
-interface ExistingPersonOption {
-  id: string
-  name: string
-  teamName?: string | null
-  teamColor?: string | null
-}
+import { UserPlus } from 'lucide-react'
+import { CreateUserForm } from '@/components/users'
 
 interface EntryScreenProps {
-  existingUsers: UserWithTeamAndDrinks[]
-  existingPeople?: ExistingPersonOption[]
   knownPersonName?: string | null
   activeEventName?: string | null
   returnTo?: string
 }
 
-type ViewMode = 'selection' | 'create' | 'existing' | 'join'
+type ViewMode = 'selection' | 'create' | 'join'
 
 export default function EntryScreen({
-  existingUsers,
-  existingPeople = [],
   knownPersonName,
   activeEventName,
   returnTo,
@@ -44,18 +32,6 @@ export default function EntryScreen({
         activeEventName={activeEventName}
         returnTo={returnTo}
         onBack={() => setViewMode('selection')}
-      />
-    )
-  }
-
-  if (viewMode === 'existing') {
-    return (
-      <SelectExistingUserForm 
-        users={existingUsers}
-        people={existingPeople}
-        mode={existingPeople.length > 0 ? 'people' : 'users'}
-        returnTo={returnTo}
-        onBack={() => setViewMode('selection')} 
       />
     )
   }
@@ -104,30 +80,6 @@ export default function EntryScreen({
         </CardContent>
       </Card>
 
-      {/* Select Existing Account Option */}
-      {(existingPeople.length > 0 || existingUsers.length > 0) && (
-        <Card className="w-full hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => setViewMode('existing')}>
-          <CardContent className="w-full p-4 sm:p-6">
-            <div className="flex w-full items-center gap-4">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <Users className="h-6 w-6 text-green-600" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="text-lg font-semibold">
-                  {existingPeople.length > 0 ? 'Izberite, kdo ste' : 'Izberite obstoječ račun'}
-                </h3>
-                <p className="text-sm ">
-                  {existingPeople.length > 0
-                    ? `Prepoznamo ${existingPeople.length} ${existingPeople.length === 1 ? 'osebo' : 'oseb'} iz prejšnjih dogodkov`
-                    : `Že sodelujem v turnirju (${existingUsers.length} ${existingUsers.length === 1 ? 'igralec' : 'igralcev'})`}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Direct buttons for smaller screens */}
       <div className="flex flex-col gap-3 sm:hidden">
         <Button 
@@ -138,20 +90,6 @@ export default function EntryScreen({
           <UserPlus className="h-5 w-5" />
           {knownPersonName ? 'Uporabi drugo osebo' : 'Ustvari nov račun'}
         </Button>
-        
-        {(existingPeople.length > 0 || existingUsers.length > 0) && (
-          <Button 
-            onClick={() => setViewMode('existing')}
-            variant="outline"
-            size="lg"
-            className="w-full justify-start gap-3"
-          >
-            <Users className="h-5 w-5" />
-            {existingPeople.length > 0
-              ? `Izberite, kdo ste (${existingPeople.length})`
-              : `Izberite obstoječ račun (${existingUsers.length})`}
-          </Button>
-        )}
       </div>
     </div>
   )

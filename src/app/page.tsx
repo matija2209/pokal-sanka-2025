@@ -1,6 +1,5 @@
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getCurrentPersonId } from '@/lib/utils/cookies'
-import { getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { EntryScreen } from '@/components/entry'
@@ -60,8 +59,6 @@ export default async function HomePage() {
     redirect('/app/select-team')
   }
 
-  // Fetch existing users for selection
-  const existingUsers = await getAllUsersWithTeamAndDrinks()
   const currentPersonId = await getCurrentPersonId()
   const multiEventEnabled = await isMultiEventSchemaAvailable()
   const knownPerson = multiEventEnabled && currentPersonId
@@ -69,27 +66,6 @@ export default async function HomePage() {
         where: { id: currentPersonId },
       })
     : null
-  const existingPeople = multiEventEnabled
-    ? await prisma.person.findMany({
-        include: {
-          users: {
-            where: activeEvent ? { eventId: activeEvent.id } : undefined,
-            include: {
-              team: true,
-            },
-            take: 1,
-          },
-        },
-        orderBy: {
-          name: 'asc',
-        },
-      }).then(people => people.map(person => ({
-        id: person.id,
-        name: person.name,
-        teamName: person.users[0]?.team?.name ?? null,
-        teamColor: person.users[0]?.team?.color ?? null,
-      })))
-    : []
   
   return (
     <div className="min-h-screen relative overflow-hidden bg-background text-foreground">
@@ -133,8 +109,6 @@ export default async function HomePage() {
           {/* Entry options */}
 
             <EntryScreen
-              existingUsers={existingUsers}
-              existingPeople={existingPeople}
               knownPersonName={knownPerson?.name ?? null}
               activeEventName={activeEvent?.name ?? null}
             />
