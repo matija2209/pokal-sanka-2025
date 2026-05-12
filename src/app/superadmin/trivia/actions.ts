@@ -5,12 +5,14 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { calculateTriviaCategoryResult } from '@/lib/trivia-scoring'
 import { requireActiveEventId } from '@/lib/events'
+import { requireAdmin } from '@/lib/auth-utils'
 
 // ===========================================================================
 // Categories
 // ===========================================================================
 
 export async function createCategoryAction(formData: FormData) {
+  await requireAdmin()
   const eventId = await requireActiveEventId()
   const title = formData.get('title') as string
   const description = formData.get('description') as string | null

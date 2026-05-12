@@ -8,6 +8,9 @@ import { getActiveEvent, getEventById } from '@/lib/events'
 import { getUserByPersonAndEvent } from '@/lib/prisma/fetchers/user-fetchers'
 import { deletePostForSuperadmin } from '@/lib/prisma/fetchers/post-fetchers'
 import { getNextAvailableColor } from '@/lib/utils/colors'
+import { requireAdmin } from '@/lib/auth-utils'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
 
 const LEGACY_SINGLE_EVENT_ID = 'legacy-single-event'
 
@@ -121,6 +124,8 @@ export async function resetEventDataById(eventId: string) {
 
 /** Deletes all gameplay/app data for the active event only. Other events and the event row itself are kept. */
 export async function resetActiveEventData() {
+  await requireAdmin()
+
   if (!(await isMultiEventSchemaAvailable())) {
     redirect('/superadmin?reset=schema-required')
   }
@@ -150,6 +155,8 @@ export async function resetActiveEventData() {
 }
 
 export async function updateActiveEventName(formData: FormData) {
+  await requireAdmin()
+
   const rawName = formData.get('eventName')
   const eventName = typeof rawName === 'string' ? rawName.trim() : ''
 
@@ -554,4 +561,52 @@ export async function deletePostAction(formData: FormData) {
   }
 
   redirect('/superadmin/posts?post=deleted')
+}
+
+export async function promotePersonToAuthUser(formData: FormData) {
+  await requireAdmin()
+
+  const personId = formData.get('personId') as string
+  const email = ((formData.get('email') as string) || '').trim().toLowerCase()
+  const password = formData.get('password') as string
+  const role = (formData.get('role') as string) || 'player'
+
+  if (!personId || !email || !password) {
+    redirect(`/superadmin/promote/${personId}?error=missing-fields`)
+  }
+
+  const person = await prisma.person.findUnique({ where: { id: personId } })
+  if (!person) {
+    redirect(`/superadmin/promote/${personId}?error=person-not-found`)
+  }
+
+  const existing = await prisma.authUser.findUnique({ where: { email } })
+  if (existing) {
+    if (existing.personId && existing.personId !== personId) {
+      redirect(`/superadmin/promote/${personId}?error=email-taken`)
+    }
+    await prisma.authUser.update({
+      where: { id: existing.id },
+      data: { personId },
+    })
+    redirect('/superadmin?manage=promoted')
+  }
+
+  await auth.api.createUser({
+    headers: await headers(),
+    body: {
+      email,
+      password,
+      name: person.name,
+      ...(role !== 'player' ? { role: role as "superadmin" | "eventAdmin" } : {}),
+    },
+  })
+
+  await prisma.authUser.update({
+    where: { email },
+    data: { personId },
+  })
+
+  revalidateAdminAndAppPaths()
+  redirect('/superadmin?manage=promoted')
 }

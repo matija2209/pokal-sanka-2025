@@ -1,10 +1,22 @@
 import Link from 'next/link'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { auth } from '@/lib/auth'
+import LogoutButton from './logout-button'
 
-export default function SuperAdminLayout({
+const ADMIN_ROLES = ['superadmin', 'eventAdmin']
+
+export default async function SuperAdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth.api.getSession({ headers: await headers() })
+  if (!session) redirect('/login')
+
+  const role = session.user.role
+  if (!role || !ADMIN_ROLES.includes(role)) redirect('/login')
+
   const navLinkClass =
     'rounded-md border border-border bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80'
 
@@ -40,6 +52,10 @@ export default function SuperAdminLayout({
             >
               Back to App
             </Link>
+            <div className="ml-auto flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">{session.user.email}</span>
+              <LogoutButton />
+            </div>
           </div>
         </div>
       </header>

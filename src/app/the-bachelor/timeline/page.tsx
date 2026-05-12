@@ -1,18 +1,17 @@
 import { getApprovedSightings } from '@/lib/prisma/fetchers/sighting-fetchers'
 import { SightingTimeline } from '@/components/bachelor/sighting-timeline'
-import { getCurrentPersonId } from '@/lib/utils/cookies'
+import { headers } from 'next/headers'
+import { auth } from '@/lib/auth'
 import { deleteSightingFromTimelineAction } from '@/app/the-bachelor/timeline/actions'
 
 export const dynamic = 'force-dynamic'
 
-const SUPERADMIN_PERSON_ID = 'person_cmfr8yyqg000ll104sxm0hkut'
-
 export default async function TimelinePage() {
-  const [sightings, personId] = await Promise.all([
+  const [sightings, session] = await Promise.all([
     getApprovedSightings(50, 0),
-    getCurrentPersonId(),
+    auth.api.getSession({ headers: await headers() }).catch(() => null),
   ])
-  const isSuperadmin = personId === SUPERADMIN_PERSON_ID
+  const isSuperadmin = session !== null
   const onDeleteSighting = async (sightingId: string) => {
     'use server'
     await deleteSightingFromTimelineAction(sightingId)

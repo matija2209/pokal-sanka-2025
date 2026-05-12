@@ -46,12 +46,64 @@ OpenAI GPT-4o-mini generates Slovenian sports commentary for:
 | `/superadmin` | Superadmin overview, person/player management, and event reset controls |
 
 ### Auth
+
+The system uses a **dual authentication model**:
+
+**Admin authentication (Better Auth):**
+- Email + password sign-in for superadmins and event admins
+- Backed by PostgreSQL via Prisma adapter
+- Role-based access control with two admin roles:
+  - **superadmin** — full control: all CRUD, manage other admins, user management
+  - **eventAdmin** — manage events: players, teams, trivia, sightings
+- All `/superadmin/*` routes require an authenticated admin session with a valid role
+- Sign-in page at `/login`; logout button in the superadmin nav bar
+
+Setup:
+```env
+BETTER_AUTH_SECRET=<openssl rand -base64 32>
+BETTER_AUTH_URL=http://localhost:3000
+```
+
+Tables: `user` (auth identity with role/ban fields), `session`, `account`, `verification` — separate from the game data models.
+
+**Player authentication (cookie-based):**
 No passwords. Users create an account by entering their name on the entry screen (`/`), or pick an existing user from the list for the currently selected event. The server stores:
 - `turnir-sanka-user-id` — active participant/user record for the selected event
 - `turnir-sanka-person-id` — shared identity across events
 - `turnir-sanka-event-id` — currently active event
 
-All pages check these cookies via `getCurrentUser()` and the active-event helpers. If the event changes and the current person has no participant in that event yet, the app returns to `/`.
+**Role summary:**
+
+| Role | Auth method | Access |
+|------|-------------|--------|
+| superadmin | Email + password | Full control: `/superadmin/*`, all CRUD, user management |
+| eventAdmin | Email + password | Manage events: players, teams, trivia, sightings |
+| player | Cookie-based (name) | Game participation: feed, stats, drink logging, team selection |
+| guest | None | Public pages: landing, bachelor game, invite links |
+
+### Promoting a Person to an Admin Account
+
+The `AuthUser` table has a `personId` bridge field that links an authenticated identity to a real Person record. This lets the same person be recognized both as a game player (cookie-based, across events) and as an authenticated identity (Better Auth, with a role).
+
+To promote a Person:
+1. Sign in as superadmin at `/login`
+2. Go to `/superadmin` → find the Person in the Players or Add-to-Event tab
+3. Click the **"Promote"** link next to their name
+4. Enter their email, password, and select a role (superadmin / eventAdmin / player)
+5. Submit — the system creates an `AuthUser` record linked via `personId`
+
+If a Person is already linked, the promote page shows the existing email and lets you update their password or change their role.
+
+To make the very first superadmin after a fresh database:
+1. Sign up at `/login` with an email and password
+2. Run the seed script: `npx tsx scripts/promote-superadmin.ts <your-email>`
+3. Restart or reload — that account is now superadmin
+
+### Seed & Admin Scripts
+```bash
+# Promote a Better Auth user to superadmin by email
+npx tsx scripts/promote-superadmin.ts admin@example.com
+```
 
 ### Invite URLs
 You can deep-link a person into a specific event with:
@@ -109,6 +161,8 @@ npm install
 DATABASE_URL="postgresql://user:pass@host:port/db"
 OPENAI_API_KEY="sk-..."           # Optional
 BLOB_READ_WRITE_TOKEN="vercel..." # Optional, for image uploads
+BETTER_AUTH_SECRET="<generated>"  # Required for admin auth (openssl rand -base64 32)
+BETTER_AUTH_URL="http://localhost:3000"  # Required for admin auth
 ```
 
 ### 3. Database
@@ -266,8 +320,9 @@ Each page is a Next.js Server Component that fetches its own data and passes it 
 | `/stats` | `src/app/stats/page.tsx` | Combined leaderboard + commentary + timeline + activity |
 | `/profile` | `src/app/profile/page.tsx` | Edit name, switch team, upload avatar/team logo |
 | `/dashboard` | `src/app/dashboard/page.tsx` | TV-optimized auto-rotating display |
-| `/superadmin` | `src/app/superadmin/page.tsx` | Superadmin overview, active event controls, person/player CRUD, event reset |
-| `/superadmin/bachelor` | `src/app/superadmin/bachelor/page.tsx` | Bachelor moderation, hype management, bachelor-event reset |
+| `/superadmin` | `src/app/superadmin/page.tsx` | **(protected)** Superadmin overview, active event controls, person/player CRUD, promote-to-account, event reset |
+| `/superadmin/bachelor` | `src/app/superadmin/bachelor/page.tsx` | **(protected)** Bachelor moderation, hype management, bachelor-event reset |
+| `/login` | `src/app/login/page.tsx` | Admin sign-in (email + password) |
 
 ### Server Actions (form handling & mutations)
 
@@ -282,7 +337,7 @@ Each page is a Next.js Server Component that fetches its own data and passes it 
 | | `logMultipleDrinksAction` | Log the same drink for multiple users + trigger commentary |
 | | `createPostAction` | Create a timeline post with optional image |
 | | `refreshDashboardAction` | Trigger dashboard data refresh |
-| `src/app/superadmin/actions.ts` | `resetActiveEventData`, `updateActiveEventName`, `createPersonAction`, `updatePersonAction`, `deletePersonAction`, `createPlayerForPersonAction`, `updatePlayerAction`, `deletePlayerAction` | Reset the active event, rename it, and manage people plus active-event players |
+| `src/app/superadmin/actions.ts` | `resetActiveEventData`, `updateActiveEventName`, `createPersonAction`, `updatePersonAction`, `deletePersonAction`, `createPlayerForPersonAction`, `updatePlayerAction`, `deletePlayerAction`, `promotePersonToAuthUser` | Reset the active event, rename it, manage people/players, promote a Person to an AuthUser account |
 | `src/app/superadmin/bachelor/actions.ts` | `approveSightingAction`, `rejectSightingAction`, `createHypeEventAction`, `triggerHypeEventAction`, `resetBachelorEventData` | Bachelor moderation, hype management, bachelor-event reset |
 
 ### Database (Prisma)

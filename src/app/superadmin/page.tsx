@@ -38,6 +38,7 @@ const manageStatusLabels: Record<string, string> = {
   'player-created': 'Player created for the selected event.',
   'player-updated': 'Player updated successfully.',
   'player-deleted': 'Player deleted from the selected event.',
+  'promoted': 'Person promoted to account successfully.',
 }
 
 const manageErrorLabels: Record<string, string> = {
@@ -389,13 +390,21 @@ export default async function SuperAdminPage({ searchParams }: SuperAdminPagePro
                           </div>
                         )}
                       </div>
-                      <div className="flex flex-wrap gap-2 text-xs font-bold">
-                        <span className="rounded-full border border-border bg-card px-3 py-1 text-foreground">
-                          {person.totalPlayers} total player{person.totalPlayers === 1 ? '' : 's'}
-                        </span>
-                        <span className="rounded-full border border-accent/50 bg-accent/20 px-3 py-1 text-foreground">
-                          In selected event
-                        </span>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <div className="flex flex-wrap gap-2 text-xs font-bold">
+                          <span className="rounded-full border border-border bg-card px-3 py-1 text-foreground">
+                            {person.totalPlayers} total player{person.totalPlayers === 1 ? '' : 's'}
+                          </span>
+                          <span className="rounded-full border border-accent/50 bg-accent/20 px-3 py-1 text-foreground">
+                            In selected event
+                          </span>
+                        </div>
+                        <Link
+                          href={`/superadmin/promote/${person.id}`}
+                          className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
+                        >
+                          Promote
+                        </Link>
                       </div>
                     </div>
 
@@ -545,9 +554,17 @@ export default async function SuperAdminPage({ searchParams }: SuperAdminPagePro
                           Person ID: <span className="font-mono">{person.id}</span>
                         </p>
                       </div>
-                      <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-bold text-muted-foreground">
-                        Not in selected event
-                      </span>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-bold text-muted-foreground">
+                          Not in selected event
+                        </span>
+                        <Link
+                          href={`/superadmin/promote/${person.id}`}
+                          className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
+                        >
+                          Promote
+                        </Link>
+                      </div>
                     </div>
 
                     <form action={createPlayerForPersonAction} className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">

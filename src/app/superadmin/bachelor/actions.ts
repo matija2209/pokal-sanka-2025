@@ -15,26 +15,20 @@ import {
   deleteHypeEvent,
   deleteHypeVote,
 } from '@/lib/prisma/fetchers/hype-fetchers'
+import { requireAdmin } from '@/lib/auth-utils'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import type { BachelorActionState } from '@/lib/types/action-states'
 import { requireBachelorEventId } from '@/lib/events'
 import { resetEventDataById } from '@/app/superadmin/actions'
 
-async function requireAdmin() {
-  const user = await getCurrentUser()
-  if (!user) {
-    throw new Error('Not authenticated')
-  }
-  return user
-}
-
 export async function approveSightingAction(
   sightingId: string
 ): Promise<BachelorActionState> {
   try {
-    const admin = await requireAdmin()
+    await requireAdmin()
+    const currentUser = await getCurrentUser()
 
-    const result = await approveSighting(sightingId, admin.id)
+    const result = await approveSighting(sightingId, currentUser?.id ?? "admin")
 
     if (!result || result.count === 0) {
       return {
