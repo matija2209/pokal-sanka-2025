@@ -115,8 +115,24 @@ model Event {
   publicSightings  PublicSighting[]
   hypeVotes        HypeVote[]
   hypeEvents       HypeEvent[]
+  landingPage      EventLandingPage?
 
   @@map("events")
+}
+
+model EventLandingPage {
+  id            String   @id @default(cuid())
+  eventId       String   @unique
+  event         Event    @relation(fields: [eventId], references: [id])
+  title         String
+  description   String   @default("")
+  galleryImages Json     @default("[]")
+  ctaText       String   @default("Enter")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("event_landing_pages")
 }
 
 model TriviaCategory {

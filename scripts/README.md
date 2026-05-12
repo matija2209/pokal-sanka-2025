@@ -4,6 +4,28 @@ This directory contains one-off and operational scripts for the app.
 
 ## Available Scripts
 
+### `npx tsx scripts/promote-superadmin.ts`
+
+Bootstraps or promotes a Better Auth account to `superadmin`.
+
+Purpose:
+- promote an existing auth account to `superadmin`
+- create the first superadmin directly when no auth account exists yet
+
+Commands:
+
+```bash
+# Promote an existing auth user
+npx tsx scripts/promote-superadmin.ts admin@example.com
+
+# Create the first superadmin directly
+npx tsx scripts/promote-superadmin.ts admin@example.com StrongPassword123
+```
+
+Notes:
+- when the email does not exist yet, `password` is required
+- `Person` adoption still happens in the `/superadmin` UI via the `Promote` flow
+
 ### `npm run seed:bachelor`
 
 Runs [seed-bachelor-event.mjs](/home/matija/pokal-sanka-2025/scripts/seed-bachelor-event.mjs).

@@ -98,9 +98,16 @@ To promote a Person:
 If a Person is already linked, the promote page shows the existing email and lets you update their password or change their role.
 
 To make the very first superadmin after a fresh database:
-1. Sign up at `/login` with an email and password
-2. Run the seed script: `npx tsx scripts/promote-superadmin.ts <your-email>`
+1. Either sign up at `/login` first and then run `npx tsx scripts/promote-superadmin.ts <your-email>`
+2. Or bootstrap the account directly with a password:
+   `npx tsx scripts/promote-superadmin.ts <your-email> <your-password>`
 3. Restart or reload — that account is now superadmin
+
+Adopting an existing `Person` into an authenticated admin account still happens in the UI:
+1. Sign in as a `superadmin`
+2. Open `/superadmin`
+3. Click `Promote` next to the target person
+4. Create or update their auth account there, which links `AuthUser.personId`
 
 ### Self-Claiming a Person Account
 
@@ -126,8 +133,11 @@ Important constraint:
 
 ### Seed & Admin Scripts
 ```bash
-# Promote a Better Auth user to superadmin by email
+# Promote an existing Better Auth user to superadmin by email
 npx tsx scripts/promote-superadmin.ts admin@example.com
+
+# Create the first superadmin directly
+npx tsx scripts/promote-superadmin.ts admin@example.com StrongPassword123
 ```
 
 ### Invite URLs
