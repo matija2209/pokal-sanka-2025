@@ -31,6 +31,9 @@ export default async function SuperAdminLayout({
             <Link href="/superadmin" className={navLinkClass}>
               Overview
             </Link>
+            <Link href="/superadmin/players" className={navLinkClass}>
+              Players
+            </Link>
             <Link href="/superadmin/trivia" className={navLinkClass}>
               Trivia
             </Link>

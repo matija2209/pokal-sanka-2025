@@ -52,7 +52,7 @@ function getManageRedirectPath(params: { status?: string; error?: string; manage
     searchParams.set('manageEventId', params.manageEventId)
   }
   const query = searchParams.toString()
-  return query ? `/superadmin?${query}` : '/superadmin'
+  return query ? `/superadmin/players?${query}` : '/superadmin/players'
 }
 
 function redirectManage(status: string, manageEventId?: string | null): never {
@@ -589,7 +589,7 @@ export async function promotePersonToAuthUser(formData: FormData) {
       where: { id: existing.id },
       data: { personId },
     })
-    redirect('/superadmin?manage=promoted')
+    redirect('/superadmin/players?manage=promoted')
   }
 
   await auth.api.createUser({
@@ -608,5 +608,5 @@ export async function promotePersonToAuthUser(formData: FormData) {
   })
 
   revalidateAdminAndAppPaths()
-  redirect('/superadmin?manage=promoted')
+  redirect('/superadmin/players?manage=promoted')
 }
