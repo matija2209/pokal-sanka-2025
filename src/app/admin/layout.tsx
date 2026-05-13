@@ -3,12 +3,12 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { ADMIN_ROLES } from '@/lib/auth-utils'
-import LogoutButton from './logout-button'
+import LogoutButton from '@/app/superadmin/logout-button'
 
-export default async function SuperAdminLayout({
+export default async function AdminLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) redirect('/login')
@@ -24,32 +24,14 @@ export default async function SuperAdminLayout({
       <header className="sticky top-0 z-50 border-b border-border bg-card text-card-foreground shadow-sm">
         <div className="container mx-auto px-4 py-3">
           <div className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Superadmin Navigation
+            Event Admin
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Link href="/superadmin" className={navLinkClass}>
-              Overview
-            </Link>
-            <Link href="/superadmin/players" className={navLinkClass}>
-              Players
-            </Link>
-            <Link href="/superadmin/trivia" className={navLinkClass}>
-              Trivia
-            </Link>
-            <Link href="/superadmin/trivia/categories/new" className={navLinkClass}>
-              New Category
-            </Link>
-            <Link href="/superadmin/trivia/powers" className={navLinkClass}>
-              Powers
-            </Link>
             <Link href="/admin" className={navLinkClass}>
               Events
             </Link>
-            <Link href="/superadmin/bachelor" className={navLinkClass}>
-              Bachelor
-            </Link>
-            <Link href="/superadmin/posts" className={navLinkClass}>
-              Posts
+            <Link href="/superadmin" className={navLinkClass}>
+              Superadmin
             </Link>
             <Link
               href="/app"
@@ -66,5 +48,5 @@ export default async function SuperAdminLayout({
       </header>
       <main>{children}</main>
     </div>
-  );
+  )
 }

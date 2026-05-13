@@ -26,7 +26,7 @@ const superadmin = ac.newRole({
 });
 
 const eventAdmin = ac.newRole({
-  event: ["read", "update"],
+  event: ["create", "read", "update"],
   player: ["create", "read", "update", "delete"],
   trivia: ["create", "read", "update", "delete"],
   sighting: ["approve", "reject"],

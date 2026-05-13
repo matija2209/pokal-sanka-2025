@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-const ADMIN_ROLES = ["superadmin", "eventAdmin"];
+export const ADMIN_ROLES = ["superadmin", "eventAdmin"];
 
 export async function getAuthSession() {
   return auth.api.getSession({ headers: await headers() });

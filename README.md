@@ -16,6 +16,16 @@ A drink tracking competition system built with Next.js 15. Features real-time le
 - **Timeline posts** — users can post messages with images, displayed as a scrolling breaking news ticker on the TV dashboard
 - **Image upload** — profile avatars, team logos, and post images via Vercel Blob with client-side canvas compression
 
+### Event Landing Pages
+- **Dynamic event landing pages** at `/event/[eventSlug]` with auto-scrolling image galleries, custom titles, descriptions, and CTA buttons
+- **Per-event configuration** — each event can have its own landing page content via the `EventLandingPage` model (title, description, gallery images, CTA text)
+- **Entry flow** — unauthenticated visitors see the CTA and entry form; authenticated users see their profile and a direct link to the game
+
+### Admin Event Management
+- **Event creation** — admins can create new events with custom slugs from `/admin`
+- **Landing page editor** — configure title, description, gallery images, and CTA text per event at `/admin/[eventSlug]`
+- **Role-based access** — `/admin` is restricted to `superadmin` and `eventAdmin` roles via Better Auth
+
 ### TV Dashboard
 - **Auto-rotating views** every 15 seconds: Teams > Players > Activity > Commentary
 - **Breaking news ticker** — BBC-style scrolling banner showing user posts
@@ -44,7 +54,10 @@ OpenAI GPT-4o-mini generates Slovenian sports commentary for:
 | `/profile` | Edit name, switch team, upload avatar/team logo |
 | `/dashboard` | TV-optimized auto-rotating display |
 | `/invite/[eventSlug]/[personId]/claim` | Invite landing page for joining an event or claiming a Better Auth account |
-| `/superadmin` | Superadmin overview, person/player management, and event reset controls |
+| `/event/[eventSlug]` | Public event landing page with gallery, title, description, CTA, and entry form |
+| `/admin` | **(protected)** Event management — create events, configure landing pages (eventAdmin+) |
+| `/admin/[eventSlug]` | **(protected)** Edit an event's landing page (title, description, gallery, CTA) |
+| `/superadmin` | **(protected)** Superadmin overview, person/player management, and event reset controls |
 
 ### Auth
 
@@ -55,8 +68,8 @@ The system uses a **dual authentication model**:
 - Backed by PostgreSQL via Prisma adapter
 - Role-based access control with two admin roles:
   - **superadmin** — full control: all CRUD, manage other admins, user management
-  - **eventAdmin** — manage events: players, teams, trivia, sightings
-- All `/superadmin/*` routes require an authenticated admin session with a valid role
+  - **eventAdmin** — manage events: create events, configure landing pages, manage players, teams, trivia, sightings
+- All `/superadmin/*` and `/admin/*` routes require an authenticated admin session with a valid role
 - Sign-in page at `/login`; logout button in the superadmin nav bar
 
 Setup:
@@ -79,10 +92,10 @@ Public entry no longer exposes existing-person selection. Existing `Person` iden
 
 | Role | Auth method | Access |
 |------|-------------|--------|
-| superadmin | Email + password | Full control: `/superadmin/*`, all CRUD, user management |
-| eventAdmin | Email + password | Manage events: players, teams, trivia, sightings |
+| superadmin | Email + password | Full control: `/superadmin/*`, `/admin/*`, all CRUD, user management |
+| eventAdmin | Email + password | Manage events: `/admin/*`, create events, configure landing pages, players, teams, trivia, sightings |
 | player | Cookie-based (name) | Game participation: feed, stats, drink logging, team selection |
-| guest | None | Public pages: landing, bachelor game, invite links |
+| guest | None | Public pages: landing, bachelor game, invite links, event landing pages |
 
 ### Promoting a Person to an Admin Account
 
@@ -234,6 +247,19 @@ model Event {
   createdAt DateTime @default(now())
 }
 
+model EventLandingPage {
+  id            String   @id @default(cuid())
+  eventId       String   @unique
+  event         Event    @relation(fields: [eventId], references: [id])
+  title         String
+  description   String   @default("")
+  galleryImages Json     @default("[]")
+  ctaText       String   @default("Enter")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 model Person {
   id                String   @id @default(cuid())
   name              String
@@ -355,6 +381,9 @@ Each page is a Next.js Server Component that fetches its own data and passes it 
 | `/stats` | `src/app/stats/page.tsx` | Combined leaderboard + commentary + timeline + activity |
 | `/profile` | `src/app/profile/page.tsx` | Edit name, switch team, upload avatar/team logo |
 | `/dashboard` | `src/app/dashboard/page.tsx` | TV-optimized auto-rotating display |
+| `/event/[eventSlug]` | `src/app/event/[eventSlug]/page.tsx` | Public event landing page with gallery, title, description, CTA, entry form |
+| `/admin` | `src/app/admin/page.tsx` | **(protected)** Event management — list events, create new events |
+| `/admin/[eventSlug]` | `src/app/admin/[eventSlug]/page.tsx` | **(protected)** Edit landing page for a specific event |
 | `/superadmin` | `src/app/superadmin/page.tsx` | **(protected)** Superadmin overview, active event controls, person/player CRUD, promote-to-account, event reset |
 | `/superadmin/bachelor` | `src/app/superadmin/bachelor/page.tsx` | **(protected)** Bachelor moderation, hype management, bachelor-event reset |
 | `/login` | `src/app/login/page.tsx` | Admin sign-in (email + password) |
@@ -374,12 +403,13 @@ Each page is a Next.js Server Component that fetches its own data and passes it 
 | | `refreshDashboardAction` | Trigger dashboard data refresh |
 | `src/app/superadmin/actions.ts` | `resetActiveEventData`, `updateActiveEventName`, `createPersonAction`, `updatePersonAction`, `deletePersonAction`, `createPlayerForPersonAction`, `updatePlayerAction`, `deletePlayerAction`, `promotePersonToAuthUser` | Reset the active event, rename it, manage people/players, promote a Person to an AuthUser account |
 | `src/app/superadmin/bachelor/actions.ts` | `approveSightingAction`, `rejectSightingAction`, `createHypeEventAction`, `triggerHypeEventAction`, `resetBachelorEventData` | Bachelor moderation, hype management, bachelor-event reset |
+| `src/app/admin/actions.ts` | `createEventAction`, `upsertEventLandingPageAction` | Create new events, configure event landing pages |
 
 ### Database (Prisma)
 
 | File | What it manages |
 |---|---|
-| `prisma/schema.prisma` | Schema — 5 models: User, Team, DrinkLog, Commentary, Post |
+| `prisma/schema.prisma` | Schema — 16 models: Event, EventLandingPage, Person, User, Team, DrinkLog, Commentary, Post, TriviaCategory, TriviaQuestion, TriviaCategoryResult, TriviaPowerUsage, PublicSighting, HypeVote, HypeEvent, AuthUser, AuthSession, AuthAccount, Verification |
 | `src/lib/prisma/client.ts` | Prisma singleton with connection logging |
 | `src/lib/prisma/types.ts` | TypeScript types: `UserWithTeam`, `TeamWithStats`, `DrinkLogWithUserAndTeam`, etc. |
 | `src/lib/prisma/fetchers/user-fetchers.ts` | `getUserWithTeamById`, `getAllUsersWithTeamAndDrinks`, `getUserWithTeamAndDrinksById`, `getRecentUserProfileImages` |
@@ -421,6 +451,8 @@ Each page is a Next.js Server Component that fetches its own data and passes it 
 | Directory | What it contains |
 |---|---|
 | `src/components/entry/` | `EntryScreen` — choose create-account or existing user |
+| `src/components/events/` | `EventSwitcher` — switch between active events |
+| `src/components/auth/` | `PersonClaimForm` — claim a person identity with Better Auth email/password |
 | `src/components/users/` | `CreateUserForm`, `SelectExistingUserForm`, `UserProfile`, `UserAvatar`, `Leaderboard`, `UserStats`, `UserHistory`, `UserAchievements`, `PlayerGrid` |
 | `src/components/teams/` | `TeamSelectionForm`, `TeamLogoForm`, `TeamLeaderboard`, `TeamStats`, `TeamLogo` |
 | `src/components/drinks/` | `DrinkLogForm`, `DrinkSelectionDialog`, `DrinkSelectionModal`, `RecentActivity` |
