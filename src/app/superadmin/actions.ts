@@ -8,7 +8,7 @@ import { getActiveEvent, getEventById } from '@/lib/events'
 import { getUserByPersonAndEvent } from '@/lib/prisma/fetchers/user-fetchers'
 import { deletePostForSuperadmin } from '@/lib/prisma/fetchers/post-fetchers'
 import { getNextAvailableColor } from '@/lib/utils/colors'
-import { requireAdmin } from '@/lib/auth-utils'
+import { requireAdmin, requireAuth, requireSuperadmin } from '@/lib/auth-utils'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 
@@ -609,4 +609,108 @@ export async function promotePersonToAuthUser(formData: FormData) {
 
   revalidateAdminAndAppPaths()
   redirect('/superadmin/players?manage=promoted')
+}
+
+// ── Event CRUD (superadmin only) ──
+
+export async function updateEventAction(formData: FormData) {
+  await requireSuperadmin()
+
+  const eventId = (formData.get('eventId') as string | null)?.trim() ?? ''
+  const name = (formData.get('name') as string | null)?.trim() ?? ''
+  const rawSlug = (formData.get('slug') as string | null)?.trim() ?? ''
+  const isActive = formData.get('isActive') === 'true'
+
+  if (!eventId || name.length < 2) {
+    redirect('/superadmin/events?error=invalid-fields')
+  }
+
+  const event = await prisma.event.findUnique({ where: { id: eventId }, select: { slug: true } })
+  if (!event) {
+    redirect('/superadmin/events?error=event-not-found')
+  }
+
+  const slug = rawSlug || name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  if (!slug) {
+    redirect('/superadmin/events?error=invalid-slug')
+  }
+
+  const existing = await prisma.event.findUnique({ where: { slug } })
+  if (existing && existing.id !== eventId) {
+    redirect(`/superadmin/events?error=slug-exists&slug=${encodeURIComponent(slug)}`)
+  }
+
+  await prisma.event.update({
+    where: { id: eventId },
+    data: { name, slug, isActive },
+  })
+
+  revalidatePath('/superadmin/events')
+  revalidatePath('/admin')
+  revalidatePath(`/event/${slug}`)
+  revalidatePath(`/event/${event.slug}`)
+  redirect(`/superadmin/events?updated=${encodeURIComponent(slug)}`)
+}
+
+export async function deleteEventAction(formData: FormData) {
+  await requireSuperadmin()
+
+  const eventId = (formData.get('eventId') as string | null)?.trim() ?? ''
+  if (!eventId) {
+    redirect('/superadmin/events?error=missing-event')
+  }
+
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    select: { id: true, slug: true, name: true },
+  })
+  if (!event) {
+    redirect('/superadmin/events?error=event-not-found')
+  }
+
+  await prisma.eventLandingPage.deleteMany({ where: { eventId } })
+  await prisma.event.delete({ where: { id: eventId } })
+
+  revalidatePath('/superadmin/events')
+  revalidatePath('/admin')
+  redirect(`/superadmin/events?deleted=${encodeURIComponent(event.name)}`)
+}
+
+// ── User role management (superadmin only) ──
+
+export async function updateUserRoleAction(formData: FormData) {
+  await requireSuperadmin()
+
+  const userId = (formData.get('userId') as string | null)?.trim() ?? ''
+  const role = (formData.get('role') as string | null)?.trim() ?? ''
+
+  if (!userId || !role) {
+    redirect('/superadmin/users?error=missing-fields')
+  }
+
+  const validRoles = ['superadmin', 'eventAdmin', 'player']
+  if (!validRoles.includes(role)) {
+    redirect('/superadmin/users?error=invalid-role')
+  }
+
+  const authUser = await prisma.authUser.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true, role: true },
+  })
+  if (!authUser) {
+    redirect('/superadmin/users?error=user-not-found')
+  }
+
+  const session = await requireAuth()
+  if (authUser.id === session.user.id && role !== 'superadmin') {
+    redirect('/superadmin/users?error=cannot-self-demote')
+  }
+
+  await prisma.authUser.update({
+    where: { id: userId },
+    data: { role },
+  })
+
+  revalidatePath('/superadmin/users')
+  redirect(`/superadmin/users?updated=${encodeURIComponent(authUser.email)}`)
 }

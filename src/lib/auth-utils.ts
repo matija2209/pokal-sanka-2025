@@ -21,3 +21,11 @@ export async function requireAdmin() {
   }
   return session;
 }
+
+export async function requireSuperadmin() {
+  const session = await requireAuth();
+  if (session.user.role !== "superadmin") {
+    throw new Error("Superadmin access required");
+  }
+  return session;
+}

@@ -1,6 +1,6 @@
 # Bwšk Bachelor 2026
 
-A drink tracking competition system built with Next.js 15. Features real-time leaderboards, team management, AI-powered commentary in Slovenian, a TV dashboard for tournament events, and multi-event storage so separate parties do not share scores or teams.
+Pokal Sanka is a multi-event party competition platform built with Next.js 15. It combines drink tracking, team play, trivia, live leaderboards, AI-powered Slovenian commentary, TV dashboards, and public event landing pages with admin controls and isolated per-event data.
 
 ## Features
 

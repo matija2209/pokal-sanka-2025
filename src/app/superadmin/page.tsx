@@ -39,6 +39,22 @@ export default async function SuperAdminPage({ searchParams }: SuperAdminPagePro
         </Link>
 
         <Link
+          href="/superadmin/events"
+          className="bg-card text-card-foreground border-2 border-border rounded-xl p-6 hover:border-primary/40 hover:shadow-md transition-all group shadow-sm"
+        >
+          <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Event Management</h2>
+          <p className="text-muted-foreground font-medium">Create, edit, and delete events. Configure event landing pages.</p>
+        </Link>
+
+        <Link
+          href="/superadmin/users"
+          className="bg-card text-card-foreground border-2 border-border rounded-xl p-6 hover:border-primary/40 hover:shadow-md transition-all group shadow-sm"
+        >
+          <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">User Management</h2>
+          <p className="text-muted-foreground font-medium">Manage admin roles for authenticated users. Promote or demote users.</p>
+        </Link>
+
+        <Link
           href="/superadmin/players"
           className="bg-card text-card-foreground border-2 border-border rounded-xl p-6 hover:border-primary/40 hover:shadow-md transition-all group shadow-sm"
         >

@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
 import { Button } from '@/components/ui/button'
-import { EventLandingPageForm } from '../event-landing-page-form'
+import { EventLandingPageForm } from '@/components/admin/event-landing-page-form'
+import { upsertEventLandingPageAction } from '@/lib/actions/event-actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,7 +40,7 @@ export default async function AdminEventPage({ params }: Props) {
         </Button>
       </div>
 
-      <EventLandingPageForm event={event} landingPage={landingPage} />
+      <EventLandingPageForm event={event} landingPage={landingPage} action={upsertEventLandingPageAction} backUrl="/admin" />
     </div>
   )
 }

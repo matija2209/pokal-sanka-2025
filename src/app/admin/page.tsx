@@ -3,7 +3,8 @@ import { prisma } from '@/lib/prisma/client'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { CreateEventForm } from './create-event-form'
+import { CreateEventForm } from '@/components/admin/create-event-form'
+import { createEventAction } from '@/lib/actions/event-actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -99,7 +100,7 @@ export default async function AdminPage({ searchParams }: Props) {
         </Card>
       )}
 
-      <CreateEventForm />
+      <CreateEventForm action={createEventAction} />
     </div>
   )
 }
