@@ -3,18 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/lib/prisma/client'
 import { getActiveEvent, getAllEvents } from '@/lib/events'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
-import {
-  createTeamAction,
-  createPersonAction,
-  createPlayerForPersonAction,
-  deleteTeamAction,
-  deletePersonAction,
-  deletePlayerAction,
-  updateTeamAction,
-  updatePersonAction,
-  updatePlayerAction,
-} from '../actions'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import PlayerManagementDirectory from '@/components/superadmin/player-management-directory'
 
 type SuperadminPlayersPageProps = {
   searchParams?: Promise<{
@@ -110,6 +99,14 @@ export default async function SuperadminPlayersPage({ searchParams }: Superadmin
     .sort((a, b) => a.name.localeCompare(b.name))
   const playersInManagedEvent = activeEventRoster.filter((person) => person.activePlayer)
   const personsNotInManagedEvent = activeEventRoster.filter((person) => !person.activePlayer)
+  const teamPlayerCounts = new Map<string, number>()
+
+  for (const person of playersInManagedEvent) {
+    const teamId = person.activePlayer?.teamId
+    if (teamId) {
+      teamPlayerCounts.set(teamId, (teamPlayerCounts.get(teamId) ?? 0) + 1)
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-6 md:p-8">
@@ -146,432 +143,51 @@ export default async function SuperadminPlayersPage({ searchParams }: Superadmin
 
         {multiEventEnabled && (
           <>
-            <div className="mb-6 rounded-xl border border-border bg-background/60 p-4">
-              <form method="get" className="flex flex-col gap-3 md:flex-row md:items-end">
-                <div className="w-full md:max-w-sm">
-                  <label htmlFor="manageEventId" className="block text-sm font-bold text-foreground mb-2">
-                    Manage players for event
-                  </label>
-                  <select
-                    id="manageEventId"
-                    name="manageEventId"
-                    defaultValue={managedEventId}
-                    className="w-full rounded-xl border-2 border-input bg-background px-4 py-3 text-sm font-medium text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                  >
-                    {events.map((event) => (
-                      <option key={event.id} value={event.id}>
-                        {event.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  type="submit"
-                  className="rounded-xl bg-secondary px-4 py-3 text-sm font-bold text-secondary-foreground hover:bg-secondary/80 transition-colors"
-                >
-                  Switch Event
-                </button>
-              </form>
-            </div>
-
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-              <form action={createTeamAction} className="border border-border rounded-xl p-5 bg-background/60">
-                <input type="hidden" name="manageEventId" value={managedEventId} />
-                <h2 className="text-lg font-bold text-foreground mb-2">Create Team</h2>
-                <p className="text-sm text-muted-foreground mb-4">Creates a new team inside <span className="font-semibold text-foreground">{managedEvent?.name ?? 'the selected event'}</span>.</p>
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                  <div className="flex-1">
-                    <label htmlFor="newTeamName" className="block text-sm font-bold text-foreground mb-2">
-                      Team name
-                    </label>
-                    <input
-                      id="newTeamName"
-                      name="name"
-                      required
-                      minLength={2}
-                      maxLength={120}
-                      placeholder="Enter team name"
-                      className="w-full rounded-xl border-2 border-input bg-background px-4 py-3 text-sm font-medium text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold px-5 py-3 rounded-xl transition-colors"
-                  >
-                    Create Team
-                  </button>
-                </div>
-              </form>
-
-              <form action={createPersonAction} className="border border-border rounded-xl p-5 bg-background/60">
-                <input type="hidden" name="manageEventId" value={managedEventId} />
-                <h2 className="text-lg font-bold text-foreground mb-2">Create Person</h2>
-                <p className="text-sm text-muted-foreground mb-4">Creates the cross-event identity. You can add the active-event player record after that.</p>
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                  <div className="flex-1">
-                    <label htmlFor="newPersonName" className="block text-sm font-bold text-foreground mb-2">
-                      Person name
-                    </label>
-                    <input
-                      id="newPersonName"
-                      name="name"
-                      required
-                      minLength={2}
-                      maxLength={120}
-                      placeholder="Enter person name"
-                      className="w-full rounded-xl border-2 border-input bg-background px-4 py-3 text-sm font-medium text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold px-5 py-3 rounded-xl transition-colors"
-                  >
-                    Create Person
-                  </button>
-                </div>
-              </form>
-
-              <div className="border border-border rounded-xl p-5 bg-background/60 xl:col-span-2">
-                <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h2 className="text-lg font-bold text-foreground mb-2">Current Event Snapshot</h2>
-                    <p className="text-sm text-muted-foreground">Use this panel to create or edit players for <span className="font-semibold text-foreground">{managedEvent?.name ?? 'the selected event'}</span>.</p>
-                  </div>
-                  {managedEventId && playersInManagedEvent.length > 0 && (
-                    <a
-                      href={`/superadmin/qr/${managedEventId}`}
-                      download
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
-                    >
-                      Download all QR codes (ZIP)
-                    </a>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <div className="text-2xl font-black text-foreground">{teams.length}</div>
-                    <div className="text-sm text-muted-foreground">Teams in event</div>
-                  </div>
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <div className="text-2xl font-black text-foreground">{activeEventRoster.length}</div>
-                    <div className="text-sm text-muted-foreground">People total</div>
-                  </div>
-                  <div className="rounded-xl border border-border bg-card p-4">
-                    <div className="text-2xl font-black text-foreground">
-                      {activeEventRoster.filter((person) => person.activePlayer).length}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Players in event</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Tabs defaultValue="players" className="mb-2">
-              <TabsList className="mb-4">
-                <TabsTrigger value="players">Players in Event ({playersInManagedEvent.length})</TabsTrigger>
-                <TabsTrigger value="add">Add to Event ({personsNotInManagedEvent.length})</TabsTrigger>
-                <TabsTrigger value="teams">Teams ({teams.length})</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="players" className="space-y-4">
-                {playersInManagedEvent.length === 0 && (
-                  <p className="text-muted-foreground rounded-xl border border-dashed border-border p-6 text-center">
-                    No players in this event yet.
-                  </p>
-                )}
-
-                {playersInManagedEvent.map((person) => (
-                  <div key={person.id} className="rounded-xl border border-border bg-background/60 p-5">
-                    <div className="flex flex-col gap-2 mb-5 md:flex-row md:items-start md:justify-between">
-                      <div>
-                        <h3 className="text-lg font-bold text-foreground">{person.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Person ID: <span className="font-mono">{person.id}</span>
-                        </p>
-                        {person.invitePath && (
-                          <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                            <p>
-                              Invite path: <span className="font-mono text-foreground">{person.invitePath}</span>
-                            </p>
-                            {appUrl && (
-                              <p className="break-all">
-                                Invite URL: <span className="font-mono text-foreground">{`${appUrl}${person.invitePath}`}</span>
-                              </p>
-                            )}
-                            {managedEventId && (
-                              <p>
-                                <a
-                                  href={`/superadmin/qr/${managedEventId}/${person.id}`}
-                                  download
-                                  className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-bold text-foreground hover:bg-accent/20 transition-colors"
-                                >
-                                  Download QR
-                                </a>
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-2 items-center">
-                        <div className="flex flex-wrap gap-2 text-xs font-bold">
-                          <span className="rounded-full border border-border bg-card px-3 py-1 text-foreground">
-                            {person.totalPlayers} total player{person.totalPlayers === 1 ? '' : 's'}
-                          </span>
-                          <span className="rounded-full border border-accent/50 bg-accent/20 px-3 py-1 text-foreground">
-                            In selected event
-                          </span>
-                        </div>
-                        <Link
-                          href={`/superadmin/promote/${person.id}`}
-                          className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
-                        >
-                          Promote
-                        </Link>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_1.4fr] gap-5">
-                      <div className="rounded-xl border border-border bg-card p-4">
-                        <h4 className="text-sm font-bold text-foreground mb-3">Person</h4>
-                        <form action={updatePersonAction} className="space-y-3">
-                          <input type="hidden" name="manageEventId" value={managedEventId} />
-                          <input type="hidden" name="personId" value={person.id} />
-                          <div>
-                            <label htmlFor={`person-name-${person.id}`} className="block text-sm font-medium text-foreground mb-2">
-                              Shared identity name
-                            </label>
-                            <input
-                              id={`person-name-${person.id}`}
-                              name="name"
-                              defaultValue={person.name}
-                              required
-                              minLength={2}
-                              maxLength={120}
-                              className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                            />
-                          </div>
-                          <div className="flex flex-wrap gap-3">
-                            <button
-                              type="submit"
-                              className="rounded-xl bg-secondary px-4 py-2.5 text-sm font-bold text-secondary-foreground hover:bg-secondary/80 transition-colors"
-                            >
-                              Save Person
-                            </button>
-                          </div>
-                        </form>
-
-                        <form action={deletePersonAction} className="mt-3">
-                          <input type="hidden" name="manageEventId" value={managedEventId} />
-                          <input type="hidden" name="personId" value={person.id} />
-                          <button
-                            type="submit"
-                            className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/15 transition-colors"
-                          >
-                            Delete Person
-                          </button>
-                        </form>
-                      </div>
-
-                      <div className="rounded-xl border border-border bg-card p-4">
-                        <h4 className="text-sm font-bold text-foreground mb-3">Player in {managedEvent?.name ?? 'Selected Event'}</h4>
-
-                        <form action={updatePlayerAction} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-                          <input type="hidden" name="manageEventId" value={managedEventId} />
-                          <input type="hidden" name="playerId" value={person.activePlayer?.id ?? ''} />
-                          <div className="md:col-span-1">
-                            <label htmlFor={`player-name-${person.id}`} className="block text-sm font-medium text-foreground mb-2">
-                              Player name
-                            </label>
-                            <input
-                              id={`player-name-${person.id}`}
-                              name="name"
-                              defaultValue={person.activePlayer?.name ?? person.name}
-                              required
-                              minLength={2}
-                              maxLength={120}
-                              className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                            />
-                          </div>
-                          <div className="md:col-span-1">
-                            <label htmlFor={`player-team-${person.id}`} className="block text-sm font-medium text-foreground mb-2">
-                              Team
-                            </label>
-                            <select
-                              id={`player-team-${person.id}`}
-                              name="teamId"
-                              defaultValue={person.activePlayer?.teamId ?? ''}
-                              className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                            >
-                              <option value="">No team</option>
-                              {teams.map((team) => (
-                                <option key={team.id} value={team.id}>
-                                  {team.name}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                          <button
-                            type="submit"
-                            className="rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
-                          >
-                            Save Player
-                          </button>
-                        </form>
-
-                        <div className="mt-3 flex flex-wrap gap-2 text-sm text-muted-foreground">
-                          <span>Player ID: <span className="font-mono text-foreground">{person.activePlayer?.id}</span></span>
-                          <span>Team: <span className="font-semibold text-foreground">{person.activePlayer?.team?.name ?? 'No team'}</span></span>
-                        </div>
-
-                        {person.activePlayer && (
-                          <form action={deletePlayerAction} className="mt-4">
-                            <input type="hidden" name="manageEventId" value={managedEventId} />
-                            <input type="hidden" name="playerId" value={person.activePlayer.id} />
-                            <button
-                              type="submit"
-                              className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/15 transition-colors"
-                            >
-                              Delete Player From Event
-                            </button>
-                          </form>
-                        )}
-
-                        {person.users.length > 0 && (
-                          <div className="mt-4 rounded-xl border border-border bg-background p-3">
-                            <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-2">
-                              Other Event Records
-                            </div>
-                            <div className="space-y-1 text-sm text-muted-foreground">
-                              {person.users.map((user) => (
-                                <div key={user.id} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                                  <span className="text-foreground">{user.name}</span>
-                                  <span>
-                                    {user.event?.name ?? 'Unknown event'}
-                                    {user.eventId === managedEvent?.id ? ' - selected event' : ''}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </TabsContent>
-
-              <TabsContent value="add" className="space-y-4">
-                {personsNotInManagedEvent.length === 0 && (
-                  <p className="text-muted-foreground rounded-xl border border-dashed border-border p-6 text-center">
-                    Everyone is already added to this event.
-                  </p>
-                )}
-
-                {personsNotInManagedEvent.map((person) => (
-                  <div key={person.id} className="rounded-xl border border-border bg-background/60 p-5">
-                    <div className="flex flex-col gap-2 mb-4 md:flex-row md:items-start md:justify-between">
-                      <div>
-                        <h3 className="text-lg font-bold text-foreground">{person.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Person ID: <span className="font-mono">{person.id}</span>
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-2 items-center">
-                        <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-bold text-muted-foreground">
-                          Not in selected event
-                        </span>
-                        <Link
-                          href={`/superadmin/promote/${person.id}`}
-                          className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
-                        >
-                          Promote
-                        </Link>
-                      </div>
-                    </div>
-
-                    <form action={createPlayerForPersonAction} className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
-                      <input type="hidden" name="manageEventId" value={managedEventId} />
-                      <input type="hidden" name="personId" value={person.id} />
-                      <div>
-                        <label htmlFor={`new-player-name-${person.id}`} className="block text-sm font-medium text-foreground mb-2">
-                          Player name for this event
-                        </label>
-                        <input
-                          id={`new-player-name-${person.id}`}
-                          name="playerName"
-                          defaultValue={person.name}
-                          maxLength={120}
-                          className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        className="rounded-xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
-                      >
-                        Add Player
-                      </button>
-                    </form>
-                  </div>
-                ))}
-              </TabsContent>
-
-              <TabsContent value="teams">
-                <div className="rounded-xl border border-border bg-background/60 p-5">
-                  <h2 className="text-lg font-bold text-foreground mb-2">Teams in {managedEvent?.name ?? 'Selected Event'}</h2>
-                  <p className="text-sm text-muted-foreground mb-4">Update names or delete teams that have no linked players.</p>
-                  {teams.length === 0 ? (
-                    <p className="text-muted-foreground rounded-xl border border-dashed border-border p-4 text-center">
-                      No teams found for this event.
-                    </p>
-                  ) : (
-                    <div className="space-y-3">
-                      {teams.map((team) => (
-                        <div key={team.id} className="rounded-xl border border-border bg-card p-4">
-                          <form action={updateTeamAction} className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
-                            <input type="hidden" name="manageEventId" value={managedEventId} />
-                            <input type="hidden" name="teamId" value={team.id} />
-                            <div>
-                              <label htmlFor={`team-name-${team.id}`} className="block text-sm font-medium text-foreground mb-2">
-                                Team name
-                              </label>
-                              <input
-                                id={`team-name-${team.id}`}
-                                name="name"
-                                defaultValue={team.name}
-                                required
-                                minLength={2}
-                                maxLength={120}
-                                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50"
-                              />
-                              <p className="mt-2 text-xs text-muted-foreground">
-                                Team ID: <span className="font-mono text-foreground">{team.id}</span>
-                              </p>
-                            </div>
-                            <button
-                              type="submit"
-                              className="rounded-xl bg-secondary px-4 py-3 text-sm font-bold text-secondary-foreground hover:bg-secondary/80 transition-colors"
-                            >
-                              Save Team
-                            </button>
-                          </form>
-
-                          <form action={deleteTeamAction} className="mt-3">
-                            <input type="hidden" name="manageEventId" value={managedEventId} />
-                            <input type="hidden" name="teamId" value={team.id} />
-                            <button
-                              type="submit"
-                              className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/15 transition-colors"
-                            >
-                              Delete Team
-                            </button>
-                          </form>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
+            <PlayerManagementDirectory
+              appUrl={appUrl}
+              events={events.map((event) => ({
+                id: event.id,
+                name: event.name,
+              }))}
+              managedEventId={managedEventId}
+              managedEventName={managedEvent?.name ?? 'Selected Event'}
+              playersInManagedEvent={playersInManagedEvent.map((person) => ({
+                personId: person.id,
+                personName: person.name,
+                totalPlayers: person.totalPlayers,
+                invitePath: person.invitePath,
+                activePlayer: {
+                  id: person.activePlayer!.id,
+                  name: person.activePlayer?.name ?? person.name,
+                  teamId: person.activePlayer?.teamId ?? null,
+                  teamName: person.activePlayer?.team?.name ?? null,
+                },
+                otherEventRecords: person.users
+                  .map((user) => ({
+                    id: user.id,
+                    name: user.name,
+                    eventId: user.eventId,
+                    eventName: user.event?.name ?? 'Unknown event',
+                  }))
+                  .filter((user) => user.eventId !== managedEventId),
+              }))}
+              personsNotInManagedEvent={personsNotInManagedEvent.map((person) => ({
+                personId: person.id,
+                personName: person.name,
+                totalPlayers: person.totalPlayers,
+                existingEventRecords: person.users.map((user) => ({
+                  id: user.id,
+                  name: user.name,
+                  eventId: user.eventId,
+                  eventName: user.event?.name ?? 'Unknown event',
+                })),
+              }))}
+              teams={teams.map((team) => ({
+                id: team.id,
+                name: team.name,
+                playerCount: teamPlayerCounts.get(team.id) ?? 0,
+              }))}
+            />
           </>
         )}
       </div>
