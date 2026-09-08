@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { EventLandingPageForm } from '@/components/admin/event-landing-page-form'
 import { upsertEventLandingPageAction } from '@/lib/actions/event-actions'
 import { updateEventAction, deleteEventAction } from '../../actions'
 import { DeleteEventButton } from './delete-button'
+import { ActiveSwitch } from './active-switch'
 
 export const dynamic = 'force-dynamic'
 
@@ -75,18 +75,7 @@ export default async function SuperadminEventDetailPage({ params }: Props) {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <input type="hidden" name="isActive" value={event.isActive ? 'true' : 'false'} id="isActiveHidden" />
-              <Switch
-                id="isActiveSwitch"
-                defaultChecked={event.isActive}
-                onCheckedChange={(checked) => {
-                  const el = document.getElementById('isActiveHidden') as HTMLInputElement
-                  if (el) el.value = String(checked)
-                }}
-              />
-              <Label htmlFor="isActiveSwitch">Event is active</Label>
-            </div>
+            <ActiveSwitch defaultChecked={event.isActive} />
 
             <div className="flex gap-3">
               <Button type="submit">Save Changes</Button>

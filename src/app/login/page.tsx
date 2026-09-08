@@ -29,7 +29,7 @@ export default function LoginPage() {
     const { error } = await authClient.signIn.email({
       email,
       password,
-      callbackURL: `${window.location.origin}/superadmin`,
+      callbackURL: "/superadmin",
     });
 
     if (error) {

@@ -34,6 +34,13 @@ const eventAdmin = ac.newRole({
 });
 
 export const auth = betterAuth({
+  trustedOrigins: [
+    "https://the-bachelor.xyz",
+    "https://www.the-bachelor.xyz",
+    "https://pokal-sanka-2025-omega.vercel.app",
+    "https://pokal-sanka-2025-ziberna.vercel.app",
+    "https://pokal-sanka-2025-git-master-ziberna.vercel.app",
+  ],
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,
