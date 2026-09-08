@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Download, UserCog } from 'lucide-react'
 import {
   createPlayerForPersonAction,
@@ -41,7 +42,7 @@ export function PlayerDetailSheet({
       <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-3xl">
         {row && (
           <div className="flex flex-col gap-6">
-            <SheetHeader className="px-0">
+            <SheetHeader className="gap-2">
               <SheetTitle>{row.personName}</SheetTitle>
               <SheetDescription>
                 Person ID: <span className="font-mono text-foreground">{row.personId}</span>
@@ -210,6 +211,8 @@ type AddPersonToEventSheetProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   row: AddablePersonRow | null
+  allPersons?: AddablePersonRow[]
+  teams?: TeamSummary[]
 }
 
 export function AddPersonToEventSheet({
@@ -218,42 +221,114 @@ export function AddPersonToEventSheet({
   open,
   onOpenChange,
   row,
+  allPersons = [],
+  teams = [],
 }: AddPersonToEventSheetProps) {
+  const [selectedPersonId, setSelectedPersonId] = useState<string>(row?.personId ?? '')
+  const [playerName, setPlayerName] = useState<string>(row?.personName ?? '')
+
+  useEffect(() => {
+    if (row) {
+      setSelectedPersonId(row.personId)
+      setPlayerName(row.personName)
+    } else if (allPersons.length > 0 && (!selectedPersonId || !allPersons.some((p) => p.personId === selectedPersonId))) {
+      setSelectedPersonId(allPersons[0].personId)
+      setPlayerName(allPersons[0].personName)
+    }
+  }, [row, allPersons, selectedPersonId])
+
+  const effectivePersons = allPersons.length > 0 ? allPersons : (row ? [row] : [])
+  const activePerson = effectivePersons.find((p) => p.personId === selectedPersonId) ?? row ?? effectivePersons[0] ?? null
+
+  const handlePersonSelectChange = (newPersonId: string) => {
+    setSelectedPersonId(newPersonId)
+    const person = effectivePersons.find((p) => p.personId === newPersonId)
+    if (person) {
+      setPlayerName(person.personName)
+    }
+  }
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-2xl">
-        {row && (
+        {activePerson ? (
           <div className="flex flex-col gap-6">
-            <SheetHeader className="px-0">
-              <SheetTitle>{row.personName}</SheetTitle>
+            <SheetHeader className="gap-2">
+              <SheetTitle>Add Player to {managedEventName}</SheetTitle>
               <SheetDescription>
-                Create the missing player record for {managedEventName}.
+                Select an existing person identity and create their player record for this event.
               </SheetDescription>
             </SheetHeader>
 
             <Card className="gap-4 py-4">
               <CardHeader>
                 <CardTitle>Add Player</CardTitle>
-                <CardDescription>The default player name starts from the shared person identity.</CardDescription>
+                <CardDescription>Choose from the full list of existing people who are not yet in this event.</CardDescription>
               </CardHeader>
               <CardContent>
-                <form action={createPlayerForPersonAction} className="flex flex-col gap-3">
+                <form action={createPlayerForPersonAction} className="flex flex-col gap-4">
                   <input type="hidden" name="manageEventId" value={managedEventId} />
-                  <input type="hidden" name="personId" value={row.personId} />
+                  <input type="hidden" name="personId" value={activePerson.personId} />
+
                   <div>
-                    <label htmlFor={`new-player-name-${row.personId}`} className="mb-2 block text-sm font-medium text-foreground">
+                    <label htmlFor="select-person-id" className="mb-2 block text-sm font-medium text-foreground">
+                      Person identity ({effectivePersons.length} available)
+                    </label>
+                    <select
+                      id="select-person-id"
+                      value={activePerson.personId}
+                      onChange={(e) => handlePersonSelectChange(e.target.value)}
+                      className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                    >
+                      {effectivePersons.map((person) => (
+                        <option key={person.personId} value={person.personId}>
+                          {person.personName} {person.totalPlayers > 0 ? `(${person.totalPlayers} other ${person.totalPlayers === 1 ? 'event' : 'events'})` : '(No other events)'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="new-player-name" className="mb-2 block text-sm font-medium text-foreground">
                       Player name for this event
                     </label>
                     <Input
-                      id={`new-player-name-${row.personId}`}
+                      id="new-player-name"
                       name="playerName"
-                      defaultValue={row.personName}
+                      value={playerName}
+                      onChange={(e) => setPlayerName(e.target.value)}
                       maxLength={120}
+                      required
                     />
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Defaults to the person&apos;s identity name: <span className="font-semibold text-foreground">{activePerson.personName}</span>
+                    </p>
                   </div>
+
+                  {teams.length > 0 && (
+                    <div>
+                      <label htmlFor="new-player-team" className="mb-2 block text-sm font-medium text-foreground">
+                        Team (optional)
+                      </label>
+                      <select
+                        id="new-player-team"
+                        name="teamId"
+                        defaultValue=""
+                        className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                      >
+                        <option value="">No team</option>
+                        {teams.map((team) => (
+                          <option key={team.id} value={team.id}>
+                            {team.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   <Button type="submit">
                     <UserCog data-icon="inline-start" />
-                    Add Player
+                    Add Player to {managedEventName}
                   </Button>
                 </form>
               </CardContent>
@@ -261,20 +336,30 @@ export function AddPersonToEventSheet({
 
             <Card className="gap-4 py-4">
               <CardHeader>
-                <CardTitle>Existing Event Records</CardTitle>
-                <CardDescription>Useful to confirm naming consistency before adding a new event player.</CardDescription>
+                <CardTitle>Existing Event Records for {activePerson.personName}</CardTitle>
+                <CardDescription>Cross-event records linked to this person.</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {row.existingEventRecords.map((record) => (
-                    <div key={record.id} className="flex flex-col gap-1 rounded-lg border bg-background p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-                      <span className="font-medium text-foreground">{record.name}</span>
-                      <span className="text-muted-foreground">{record.eventName}</span>
-                    </div>
-                  ))}
+                  {activePerson.existingEventRecords.length === 0 ? (
+                    <p className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                      No other event records linked to this person.
+                    </p>
+                  ) : (
+                    activePerson.existingEventRecords.map((record) => (
+                      <div key={record.id} className="flex flex-col gap-1 rounded-lg border bg-background p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+                        <span className="font-medium text-foreground">{record.name}</span>
+                        <span className="text-muted-foreground">{record.eventName}</span>
+                      </div>
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
+          </div>
+        ) : (
+          <div className="py-8 text-center text-muted-foreground">
+            All existing people are already registered in this event.
           </div>
         )}
       </SheetContent>
@@ -302,7 +387,7 @@ export function TeamDetailSheet({
       <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
         {row && (
           <div className="flex flex-col gap-6">
-            <SheetHeader className="px-0">
+            <SheetHeader className="gap-2">
               <SheetTitle>{row.name}</SheetTitle>
               <SheetDescription>Update or remove this team from {managedEventName}.</SheetDescription>
             </SheetHeader>

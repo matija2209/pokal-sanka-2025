@@ -319,10 +319,34 @@ export async function createPersonAction(formData: FormData) {
     redirectManageError('invalid-person-name', manageEventId)
   }
 
+  const addToEvent = formData.get('addToEvent') === 'on' || formData.get('addToEvent') === 'true'
+  const rawTeamId = typeof formData.get('teamId') === 'string' ? (formData.get('teamId') as string).trim() : ''
+  const teamId = rawTeamId || null
+
   try {
-    await prisma.person.create({
+    const person = await prisma.person.create({
       data: { name },
     })
+
+    if (addToEvent && manageEventId) {
+      const managedEvent = await requireSuperadminManagedEvent(formData)
+      if (teamId) {
+        const team = await prisma.team.findFirst({
+          where: { id: teamId, eventId: managedEvent.id },
+        })
+        if (!team) {
+          redirectManageError('invalid-team', manageEventId)
+        }
+      }
+      await prisma.user.create({
+        data: {
+          name,
+          eventId: managedEvent.id,
+          personId: person.id,
+          teamId: teamId,
+        },
+      })
+    }
 
     revalidateAdminAndAppPaths()
   } catch (error) {
@@ -330,7 +354,7 @@ export async function createPersonAction(formData: FormData) {
     redirectManageError('create-person-failed', manageEventId)
   }
 
-  redirectManage('person-created', manageEventId)
+  redirectManage(addToEvent ? 'player-created' : 'person-created', manageEventId)
 }
 
 export async function updatePersonAction(formData: FormData) {
@@ -415,6 +439,8 @@ export async function createPlayerForPersonAction(formData: FormData) {
 
   const personId = typeof formData.get('personId') === 'string' ? formData.get('personId') as string : ''
   const playerName = normalizeName(formData.get('playerName'))
+  const rawTeamId = typeof formData.get('teamId') === 'string' ? (formData.get('teamId') as string).trim() : ''
+  const teamId = rawTeamId || null
 
   if (!personId) {
     redirectManageError('missing-person', manageEventId)
@@ -437,11 +463,21 @@ export async function createPlayerForPersonAction(formData: FormData) {
       redirectManageError('player-already-exists', manageEventId)
     }
 
+    if (teamId) {
+      const team = await prisma.team.findFirst({
+        where: { id: teamId, eventId: managedEvent.id },
+      })
+      if (!team) {
+        redirectManageError('invalid-team', manageEventId)
+      }
+    }
+
     await prisma.user.create({
       data: {
         name: playerName || person.name,
         eventId: managedEvent.id,
         personId: person.id,
+        teamId: teamId,
       },
     })
 
@@ -452,6 +488,92 @@ export async function createPlayerForPersonAction(formData: FormData) {
   }
 
   redirectManage('player-created', manageEventId)
+}
+
+export async function bulkCreatePlayersForPersonsAction(formData: FormData) {
+  const manageEventId = resolveManageEventId(formData)
+  if (!(await isMultiEventSchemaAvailable())) {
+    redirectManageError('schema-required', manageEventId)
+  }
+
+  const rawPersonIds = formData.getAll('personIds')
+  let personIds: string[] = []
+  for (const entry of rawPersonIds) {
+    if (typeof entry === 'string') {
+      const trimmed = entry.trim()
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          const parsed = JSON.parse(trimmed)
+          if (Array.isArray(parsed)) {
+            personIds.push(...parsed.filter((id) => typeof id === 'string'))
+            continue
+          }
+        } catch {
+          // ignore
+        }
+      }
+      if (trimmed.includes(',')) {
+        personIds.push(...trimmed.split(',').map((id) => id.trim()).filter(Boolean))
+      } else if (trimmed) {
+        personIds.push(trimmed)
+      }
+    }
+  }
+  personIds = Array.from(new Set(personIds))
+
+  if (personIds.length === 0) {
+    redirectManageError('missing-person', manageEventId)
+  }
+
+  const rawTeamId = typeof formData.get('teamId') === 'string' ? (formData.get('teamId') as string).trim() : ''
+  const teamId = rawTeamId || null
+
+  const managedEvent = await requireSuperadminManagedEvent(formData)
+
+  try {
+    if (teamId) {
+      const team = await prisma.team.findFirst({
+        where: { id: teamId, eventId: managedEvent.id },
+      })
+      if (!team) {
+        redirectManageError('invalid-team', manageEventId)
+      }
+    }
+
+    const persons = await prisma.person.findMany({
+      where: { id: { in: personIds } },
+      select: { id: true, name: true },
+    })
+
+    const existingUsers = await prisma.user.findMany({
+      where: {
+        eventId: managedEvent.id,
+        personId: { in: personIds },
+      },
+      select: { personId: true },
+    })
+    const existingPersonIdSet = new Set(existingUsers.map((u) => u.personId).filter(Boolean))
+
+    const toCreate = persons.filter((p) => !existingPersonIdSet.has(p.id))
+
+    if (toCreate.length > 0) {
+      await prisma.user.createMany({
+        data: toCreate.map((person) => ({
+          name: person.name,
+          eventId: managedEvent.id,
+          personId: person.id,
+          teamId: teamId,
+        })),
+      })
+    }
+
+    revalidateAdminAndAppPaths()
+  } catch (error) {
+    console.error('Error bulk creating players for persons:', error)
+    redirectManageError('batch-create-failed', manageEventId)
+  }
+
+  redirectManage('players-batch-created', manageEventId)
 }
 
 export async function updatePlayerAction(formData: FormData) {

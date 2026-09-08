@@ -40,6 +40,7 @@ export const auth = betterAuth({
     "https://pokal-sanka-2025-omega.vercel.app",
     "https://pokal-sanka-2025-ziberna.vercel.app",
     "https://pokal-sanka-2025-git-master-ziberna.vercel.app",
+    "http://95.217.200.105:3000",
   ],
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   emailAndPassword: {

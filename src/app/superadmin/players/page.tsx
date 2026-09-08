@@ -23,6 +23,7 @@ const manageStatusLabels: Record<string, string> = {
   'player-created': 'Player created for the selected event.',
   'player-updated': 'Player updated successfully.',
   'player-deleted': 'Player deleted from the selected event.',
+  'players-batch-created': 'Selected people added as players to the event.',
   'promoted': 'Person promoted to account successfully.',
 }
 
@@ -43,6 +44,7 @@ const manageErrorLabels: Record<string, string> = {
   'update-person-failed': 'Failed to update person.',
   'delete-person-failed': 'Failed to delete person.',
   'create-player-failed': 'Failed to create player.',
+  'batch-create-failed': 'Failed to add selected people as players.',
   'update-player-failed': 'Failed to update player.',
   'delete-player-failed': 'Failed to delete player.',
   'create-team-failed': 'Failed to create team.',
