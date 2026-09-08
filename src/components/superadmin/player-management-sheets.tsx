@@ -11,6 +11,7 @@ import {
   updatePlayerAction,
   updateTeamAction,
 } from '@/app/superadmin/actions'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -68,9 +69,39 @@ export function PlayerDetailSheet({
                   <CardDescription>Shared identity across all events.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3">
-                  <form action={updatePersonAction} className="flex flex-col gap-3">
+                  <form action={updatePersonAction} encType="multipart/form-data" className="flex flex-col gap-4">
                     <input type="hidden" name="manageEventId" value={managedEventId} />
                     <input type="hidden" name="personId" value={row.personId} />
+
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-16 w-16 border shrink-0">
+                        {row.personImageUrl ? (
+                          <AvatarImage src={row.personImageUrl} alt={row.personName} className="object-cover" />
+                        ) : null}
+                        <AvatarFallback className="text-base font-semibold">
+                          {row.personName.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-1.5 min-w-0">
+                        <label htmlFor={`person-image-${row.personId}`} className="block text-sm font-medium text-foreground">
+                          Shared Identity Photo
+                        </label>
+                        <Input
+                          id={`person-image-${row.personId}`}
+                          name="personImage"
+                          type="file"
+                          accept="image/*"
+                          className="text-xs file:text-xs"
+                        />
+                        {row.personImageUrl && (
+                          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer pt-1">
+                            <input type="checkbox" name="removeImage" value="true" className="rounded border-input" />
+                            <span>Remove person photo</span>
+                          </label>
+                        )}
+                      </div>
+                    </div>
+
                     <div>
                       <label htmlFor={`person-name-${row.personId}`} className="mb-2 block text-sm font-medium text-foreground">
                         Shared identity name
@@ -99,45 +130,84 @@ export function PlayerDetailSheet({
                   <CardTitle>Player in {managedEventName}</CardTitle>
                   <CardDescription>Edit the event-specific participant record.</CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-3">
-                  <form action={updatePlayerAction} className="grid gap-3 md:grid-cols-3 md:items-end">
+                <CardContent className="flex flex-col gap-4">
+                  <form action={updatePlayerAction} encType="multipart/form-data" className="flex flex-col gap-4">
                     <input type="hidden" name="manageEventId" value={managedEventId} />
                     <input type="hidden" name="playerId" value={row.activePlayer.id} />
-                    <div>
-                      <label htmlFor={`player-name-${row.personId}`} className="mb-2 block text-sm font-medium text-foreground">
-                        Player name
-                      </label>
-                      <Input
-                        id={`player-name-${row.personId}`}
-                        name="name"
-                        defaultValue={row.activePlayer.name}
-                        required
-                        minLength={2}
-                        maxLength={120}
-                      />
+
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-16 w-16 border shrink-0">
+                        {(row.activePlayer.profileImageUrl || row.personImageUrl) ? (
+                          <AvatarImage
+                            src={row.activePlayer.profileImageUrl || row.personImageUrl || ''}
+                            alt={row.activePlayer.name}
+                            className="object-cover"
+                          />
+                        ) : null}
+                        <AvatarFallback className="text-base font-semibold">
+                          {row.activePlayer.name.slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-1.5 min-w-0">
+                        <label htmlFor={`player-image-${row.activePlayer.id}`} className="block text-sm font-medium text-foreground">
+                          Event Avatar <span className="text-xs text-muted-foreground font-normal">(overrides Person photo for this event)</span>
+                        </label>
+                        <Input
+                          id={`player-image-${row.activePlayer.id}`}
+                          name="playerImage"
+                          type="file"
+                          accept="image/*"
+                          className="text-xs file:text-xs"
+                        />
+                        {row.activePlayer.profileImageUrl && (
+                          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer pt-1">
+                            <input type="checkbox" name="removeImage" value="true" className="rounded border-input" />
+                            <span>Remove event avatar (reverts to Person photo)</span>
+                          </label>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <label htmlFor={`player-team-${row.personId}`} className="mb-2 block text-sm font-medium text-foreground">
-                        Team
-                      </label>
-                      <select
-                        id={`player-team-${row.personId}`}
-                        name="teamId"
-                        defaultValue={row.activePlayer.teamId ?? ''}
-                        className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                      >
-                        <option value="">No team</option>
-                        {teams.map((team) => (
-                          <option key={team.id} value={team.id}>
-                            {team.name}
-                          </option>
-                        ))}
-                      </select>
+
+                    <div className="grid gap-3 md:grid-cols-2 md:items-end">
+                      <div>
+                        <label htmlFor={`player-name-${row.personId}`} className="mb-2 block text-sm font-medium text-foreground">
+                          Player name (in event)
+                        </label>
+                        <Input
+                          id={`player-name-${row.personId}`}
+                          name="name"
+                          defaultValue={row.activePlayer.name}
+                          required
+                          minLength={2}
+                          maxLength={120}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor={`player-team-${row.personId}`} className="mb-2 block text-sm font-medium text-foreground">
+                          Team
+                        </label>
+                        <select
+                          id={`player-team-${row.personId}`}
+                          name="teamId"
+                          defaultValue={row.activePlayer.teamId ?? ''}
+                          className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                        >
+                          <option value="">No team</option>
+                          {teams.map((team) => (
+                            <option key={team.id} value={team.id}>
+                              {team.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                    <Button type="submit">Save Player</Button>
+
+                    <div className="flex gap-2">
+                      <Button type="submit">Save Player</Button>
+                    </div>
                   </form>
 
-                  <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+                  <div className="flex flex-wrap gap-2 text-sm text-muted-foreground border-t pt-3">
                     <span>
                       Player ID: <span className="font-mono text-foreground">{row.activePlayer.id}</span>
                     </span>

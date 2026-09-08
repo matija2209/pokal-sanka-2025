@@ -19,3 +19,28 @@ export function ActiveSwitch({ defaultChecked }: { defaultChecked: boolean }) {
     </div>
   )
 }
+
+export function RandomTeamsSwitch({ defaultChecked }: { defaultChecked: boolean }) {
+  return (
+    <div className="flex items-start gap-3">
+      <input type="hidden" name="isRandomTeams" value={defaultChecked ? 'true' : 'false'} id="isRandomTeamsHidden" />
+      <Switch
+        id="isRandomTeamsSwitch"
+        defaultChecked={defaultChecked}
+        onCheckedChange={(checked) => {
+          const el = document.getElementById('isRandomTeamsHidden') as HTMLInputElement
+          if (el) el.value = String(checked)
+        }}
+        className="mt-0.5"
+      />
+      <div>
+        <Label htmlFor="isRandomTeamsSwitch" className="font-medium">
+          Naključna dodelitev ekip (Random Teams / Kolo sreče)
+        </Label>
+        <p className="text-xs text-muted-foreground">
+          Igralci se ekipi pridružijo preko kolesa sreče (bonding exercise) namesto ročne izbire.
+        </p>
+      </div>
+    </div>
+  )
+}

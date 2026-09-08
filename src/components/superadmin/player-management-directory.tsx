@@ -9,6 +9,7 @@ import {
   createPlayerForPersonAction,
   createTeamAction,
 } from '@/app/superadmin/actions'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -467,7 +468,19 @@ function PlayersTab({
                 const isOpen = row.personId === openPersonId
                 return (
                   <TableRow key={row.personId}>
-                    <TableCell className="font-medium">{row.personName}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-7 w-7 border shrink-0">
+                          {(row.activePlayer.profileImageUrl || row.personImageUrl) ? (
+                            <AvatarImage src={row.activePlayer.profileImageUrl || row.personImageUrl || ''} alt={row.personName} className="object-cover" />
+                          ) : null}
+                          <AvatarFallback className="text-xs">
+                            {row.personName.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>{row.personName}</span>
+                      </div>
+                    </TableCell>
                     <TableCell>{row.activePlayer.name}</TableCell>
                     <TableCell>
                       <Badge variant={row.activePlayer.teamName ? 'secondary' : 'outline'}>
@@ -669,7 +682,19 @@ function AddToEventTab({
                         aria-label={`Select ${row.personName}`}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{row.personName}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-7 w-7 border shrink-0">
+                          {row.personImageUrl ? (
+                            <AvatarImage src={row.personImageUrl} alt={row.personName} className="object-cover" />
+                          ) : null}
+                          <AvatarFallback className="text-xs">
+                            {row.personName.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>{row.personName}</span>
+                      </div>
+                    </TableCell>
                     <TableCell>{row.totalPlayers}</TableCell>
                     <TableCell>
                       <Badge variant="outline">Not in selected event</Badge>

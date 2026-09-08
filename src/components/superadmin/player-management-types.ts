@@ -19,11 +19,13 @@ export type EventRecord = {
 export type PlayerRow = {
   personId: string
   personName: string
+  personImageUrl?: string | null
   totalPlayers: number
   invitePath: string
   activePlayer: {
     id: string
     name: string
+    profileImageUrl?: string | null
     teamId: string | null
     teamName: string | null
   }
@@ -33,6 +35,7 @@ export type PlayerRow = {
 export type AddablePersonRow = {
   personId: string
   personName: string
+  personImageUrl?: string | null
   totalPlayers: number
   existingEventRecords: EventRecord[]
 }

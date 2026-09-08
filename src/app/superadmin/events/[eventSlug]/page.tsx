@@ -10,7 +10,7 @@ import { EventLandingPageForm } from '@/components/admin/event-landing-page-form
 import { upsertEventLandingPageAction } from '@/lib/actions/event-actions'
 import { updateEventAction, deleteEventAction } from '../../actions'
 import { DeleteEventButton } from './delete-button'
-import { ActiveSwitch } from './active-switch'
+import { ActiveSwitch, RandomTeamsSwitch } from './active-switch'
 
 export const dynamic = 'force-dynamic'
 
@@ -76,6 +76,7 @@ export default async function SuperadminEventDetailPage({ params }: Props) {
             </div>
 
             <ActiveSwitch defaultChecked={event.isActive} />
+            <RandomTeamsSwitch defaultChecked={event.isRandomTeams} />
 
             <div className="flex gap-3">
               <Button type="submit">Save Changes</Button>

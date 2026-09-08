@@ -156,11 +156,13 @@ export default async function SuperadminPlayersPage({ searchParams }: Superadmin
               playersInManagedEvent={playersInManagedEvent.map((person) => ({
                 personId: person.id,
                 personName: person.name,
+                personImageUrl: person.profile_image_url ?? null,
                 totalPlayers: person.totalPlayers,
                 invitePath: person.invitePath,
                 activePlayer: {
                   id: person.activePlayer!.id,
                   name: person.activePlayer?.name ?? person.name,
+                  profileImageUrl: person.activePlayer?.profile_image_url ?? null,
                   teamId: person.activePlayer?.teamId ?? null,
                   teamName: person.activePlayer?.team?.name ?? null,
                 },
@@ -176,6 +178,7 @@ export default async function SuperadminPlayersPage({ searchParams }: Superadmin
               personsNotInManagedEvent={personsNotInManagedEvent.map((person) => ({
                 personId: person.id,
                 personName: person.name,
+                personImageUrl: person.profile_image_url ?? null,
                 totalPlayers: person.totalPlayers,
                 existingEventRecords: person.users.map((user) => ({
                   id: user.id,

@@ -8,6 +8,7 @@ import { getActiveEvent, getEventById } from '@/lib/events'
 import { getUserByPersonAndEvent } from '@/lib/prisma/fetchers/user-fetchers'
 import { deletePostForSuperadmin } from '@/lib/prisma/fetchers/post-fetchers'
 import { getNextAvailableColor } from '@/lib/utils/colors'
+import { uploadImage } from '@/lib/utils/image-upload'
 import { requireAdmin, requireAuth, requireSuperadmin } from '@/lib/auth-utils'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
@@ -365,6 +366,8 @@ export async function updatePersonAction(formData: FormData) {
 
   const personId = typeof formData.get('personId') === 'string' ? formData.get('personId') as string : ''
   const name = normalizeName(formData.get('name'))
+  const removeImage = formData.get('removeImage') === 'true'
+  const personImage = formData.get('personImage') as File | null
 
   if (!personId) {
     redirectManageError('missing-person', manageEventId)
@@ -375,9 +378,18 @@ export async function updatePersonAction(formData: FormData) {
   }
 
   try {
+    const updateData: { name: string; profile_image_url?: string | null } = { name }
+
+    if (removeImage) {
+      updateData.profile_image_url = null
+    } else if (personImage && personImage.size > 0) {
+      const imageUrl = await uploadImage(personImage, 'persons', personId)
+      updateData.profile_image_url = imageUrl
+    }
+
     await prisma.person.update({
       where: { id: personId },
-      data: { name },
+      data: updateData,
     })
 
     revalidateAdminAndAppPaths()
@@ -582,6 +594,8 @@ export async function updatePlayerAction(formData: FormData) {
   const name = normalizeName(formData.get('name'))
   const rawTeamId = typeof formData.get('teamId') === 'string' ? formData.get('teamId') as string : ''
   const teamId = rawTeamId || null
+  const removeImage = formData.get('removeImage') === 'true'
+  const playerImage = formData.get('playerImage') as File | null
 
   if (!playerId) {
     redirectManageError('missing-player', manageEventId)
@@ -614,12 +628,21 @@ export async function updatePlayerAction(formData: FormData) {
       }
     }
 
+    const updateData: { name: string; teamId: string | null; profile_image_url?: string | null } = {
+      name,
+      teamId,
+    }
+
+    if (removeImage) {
+      updateData.profile_image_url = null
+    } else if (playerImage && playerImage.size > 0) {
+      const imageUrl = await uploadImage(playerImage, 'users', playerId)
+      updateData.profile_image_url = imageUrl
+    }
+
     await prisma.user.update({
       where: { id: playerId },
-      data: {
-        name,
-        teamId,
-      },
+      data: updateData,
     })
 
     revalidateAdminAndAppPaths()
@@ -742,6 +765,7 @@ export async function updateEventAction(formData: FormData) {
   const name = (formData.get('name') as string | null)?.trim() ?? ''
   const rawSlug = (formData.get('slug') as string | null)?.trim() ?? ''
   const isActive = formData.get('isActive') === 'true'
+  const isRandomTeams = formData.get('isRandomTeams') === 'true'
 
   if (!eventId || name.length < 2) {
     redirect('/superadmin/events?error=invalid-fields')
@@ -764,11 +788,12 @@ export async function updateEventAction(formData: FormData) {
 
   await prisma.event.update({
     where: { id: eventId },
-    data: { name, slug, isActive },
+    data: { name, slug, isActive, isRandomTeams },
   })
 
   revalidatePath('/superadmin/events')
   revalidatePath('/admin')
+  revalidatePath('/app/select-team')
   revalidatePath(`/event/${slug}`)
   revalidatePath(`/event/${event.slug}`)
   redirect(`/superadmin/events?updated=${encodeURIComponent(slug)}`)
