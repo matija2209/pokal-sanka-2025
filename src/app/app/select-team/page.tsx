@@ -41,11 +41,9 @@ export default async function SelectTeamPage() {
   if (isRandomTeams) {
     return (
       <div className="w-full max-w-5xl mx-auto px-2 sm:px-4 py-4">
-        <RandomTeamSpinner 
+        <RandomTeamSpinner
           currentUserId={currentUser.id}
-          currentUserName={currentUser.name}
           availableTeams={availableTeams}
-          redirectUrl="/app/feed"
         />
       </div>
     )
