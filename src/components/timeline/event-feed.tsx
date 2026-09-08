@@ -45,12 +45,17 @@ import { ACTION_LABELS } from '@/lib/utils/bachelor-points'
 import type { ActionType } from '@/lib/utils/bachelor-points'
 import { isVideoUrl } from '@/lib/utils/media'
 
+import type { Event } from '@/lib/prisma/types'
+import { getActiveEvent } from '@/lib/events'
+import { isBachelorEvent } from '@/lib/events-shared'
+
 interface EventFeedProps {
   currentUser: {
     id: string
     name: string
     profile_image_url?: string | null
   }
+  currentEvent?: Event | null
 }
 
 type FeedHighlightGroup = {
@@ -223,14 +228,18 @@ function getFeedItems(
   )
 }
 
-export default async function EventFeed({ currentUser }: EventFeedProps) {
+export default async function EventFeed({ currentUser, currentEvent }: EventFeedProps) {
+  const activeEvent = currentEvent ?? (await getActiveEvent())
+  const eventId = activeEvent?.id
+  const isBachelor = isBachelorEvent(activeEvent)
+
   const [posts, recentCommentaries, recentImagePosts, recentSightings, hypeEvents, hypeVoteCount] = await Promise.all([
-    getPostsWithUsers(24),
-    getRecentCommentaries(30),
-    getRecentPostsWithImages(10),
-    getApprovedSightings(10, 0),
-    getHypeEvents(),
-    getHypeVoteCount(),
+    getPostsWithUsers(24, eventId),
+    getRecentCommentaries(30, eventId),
+    getRecentPostsWithImages(10, eventId),
+    isBachelor && eventId ? getApprovedSightings(10, 0, eventId) : Promise.resolve([]),
+    isBachelor && eventId ? getHypeEvents(eventId) : Promise.resolve([]),
+    isBachelor && eventId ? getHypeVoteCount(eventId) : Promise.resolve(0),
   ])
 
   const highlightGroups = getGroupedHighlights(recentCommentaries)
@@ -303,7 +312,7 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                           <div className="relative h-full w-full overflow-hidden rounded-full bg-muted">
                             <Image
                               src={sighting.photoUrl}
-                              alt={`Bachelor sighting ${sighting.submitterName ?? ''}`.trim()}
+                              alt={`${activeEvent?.name ?? 'Bachelor'} sighting ${sighting.submitterName ?? ''}`.trim()}
                               fill
                               sizes="66px"
                               className="object-cover"
@@ -312,7 +321,7 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                         </div>
                       </div>
                       <span className="text-[11px] font-medium truncate w-full text-center">
-                        Bachelor
+                        {activeEvent?.name ? activeEvent.name.split(' ')[0] : 'Bachelor'}
                       </span>
                     </div>
                   </CarouselItem>
@@ -402,7 +411,9 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                           </div>
                           <div className="flex flex-col -space-y-0.5">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-sm font-bold">Bachelor sighting</span>
+                              <span className="text-sm font-bold">
+                                {activeEvent?.name ? `${activeEvent.name} opazovanje` : 'Opazovanje'}
+                              </span>
                               <Badge variant="outline" className="text-[10px]">
                                 {actionLabel}
                               </Badge>
@@ -423,7 +434,7 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                       <div className="relative aspect-square w-full bg-muted overflow-hidden">
                         <Image
                           src={sighting.photoUrl}
-                          alt={`Bachelor sighting by ${sighting.submitterName ?? 'anonymous'}`}
+                          alt={`${activeEvent?.name ?? 'Bachelor'} sighting by ${sighting.submitterName ?? 'anonymous'}`}
                           fill
                           sizes="(max-width: 1024px) 100vw, 760px"
                           className="object-cover"
@@ -436,7 +447,7 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                             <span className="font-bold mr-2">
                               {sighting.submitterName ?? 'Anonymous'}
                             </span>
-                            {sighting.message || 'New bachelor sighting added to the timeline.'}
+                            {sighting.message || 'New sighting added to the timeline.'}
                           </p>
                           <p className="text-[11px] uppercase tracking-tight text-muted-foreground">
                             Friendship level: {sighting.friendshipLevel}
@@ -475,7 +486,9 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                             </div>
                             <div className="flex flex-col -space-y-0.5">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-sm font-bold">Bachelor hype event</span>
+                                <span className="text-sm font-bold">
+                                  {activeEvent?.name ? `${activeEvent.name} hype dogodek` : 'Hype dogodek'}
+                                </span>
                                 <Badge variant="outline" className="text-[10px] uppercase">
                                   {hypeEvent.status}
                                 </Badge>
@@ -506,7 +519,7 @@ export default async function EventFeed({ currentUser }: EventFeedProps) {
                           <Badge variant="secondary" className="text-[10px]">
                             {hypeEvent.voteCount}/{hypeEvent.voteThreshold} votes
                           </Badge>
-                          <span>Current bachelor votes: {hypeVoteCount}</span>
+                          <span>Št. glasov: {hypeVoteCount}</span>
                         </div>
                       </div>
                     </article>

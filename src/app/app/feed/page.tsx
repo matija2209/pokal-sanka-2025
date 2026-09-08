@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/lib/utils/cookies'
 import { redirect } from 'next/navigation'
 import { EventFeed } from '@/components/timeline'
 import type { Metadata } from 'next'
-import { getSiteBrandParts } from '@/lib/events'
+import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -22,7 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export const dynamic = 'force-dynamic'
 
 export default async function FeedPage() {
-  const currentUser = await getCurrentUser()
+  const currentEvent = await getActiveEvent()
+  const currentUser = await getCurrentUser(currentEvent?.id)
 
   if (!currentUser) {
     redirect('/')
@@ -33,6 +34,6 @@ export default async function FeedPage() {
   }
 
   return (
-    <EventFeed currentUser={currentUser} />
+    <EventFeed currentUser={currentUser} currentEvent={currentEvent} />
   )
 }
