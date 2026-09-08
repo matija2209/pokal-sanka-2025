@@ -1,11 +1,22 @@
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
 import { DashboardLayout } from '@/components/layout'
 import NavShell from '@/components/layout/nav-shell'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getActiveEvent, getAllEvents } from '@/lib/events'
 
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const currentEvent = await getActiveEvent()
+  const eventName = currentEvent?.name ?? 'Pokal Sanka'
+
+  return {
+    title: `${eventName} | App`,
+    description: `Event dashboard for ${eventName}`,
+  }
+}
 
 async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const [currentEvent, availableEvents] = await Promise.all([
