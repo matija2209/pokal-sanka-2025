@@ -487,6 +487,21 @@ export function TeamDetailSheet({
                       Team ID: <span className="font-mono text-foreground">{row.id}</span>
                     </p>
                   </div>
+                  <div className="flex-1">
+                    <label htmlFor={`team-color-${row.id}`} className="mb-2 block text-sm font-medium text-foreground">
+                      Team color
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        id={`team-color-${row.id}`}
+                        name="color"
+                        type="color"
+                        defaultValue={row.color ?? '#6B7280'}
+                        className="h-9 w-14 rounded-md border border-input bg-background p-1"
+                      />
+                      <span className="font-mono text-xs text-muted-foreground">{row.color ?? '#6B7280'}</span>
+                    </div>
+                  </div>
                   <div className="flex gap-2">
                     <Button type="submit" variant="secondary">Save Team</Button>
                     <Button type="submit" formAction={deleteTeamAction} variant="destructive">

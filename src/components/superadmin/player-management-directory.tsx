@@ -11,6 +11,7 @@ import {
 } from '@/app/superadmin/actions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { TeamBadge } from '@/components/teams/team-badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -483,9 +484,10 @@ function PlayersTab({
                     </TableCell>
                     <TableCell>{row.activePlayer.name}</TableCell>
                     <TableCell>
-                      <Badge variant={row.activePlayer.teamName ? 'secondary' : 'outline'}>
-                        {row.activePlayer.teamName ?? 'No team'}
-                      </Badge>
+                      <TeamBadge
+                        team={row.activePlayer.teamName ? { name: row.activePlayer.teamName, color: row.activePlayer.teamColor } : null}
+                        emptyLabel="No team"
+                      />
                     </TableCell>
                     <TableCell>{row.totalPlayers}</TableCell>
                     <TableCell>{row.invitePath ? <Badge variant="outline">Ready</Badge> : <Badge variant="outline">Unavailable</Badge>}</TableCell>
@@ -797,7 +799,9 @@ function TeamsTab({
                 const isOpen = row.id === openTeamId
                 return (
                   <TableRow key={row.id}>
-                    <TableCell className="font-medium">{row.name}</TableCell>
+                    <TableCell className="font-medium">
+                      <TeamBadge team={row} />
+                    </TableCell>
                     <TableCell>{row.playerCount}</TableCell>
                     <TableCell>
                       <Badge variant={row.playerCount > 0 ? 'secondary' : 'outline'}>

@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { logDrinkAction, logMultipleDrinksAction } from '@/app/actions'
 import { initialDrinkLogActionState, initialMultiDrinkLogActionState } from '@/lib/types/action-states'
 import { getDrinkLabel, getDrinkPoints } from '@/lib/utils/drinks'
+import { TeamBadge } from '@/components/teams/team-badge'
 import { toast } from 'sonner'
 
 interface DrinkLogFormProps {
@@ -105,16 +106,8 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
                   {allUsers.map(user => (
                     <SelectItem key={user.id} value={user.id}>
                       <div className="flex items-center gap-2">
-                        {user.team && (
-                          <div 
-                            className="w-3 h-3 rounded" 
-                            style={{ backgroundColor: user.team.color }}
-                          />
-                        )}
                         <span>{user.name}</span>
-                        {user.team && (
-                          <span className="">({user.team.name})</span>
-                        )}
+                        {user.team && <TeamBadge team={user.team} className="text-[10px] px-1.5 py-0" />}
                       </div>
                     </SelectItem>
                   ))}
@@ -139,16 +132,8 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
                       disabled={!selectedUserIds.includes(user.id)}
                     />
                     <Label htmlFor={`user-${user.id}`} className="flex items-center gap-2 cursor-pointer flex-1">
-                      {user.team && (
-                        <div 
-                          className="w-3 h-3 rounded" 
-                          style={{ backgroundColor: user.team.color }}
-                        />
-                      )}
                       <span>{user.name}</span>
-                      {user.team && (
-                        <span className="">({user.team.name})</span>
-                      )}
+                      {user.team && <TeamBadge team={user.team} className="text-[10px] px-1.5 py-0" />}
                     </Label>
                   </div>
                 ))}

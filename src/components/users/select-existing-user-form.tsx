@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Search, UserPlus } from 'lucide-react'
 import { selectExistingUserAction } from '@/app/actions'
 import { initialUserActionState } from '@/lib/types/action-states'
+import { TeamBadge } from '@/components/teams/team-badge'
 
 export interface ExistingPlayerOption {
   id: string
@@ -130,21 +131,10 @@ export default function SelectExistingUserForm({
                     )}
                   </div>
 
-                  {player.teamName ? (
-                    <div className="inline-flex items-center gap-1.5 rounded-full border bg-muted/60 px-2 py-0.5 max-w-[95px] sm:max-w-[120px]">
-                      <div
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: player.teamColor || '#cbd5e1' }}
-                      />
-                      <span className="text-[10px] sm:text-xs font-medium text-muted-foreground truncate">
-                        {player.teamName}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-[10px] text-muted-foreground/70 bg-muted/40 rounded-full px-2 py-0.5">
-                      Brez ekipe
-                    </span>
-                  )}
+                  <TeamBadge
+                    team={player.teamName ? { name: player.teamName, color: player.teamColor } : null}
+                    className="text-[10px] sm:text-xs px-2 py-0.5 max-w-[95px] sm:max-w-[120px] truncate"
+                  />
                 </div>
 
                 <div className="min-w-0 w-full">

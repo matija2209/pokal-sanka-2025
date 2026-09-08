@@ -3,6 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { TeamBadge } from '@/components/teams/team-badge'
 import { Activity, Clock } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import type { DrinkLogWithUser } from '@/lib/prisma/types'
@@ -51,19 +52,7 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium">{log.user.name}</span>
-                    {log.user.team ? (
-                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[11px] font-medium bg-muted/60 border border-border/50 text-foreground">
-                        <span
-                          className="w-1.5 h-1.5 rounded-full shrink-0"
-                          style={{ backgroundColor: log.user.team.color || '#3b82f6' }}
-                        />
-                        <span className="truncate max-w-[120px]">{log.user.team.name}</span>
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] text-muted-foreground/70 bg-muted/30 border border-dashed border-border/40">
-                        Brez ekipe
-                      </span>
-                    )}
+                    <TeamBadge team={log.user.team} className="text-[11px] px-1.5 py-0.5 max-w-[120px] truncate" />
                     <span className="text-lg">{getDrinkEmoji(log.drinkType)}</span>
                     <Badge 
                       className={`text-xs achievement-badge ${

@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Trophy, Medal, Award, TrendingUp } from 'lucide-react'
 import { calculateUserScore, getUserTriviaPoints } from '@/lib/utils/calculations'
 import UserAvatar from './user-avatar'
+import { TeamBadge } from '@/components/teams/team-badge'
 import type { UserWithTeamAndDrinks } from '@/lib/prisma/types'
 
 interface LeaderboardProps {
@@ -110,19 +111,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter, triviaPo
                         </div>
                         
                         <div className="mt-1 flex items-center gap-2 flex-wrap">
-                          {user.team ? (
-                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-muted/70 border border-border/60 text-foreground">
-                              <span
-                                className="w-2 h-2 rounded-full shrink-0 shadow-xs"
-                                style={{ backgroundColor: user.team.color || '#3b82f6' }}
-                              />
-                              <span className="truncate max-w-[140px] sm:max-w-[200px]">{user.team.name}</span>
-                            </div>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-normal text-muted-foreground/70 bg-muted/30 border border-dashed border-border/50">
-                              Brez ekipe
-                            </span>
-                          )}
+                          <TeamBadge team={user.team} className="text-xs px-2 py-0.5 max-w-[140px] sm:max-w-[200px] truncate" />
                         </div>
                         
                         <div className="flex items-center gap-3 mt-1.5">

@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import UserAvatar from './user-avatar'
+import { TeamBadge } from '@/components/teams/team-badge'
 import type { UserWithTeamAndScore } from '@/lib/prisma/types'
 
 interface PlayerCardProps {
@@ -47,19 +48,9 @@ export default function PlayerCard({ user, currentUserId, onSelectPlayer }: Play
             </h3>
             
             {/* Team Info */}
-            {user.team ? (
-              <div className="flex items-center justify-center gap-1.5 mt-1.5">
-                <div 
-                  className="w-2.5 h-2.5 rounded-full shadow-inner border border-black/10"
-                  style={{ backgroundColor: teamColor }}
-                />
-                <span className="text-xs font-bold text-muted-foreground truncate uppercase tracking-tight">
-                  {user.team.name}
-                </span>
-              </div>
-            ) : (
-              <span className="text-[10px] text-muted-foreground/60 uppercase font-bold tracking-widest mt-1 block">Brez ekipe</span>
-            )}
+            <div className="flex items-center justify-center mt-1.5">
+              <TeamBadge team={user.team} className="text-[10px] font-bold uppercase tracking-tight" />
+            </div>
           </div>
           
           {/* Score */}

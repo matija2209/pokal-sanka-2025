@@ -3,6 +3,7 @@
 import { useState, useEffect, useTransition } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { TeamBadge } from '@/components/teams/team-badge'
 import { Trophy, Users, Activity, Clock } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import UserAvatar from '@/components/users/user-avatar'
@@ -214,9 +215,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
                       {player.team && (
                         <div className="flex items-center gap-2">
                           <TeamLogo team={player.team} size="sm" />
-                          <Badge className="text-base px-2 py-1" style={{ backgroundColor: player.team.color }}>
-                            {player.team.name}
-                          </Badge>
+                          <TeamBadge team={player.team} className="text-base px-2 py-1" />
                         </div>
                       )}
                     </div>

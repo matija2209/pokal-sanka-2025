@@ -3,6 +3,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { sl } from 'date-fns/locale'
 import { ArrowLeft } from 'lucide-react'
 import { getPostsForSuperadmin } from '@/lib/prisma/fetchers/post-fetchers'
+import { TeamBadge } from '@/components/teams/team-badge'
 import { deletePostAction } from '../actions'
 
 type SuperadminPostsPageProps = {
@@ -66,11 +67,7 @@ export default async function SuperadminPostsPage({ searchParams }: SuperadminPo
                   <div className="space-y-2 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 text-sm">
                       <span className="font-bold text-foreground">{post.user.name}</span>
-                      {post.user.team?.name && (
-                        <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
-                          Team: {post.user.team.name}
-                        </span>
-                      )}
+                      {post.user.team && <TeamBadge team={post.user.team} className="text-xs" />}
                       <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: sl })}
                       </span>

@@ -34,6 +34,13 @@ function normalizeName(rawName: FormDataEntryValue | null): string {
   return typeof rawName === 'string' ? rawName.trim() : ''
 }
 
+const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/
+
+function normalizeHexColor(rawColor: FormDataEntryValue | null): string | null {
+  const value = typeof rawColor === 'string' ? rawColor.trim() : ''
+  return HEX_COLOR_PATTERN.test(value) ? value : null
+}
+
 function resolveManageEventId(formData?: FormData): string | null {
   const rawManageEventId = formData?.get('manageEventId')
   return typeof rawManageEventId === 'string' && rawManageEventId.trim().length > 0
@@ -229,6 +236,7 @@ export async function updateTeamAction(formData: FormData) {
 
   const teamId = typeof formData.get('teamId') === 'string' ? formData.get('teamId') as string : ''
   const name = normalizeName(formData.get('name'))
+  const color = normalizeHexColor(formData.get('color'))
 
   if (!teamId) {
     redirectManageError('missing-team', manageEventId)
@@ -252,7 +260,7 @@ export async function updateTeamAction(formData: FormData) {
 
     await prisma.team.update({
       where: { id: teamId },
-      data: { name },
+      data: { name, ...(color ? { color } : {}) },
     })
 
     revalidateAdminAndAppPaths()

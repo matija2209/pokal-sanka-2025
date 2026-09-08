@@ -30,12 +30,26 @@ export function isColorUsed(color: string, existingTeams: Team[]): boolean {
 export function getNextAvailableColor(existingTeams: Team[]): string {
   const usedColors = existingTeams.map(team => team.color)
   const availableColors = TEAM_COLORS.filter(color => !usedColors.includes(color))
-  
+
   // If all colors are used, return a random one
   if (availableColors.length === 0) {
     return getRandomTeamColor()
   }
-  
+
   // Return first available color
   return availableColors[0]
+}
+
+// Picks readable black/white text for an arbitrary hex background using
+// perceived brightness (YIQ), since team colors are free-form hex values.
+export function getContrastTextColor(hex: string): string {
+  const normalized = hex.replace('#', '')
+  if (normalized.length !== 6) return '#ffffff'
+
+  const r = parseInt(normalized.substring(0, 2), 16)
+  const g = parseInt(normalized.substring(2, 4), 16)
+  const b = parseInt(normalized.substring(4, 6), 16)
+
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000
+  return yiq >= 150 ? '#000000' : '#ffffff'
 }

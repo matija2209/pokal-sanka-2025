@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { logDrinkAction } from '@/app/actions'
 import { initialDrinkLogActionState } from '@/lib/types/action-states'
 import { getDrinksByCategory } from '@/lib/utils/drinks'
+import { TeamBadge } from '@/components/teams/team-badge'
 import type { UserWithTeam } from '@/lib/prisma/types'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
@@ -46,17 +47,7 @@ export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormP
 
       <div className="flex flex-col items-center gap-2 mb-8 p-4 bg-secondary/30 rounded-2xl border border-border/50">
         <span className="text-xl font-bold text-foreground leading-none">{selectedUser.name}</span>
-        {selectedUser.team ? (
-          <div className="flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-background border border-border/50 shadow-sm">
-            <div 
-              className="w-2.5 h-2.5 rounded-full shadow-sm"
-              style={{ backgroundColor: selectedUser.team.color }}
-            />
-            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{selectedUser.team.name}</span>
-          </div>
-        ) : (
-          <span className="text-xs font-medium text-muted-foreground">Brez ekipe</span>
-        )}
+        <TeamBadge team={selectedUser.team} className="text-xs font-bold uppercase tracking-wider" />
       </div>
       
       <form action={formAction} className="space-y-8 relative">

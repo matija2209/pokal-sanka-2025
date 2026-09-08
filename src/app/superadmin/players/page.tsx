@@ -165,6 +165,7 @@ export default async function SuperadminPlayersPage({ searchParams }: Superadmin
                   profileImageUrl: person.activePlayer?.profile_image_url ?? null,
                   teamId: person.activePlayer?.teamId ?? null,
                   teamName: person.activePlayer?.team?.name ?? null,
+                  teamColor: person.activePlayer?.team?.color ?? null,
                 },
                 otherEventRecords: person.users
                   .map((user) => ({
@@ -190,6 +191,7 @@ export default async function SuperadminPlayersPage({ searchParams }: Superadmin
               teams={teams.map((team) => ({
                 id: team.id,
                 name: team.name,
+                color: team.color,
                 playerCount: teamPlayerCounts.get(team.id) ?? 0,
               }))}
             />

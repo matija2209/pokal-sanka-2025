@@ -6,6 +6,7 @@ export type EventOption = {
 export type TeamSummary = {
   id: string
   name: string
+  color: string | null
   playerCount: number
 }
 
@@ -28,6 +29,7 @@ export type PlayerRow = {
     profileImageUrl?: string | null
     teamId: string | null
     teamName: string | null
+    teamColor: string | null
   }
   otherEventRecords: EventRecord[]
 }
