@@ -22,7 +22,6 @@ const NAV_ITEMS: Array<{
   matchPrefix?: string
 }> = [
   { href: '/app/feed', icon: Images, label: 'Feed' },
-  { href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor' },
   { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
   { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
   { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
@@ -57,7 +56,7 @@ export default function NavShell() {
               priority
             />
             <span className="text-lg md:text-xl font-bold hidden sm:block">
-              Bwšk Bachelor 2026
+              Pokal Šanka
             </span>
             <span className="text-lg font-bold sm:hidden">
               Šanka

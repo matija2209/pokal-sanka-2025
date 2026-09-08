@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import UserMenu from './user-menu'
 import type { Event, UserWithTeam } from '@/lib/prisma/types'
+import { isBachelorEvent } from '@/lib/events-shared'
 
 type NavItem = {
   href: string
@@ -24,16 +25,6 @@ type NavItem = {
   label: string
   matchPrefix?: string
 }
-
-const NAV_ITEMS: NavItem[] = [
-  { href: '/app/feed', icon: Images, label: 'Feed' },
-  { href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor' },
-  { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
-  { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
-  { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
-  { href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' },
-  { href: '/app/profile', icon: User, label: 'Profil' },
-]
 
 interface NavigationProps {
   currentUser: UserWithTeam
@@ -45,14 +36,24 @@ interface NavigationProps {
 
 export default function Navigation({ currentUser, currentEvent, availableEvents, onRefresh, isRefreshing }: NavigationProps) {
   const pathname = usePathname()
+  const isBachelor = isBachelorEvent(currentEvent)
 
-  const navItems = useMemo(
-    () => NAV_ITEMS.map(item => ({
+  const navItems = useMemo(() => {
+    const items: NavItem[] = [
+      { href: '/app/feed', icon: Images, label: 'Feed' },
+      ...(isBachelor ? [{ href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor' }] : []),
+      { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
+      { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
+      { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
+      { href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' },
+      { href: '/app/profile', icon: User, label: 'Profil' },
+    ]
+
+    return items.map(item => ({
       ...item,
       active: item.matchPrefix ? pathname.startsWith(item.matchPrefix) : pathname === item.href,
-    })),
-    [pathname],
-  )
+    }))
+  }, [pathname, isBachelor])
 
   return (
     <nav className=" border-b shadow-sm">
@@ -73,17 +74,17 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
           <Link href="/app/players" className="flex items-center space-x-2">
             <Image
               src="/logo-small.png"
-              alt="Pokal Šanka"
+              alt={currentEvent?.name || 'Pokal Šanka'}
               width={48}
               height={48}
               className="w-12 h-12 md:w-6 md:h-6 object-contain"
               priority
             />
-            <span className="text-lg md:text-xl font-bold  hidden sm:block">
-              Bwšk Bachelor 2026
+            <span className="text-lg md:text-xl font-bold hidden sm:block truncate max-w-[200px] md:max-w-[320px]">
+              {currentEvent?.name || 'Pokal Šanka'}
             </span>
-            <span className="text-lg font-bold  sm:hidden">
-              Šanka
+            <span className="text-lg font-bold sm:hidden truncate max-w-[120px]">
+              {currentEvent?.name || 'Šanka'}
             </span>
           </Link>
 
