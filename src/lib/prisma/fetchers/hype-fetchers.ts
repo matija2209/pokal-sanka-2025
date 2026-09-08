@@ -5,9 +5,9 @@ import type { HypeVote } from '@prisma/client'
 export async function createHypeVote(data: {
   suggestion?: string
   voterName?: string
-}) {
+}, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeVote.create({
       data: { ...data, eventId },
     })
@@ -17,9 +17,9 @@ export async function createHypeVote(data: {
   }
 }
 
-export async function getHypeVoteCount() {
+export async function getHypeVoteCount(eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     const aggregate = await prisma.hypeEvent.aggregate({
       where: { eventId },
       _sum: { voteCount: true },
@@ -31,9 +31,9 @@ export async function getHypeVoteCount() {
   }
 }
 
-export async function getHypeVoteCountSince(since: Date) {
+export async function getHypeVoteCountSince(since: Date, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeVote.count({
       where: { eventId, createdAt: { gte: since } },
     })
@@ -43,9 +43,9 @@ export async function getHypeVoteCountSince(since: Date) {
   }
 }
 
-export async function getHypeEvents() {
+export async function getHypeEvents(eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeEvent.findMany({
       where: { eventId },
       orderBy: { createdAt: 'asc' },
@@ -56,9 +56,9 @@ export async function getHypeEvents() {
   }
 }
 
-export async function getHypeEventById(id: string) {
+export async function getHypeEventById(id: string, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeEvent.findFirst({
       where: { id, eventId },
     })
@@ -68,9 +68,9 @@ export async function getHypeEventById(id: string) {
   }
 }
 
-export async function getHypeVotes(): Promise<HypeVote[]> {
+export async function getHypeVotes(eventIdOverride?: string): Promise<HypeVote[]> {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeVote.findMany({
       where: { eventId },
       orderBy: { createdAt: 'desc' },
@@ -85,9 +85,9 @@ export async function createHypeEvent(data: {
   title: string
   description?: string
   voteThreshold?: number
-}) {
+}, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeEvent.create({
       data: { ...data, eventId },
     })
@@ -100,9 +100,10 @@ export async function createHypeEvent(data: {
 export async function updateHypeEventStatus(
   id: string,
   status: string,
+  eventIdOverride?: string
 ) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     const updateData: Record<string, unknown> = { status }
     if (status === 'unlocked') updateData.unlockedAt = new Date()
     if (status === 'completed') updateData.completedAt = new Date()
@@ -117,9 +118,9 @@ export async function updateHypeEventStatus(
   }
 }
 
-export async function getNextLockedHypeEvent() {
+export async function getNextLockedHypeEvent(eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeEvent.findFirst({
       where: { eventId, status: 'locked' },
       orderBy: { createdAt: 'asc' },
@@ -142,9 +143,9 @@ export async function incrementHypeEventVoteCount(eventId: string) {
   }
 }
 
-export async function deleteHypeEvent(id: string) {
+export async function deleteHypeEvent(id: string, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeEvent.deleteMany({
       where: { id, eventId },
     })
@@ -154,9 +155,9 @@ export async function deleteHypeEvent(id: string) {
   }
 }
 
-export async function deleteHypeVote(id: string) {
+export async function deleteHypeVote(id: string, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.hypeVote.deleteMany({
       where: { id, eventId },
     })

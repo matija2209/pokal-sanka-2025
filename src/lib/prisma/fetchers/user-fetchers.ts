@@ -16,12 +16,12 @@ function withLegacyRelations<T extends { team?: any }>(user: T) {
   }
 }
 
-export async function getUserById(id: string): Promise<User | null> {
+export async function getUserById(id: string, eventIdOverride?: string): Promise<User | null> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.user.findUnique({ where: { id } })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.user.findFirst({
       where: { id, eventId },
     })
@@ -31,14 +31,14 @@ export async function getUserById(id: string): Promise<User | null> {
   }
 }
 
-export async function createUser(name: string, personId?: string | null): Promise<User | null> {
+export async function createUser(name: string, personId?: string | null, eventIdOverride?: string): Promise<User | null> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.user.create({
         data: { name },
       })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
 
     const resolvedPersonId = personId ?? (
       await prisma.person.create({
@@ -65,15 +65,8 @@ export async function createUserForPerson(personId: string, name: string): Promi
 
 export async function updateUserTeam(userId: string, teamId: string | null): Promise<User | null> {
   try {
-    if (!(await isMultiEventSchemaAvailable())) {
-      return await prisma.user.update({
-        where: { id: userId },
-        data: { teamId },
-      })
-    }
-    const eventId = await requireActiveEventId()
-    const existingUser = await prisma.user.findFirst({
-      where: { id: userId, eventId },
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
     })
 
     if (!existingUser) {
@@ -81,11 +74,16 @@ export async function updateUserTeam(userId: string, teamId: string | null): Pro
     }
 
     if (teamId) {
-      const team = await prisma.team.findFirst({
-        where: { id: teamId, eventId },
+      const team = await prisma.team.findUnique({
+        where: { id: teamId },
       })
 
       if (!team) {
+        return null
+      }
+
+      if (existingUser.eventId && team.eventId && existingUser.eventId !== team.eventId) {
+        console.error('Event ID mismatch between user and team:', existingUser.eventId, team.eventId)
         return null
       }
     }
@@ -102,7 +100,8 @@ export async function updateUserTeam(userId: string, teamId: string | null): Pro
 
 export async function updateUserProfile(
   userId: string,
-  data: { name?: string; teamId?: string | null; profile_image_url?: string }
+  data: { name?: string; teamId?: string | null; profile_image_url?: string },
+  eventIdOverride?: string
 ): Promise<User | null> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
@@ -111,7 +110,7 @@ export async function updateUserProfile(
         data,
       })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     const existingUser = await prisma.user.findFirst({
       where: { id: userId, eventId },
     })
@@ -140,7 +139,7 @@ export async function updateUserProfile(
   }
 }
 
-export async function deleteUser(id: string): Promise<boolean> {
+export async function deleteUser(id: string, eventIdOverride?: string): Promise<boolean> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       await prisma.user.delete({
@@ -148,7 +147,7 @@ export async function deleteUser(id: string): Promise<boolean> {
       })
       return true
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     const existingUser = await prisma.user.findFirst({
       where: { id, eventId },
     })
@@ -194,7 +193,7 @@ export async function getUserWithTeamById(id: string, eventId?: string): Promise
   }
 }
 
-export async function getUserWithTeamAndDrinksById(id: string): Promise<UserWithTeamAndDrinks | null> {
+export async function getUserWithTeamAndDrinksById(id: string, eventIdOverride?: string): Promise<UserWithTeamAndDrinks | null> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const user = await prisma.user.findUnique({
@@ -211,7 +210,7 @@ export async function getUserWithTeamAndDrinksById(id: string): Promise<UserWith
 
       return user ? withLegacyRelations(user) as UserWithTeamAndDrinks : null
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.user.findFirst({
       where: { id, eventId },
       include: {
@@ -232,7 +231,7 @@ export async function getUserWithTeamAndDrinksById(id: string): Promise<UserWith
   }
 }
 
-export async function getAllUsers(): Promise<User[]> {
+export async function getAllUsers(eventIdOverride?: string): Promise<User[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.user.findMany({
@@ -241,7 +240,7 @@ export async function getAllUsers(): Promise<User[]> {
         },
       })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.user.findMany({
       where: { eventId },
       orderBy: {
@@ -254,7 +253,7 @@ export async function getAllUsers(): Promise<User[]> {
   }
 }
 
-export async function getAllUsersWithTeamAndDrinks(): Promise<UserWithTeamAndDrinks[]> {
+export async function getAllUsersWithTeamAndDrinks(eventIdOverride?: string): Promise<UserWithTeamAndDrinks[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const users = await prisma.user.findMany({
@@ -273,7 +272,7 @@ export async function getAllUsersWithTeamAndDrinks(): Promise<UserWithTeamAndDri
 
       return users.map(user => withLegacyRelations(user) as UserWithTeamAndDrinks)
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.user.findMany({
       where: { eventId },
       include: {
@@ -297,7 +296,7 @@ export async function getAllUsersWithTeamAndDrinks(): Promise<UserWithTeamAndDri
   }
 }
 
-export async function getAllUsersForQuickLog(): Promise<UserWithTeamAndScore[]> {
+export async function getAllUsersForQuickLog(eventIdOverride?: string): Promise<UserWithTeamAndScore[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const [users, scoreRows] = await Promise.all([
@@ -329,7 +328,7 @@ export async function getAllUsersForQuickLog(): Promise<UserWithTeamAndScore[]> 
         .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
     }
 
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     const [users, scoreRows] = await Promise.all([
       prisma.user.findMany({
         where: { eventId },
@@ -367,7 +366,7 @@ export async function getAllUsersForQuickLog(): Promise<UserWithTeamAndScore[]> 
   }
 }
 
-export async function getUsersByTeamId(teamId: string): Promise<User[]> {
+export async function getUsersByTeamId(teamId: string, eventIdOverride?: string): Promise<User[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.user.findMany({
@@ -377,7 +376,7 @@ export async function getUsersByTeamId(teamId: string): Promise<User[]> {
         },
       })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.user.findMany({
       where: { teamId, eventId },
       orderBy: {
@@ -390,7 +389,7 @@ export async function getUsersByTeamId(teamId: string): Promise<User[]> {
   }
 }
 
-export async function getUsersWithoutTeam(): Promise<User[]> {
+export async function getUsersWithoutTeam(eventIdOverride?: string): Promise<User[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.user.findMany({
@@ -400,7 +399,7 @@ export async function getUsersWithoutTeam(): Promise<User[]> {
         },
       })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.user.findMany({
       where: { teamId: null, eventId },
       orderBy: {

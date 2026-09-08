@@ -138,7 +138,7 @@ export async function deletePostForSuperadmin(postId: string) {
   })
 }
 
-export async function getPostsWithUsers(limit: number = 20) {
+export async function getPostsWithUsers(limit: number = 20, eventIdOverride?: string) {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.post.findMany({
       take: limit,
@@ -154,7 +154,7 @@ export async function getPostsWithUsers(limit: number = 20) {
     })
   }
 
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
 
   return await prisma.post.findMany({
     where: { eventId },
@@ -176,7 +176,7 @@ export async function getPostsWithUsers(limit: number = 20) {
   })
 }
 
-export async function getRecentPostsWithImages(limit: number = 5) {
+export async function getRecentPostsWithImages(limit: number = 5, eventIdOverride?: string) {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.post.findMany({
       where: {
@@ -196,7 +196,7 @@ export async function getRecentPostsWithImages(limit: number = 5) {
     })
   }
 
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
 
   return await prisma.post.findMany({
     where: {

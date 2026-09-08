@@ -21,12 +21,13 @@ async function guardTriviaAvailable(): Promise<boolean> {
 export async function createCategory(
   title: string,
   description?: string,
-  status: string = 'draft'
+  status: string = 'draft',
+  eventIdOverride?: string
 ) {
   if (!(await guardTriviaAvailable())) {
     throw new Error('Trivia module is not available. Run database migration first.')
   }
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
   return prisma.triviaCategory.create({
     data: { eventId, title, description, status },
   })
@@ -37,9 +38,9 @@ export async function getCategoryById(id: string) {
   return prisma.triviaCategory.findUnique({ where: { id } })
 }
 
-export async function getAllCategories() {
+export async function getAllCategories(eventIdOverride?: string) {
   if (!(await guardTriviaAvailable())) return []
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
   return prisma.triviaCategory.findMany({
     where: { eventId },
     orderBy: { createdAt: 'desc' },
@@ -148,9 +149,9 @@ export async function getCategoryResultsByCategoryId(categoryId: string) {
   })
 }
 
-export async function getAllPublishedResults() {
+export async function getAllPublishedResults(eventIdOverride?: string) {
   if (!(await guardTriviaAvailable())) return []
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
   return prisma.triviaCategoryResult.findMany({
     where: { category: { eventId }, publishedToScoreboard: true },
     include: { category: true },
@@ -158,9 +159,9 @@ export async function getAllPublishedResults() {
   })
 }
 
-export async function getAllTriviaResults() {
+export async function getAllTriviaResults(eventIdOverride?: string) {
   if (!(await guardTriviaAvailable())) return []
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
   return prisma.triviaCategoryResult.findMany({
     where: { category: { eventId } },
   })
@@ -209,11 +210,11 @@ export async function createPowerUsage(data: {
   categoryId?: string
   targetUserId?: string
   note?: string
-}) {
+}, eventIdOverride?: string) {
   if (!(await guardTriviaAvailable())) {
     throw new Error('Trivia module is not available. Run database migration first.')
   }
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
   return prisma.triviaPowerUsage.create({
     data: { eventId, ...data },
   })
@@ -227,9 +228,9 @@ export async function getPowerUsageByUserId(userId: string) {
   })
 }
 
-export async function getAllPowerUsage() {
+export async function getAllPowerUsage(eventIdOverride?: string) {
   if (!(await guardTriviaAvailable())) return []
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
   return prisma.triviaPowerUsage.findMany({
     where: { eventId },
     orderBy: { createdAt: 'desc' },
@@ -240,9 +241,9 @@ export async function getAllPowerUsage() {
 // Score helpers
 // ===========================================================================
 
-export async function getUserTriviaPoints(userId: string): Promise<number> {
+export async function getUserTriviaPoints(userId: string, eventIdOverride?: string): Promise<number> {
   if (!(await guardTriviaAvailable())) return 0
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
   const results = await prisma.triviaCategoryResult.findMany({
     where: {
       category: { eventId },
@@ -252,9 +253,9 @@ export async function getUserTriviaPoints(userId: string): Promise<number> {
   return results.reduce((sum, r) => sum + r.finalPoints, 0)
 }
 
-export async function getAllUsersTriviaPoints(): Promise<Map<string, number>> {
+export async function getAllUsersTriviaPoints(eventIdOverride?: string): Promise<Map<string, number>> {
   if (!(await guardTriviaAvailable())) return new Map()
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
   const results = await prisma.triviaCategoryResult.findMany({
     where: { category: { eventId } },
   })

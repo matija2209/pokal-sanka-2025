@@ -77,14 +77,14 @@ export async function deleteDrinkLog(id: string): Promise<boolean> {
   }
 }
 
-export async function getAllDrinkLogs(): Promise<DrinkLog[]> {
+export async function getAllDrinkLogs(eventIdOverride?: string): Promise<DrinkLog[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.drinkLog.findMany({
         orderBy: { createdAt: 'desc' },
       })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.drinkLog.findMany({
       where: { eventId },
       orderBy: {
@@ -97,7 +97,7 @@ export async function getAllDrinkLogs(): Promise<DrinkLog[]> {
   }
 }
 
-export async function getDrinkLogsByUserId(userId: string): Promise<DrinkLog[]> {
+export async function getDrinkLogsByUserId(userId: string, eventIdOverride?: string): Promise<DrinkLog[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.drinkLog.findMany({
@@ -105,7 +105,7 @@ export async function getDrinkLogsByUserId(userId: string): Promise<DrinkLog[]> 
         orderBy: { createdAt: 'desc' },
       })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.drinkLog.findMany({
       where: { userId, eventId },
       orderBy: {
@@ -118,7 +118,7 @@ export async function getDrinkLogsByUserId(userId: string): Promise<DrinkLog[]> 
   }
 }
 
-export async function getUserDrinkCount(userId: string, drinkType?: string): Promise<number> {
+export async function getUserDrinkCount(userId: string, drinkType?: string, eventIdOverride?: string): Promise<number> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.drinkLog.count({
@@ -128,7 +128,7 @@ export async function getUserDrinkCount(userId: string, drinkType?: string): Pro
         },
       })
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.drinkLog.count({
       where: {
         userId,
@@ -142,7 +142,7 @@ export async function getUserDrinkCount(userId: string, drinkType?: string): Pro
   }
 }
 
-export async function getUserTotalPoints(userId: string): Promise<number> {
+export async function getUserTotalPoints(userId: string, eventIdOverride?: string): Promise<number> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const result = await prisma.drinkLog.aggregate({
@@ -151,7 +151,7 @@ export async function getUserTotalPoints(userId: string): Promise<number> {
       })
       return result._sum.points || 0
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     const result = await prisma.drinkLog.aggregate({
       where: { userId, eventId },
       _sum: {
@@ -165,7 +165,7 @@ export async function getUserTotalPoints(userId: string): Promise<number> {
   }
 }
 
-export async function getRecentDrinkLogs(limit: number): Promise<DrinkLogWithUser[]> {
+export async function getRecentDrinkLogs(limit: number, eventIdOverride?: string): Promise<DrinkLogWithUser[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.drinkLog.findMany({
@@ -180,7 +180,7 @@ export async function getRecentDrinkLogs(limit: number): Promise<DrinkLogWithUse
         take: limit,
       }) as DrinkLogWithUser[]
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.drinkLog.findMany({
       where: { eventId },
       include: {
@@ -204,7 +204,7 @@ export async function getRecentDrinkLogs(limit: number): Promise<DrinkLogWithUse
   }
 }
 
-export async function getRecentDrinkLogsWithTeam(limit: number): Promise<DrinkLogWithUserAndTeam[]> {
+export async function getRecentDrinkLogsWithTeam(limit: number, eventIdOverride?: string): Promise<DrinkLogWithUserAndTeam[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.drinkLog.findMany({
@@ -219,7 +219,7 @@ export async function getRecentDrinkLogsWithTeam(limit: number): Promise<DrinkLo
         take: limit,
       }) as DrinkLogWithUserAndTeam[]
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.drinkLog.findMany({
       where: { eventId },
       include: {
@@ -241,7 +241,7 @@ export async function getRecentDrinkLogsWithTeam(limit: number): Promise<DrinkLo
   }
 }
 
-export async function getDrinkLogsToday(): Promise<DrinkLogWithUser[]> {
+export async function getDrinkLogsToday(eventIdOverride?: string): Promise<DrinkLogWithUser[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const today = new Date()
@@ -266,7 +266,7 @@ export async function getDrinkLogsToday(): Promise<DrinkLogWithUser[]> {
         orderBy: { createdAt: 'desc' },
       }) as DrinkLogWithUser[]
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
@@ -301,7 +301,7 @@ export async function getDrinkLogsToday(): Promise<DrinkLogWithUser[]> {
   }
 }
 
-export async function getDrinkLogsSince(date: Date): Promise<DrinkLogWithUser[]> {
+export async function getDrinkLogsSince(date: Date, eventIdOverride?: string): Promise<DrinkLogWithUser[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       return await prisma.drinkLog.findMany({
@@ -320,7 +320,7 @@ export async function getDrinkLogsSince(date: Date): Promise<DrinkLogWithUser[]>
         orderBy: { createdAt: 'desc' },
       }) as DrinkLogWithUser[]
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     return await prisma.drinkLog.findMany({
       where: {
         eventId,
@@ -348,7 +348,7 @@ export async function getDrinkLogsSince(date: Date): Promise<DrinkLogWithUser[]>
   }
 }
 
-export async function getTeamTotalPoints(teamId: string): Promise<number> {
+export async function getTeamTotalPoints(teamId: string, eventIdOverride?: string): Promise<number> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const result = await prisma.drinkLog.aggregate({
@@ -361,7 +361,7 @@ export async function getTeamTotalPoints(teamId: string): Promise<number> {
       })
       return result._sum.points || 0
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     const result = await prisma.drinkLog.aggregate({
       where: {
         eventId,
@@ -381,7 +381,7 @@ export async function getTeamTotalPoints(teamId: string): Promise<number> {
   }
 }
 
-export async function getTopUsersByPoints(limit: number): Promise<{ userId: string; name: string; totalPoints: number }[]> {
+export async function getTopUsersByPoints(limit: number, eventIdOverride?: string): Promise<{ userId: string; name: string; totalPoints: number }[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const results = await prisma.drinkLog.groupBy({
@@ -410,7 +410,7 @@ export async function getTopUsersByPoints(limit: number): Promise<{ userId: stri
         })
       )
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     const results = await prisma.drinkLog.groupBy({
       by: ['userId'],
       where: { eventId },
@@ -445,7 +445,7 @@ export async function getTopUsersByPoints(limit: number): Promise<{ userId: stri
   }
 }
 
-export async function getTopTeamsByPoints(limit: number): Promise<{ teamId: string; teamName: string; totalPoints: number }[]> {
+export async function getTopTeamsByPoints(limit: number, eventIdOverride?: string): Promise<{ teamId: string; teamName: string; totalPoints: number }[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
       const teams = await prisma.team.findMany({
@@ -470,7 +470,7 @@ export async function getTopTeamsByPoints(limit: number): Promise<{ teamId: stri
         .sort((a, b) => b.totalPoints - a.totalPoints)
         .slice(0, limit)
     }
-    const eventId = await requireActiveEventId()
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
     const teams = await prisma.team.findMany({
       where: { eventId },
       include: {

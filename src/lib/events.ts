@@ -7,10 +7,23 @@ import type { Event } from '@/lib/prisma/types'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 
 export const ACTIVE_EVENT_COOKIE_NAME = 'turnir-sanka-event-id'
-export const DEFAULT_LEGACY_EVENT_SLUG = 'birthday-party-legacy'
-export const DEFAULT_LEGACY_EVENT_NAME = 'Birthday Party'
-export const DEFAULT_BACHELOR_EVENT_SLUG = 'bachelor-party'
-export const DEFAULT_BACHELOR_EVENT_NAME = 'Bachelor Party'
+
+import {
+  DEFAULT_LEGACY_EVENT_SLUG,
+  DEFAULT_LEGACY_EVENT_NAME,
+  DEFAULT_BACHELOR_EVENT_SLUG,
+  DEFAULT_BACHELOR_EVENT_NAME,
+  isBachelorEvent,
+} from '@/lib/events-shared'
+
+export {
+  DEFAULT_LEGACY_EVENT_SLUG,
+  DEFAULT_LEGACY_EVENT_NAME,
+  DEFAULT_BACHELOR_EVENT_SLUG,
+  DEFAULT_BACHELOR_EVENT_NAME,
+  isBachelorEvent,
+}
+
 
 export function getEventEntryPathBySlug(eventSlug: string): string {
   return eventSlug === DEFAULT_BACHELOR_EVENT_SLUG ? '/bwsk/enter' : '/'
@@ -22,6 +35,7 @@ function getLegacyFallbackEvent(): Event {
     slug: DEFAULT_LEGACY_EVENT_SLUG,
     name: DEFAULT_LEGACY_EVENT_NAME,
     isActive: true,
+    isRandomTeams: false,
     createdAt: new Date(0),
   }
 }

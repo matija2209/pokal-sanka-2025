@@ -11,9 +11,9 @@ export async function createSighting(data: {
   actionType: string
   points: number
   friendshipLevel: string
-}) {
+}, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.create({
       data: { ...data, eventId, status: 'approved', approvedAt: new Date() },
     })
@@ -23,9 +23,9 @@ export async function createSighting(data: {
   }
 }
 
-export async function getSightingById(id: string) {
+export async function getSightingById(id: string, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.findFirst({
       where: { id, eventId },
     })
@@ -35,9 +35,9 @@ export async function getSightingById(id: string) {
   }
 }
 
-export async function getApprovedSightings(limit = 20, offset = 0) {
+export async function getApprovedSightings(limit = 20, offset = 0, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.findMany({
       where: { eventId, status: 'approved' },
       orderBy: { createdAt: 'desc' },
@@ -50,9 +50,9 @@ export async function getApprovedSightings(limit = 20, offset = 0) {
   }
 }
 
-export async function getApprovedSightingsForMap() {
+export async function getApprovedSightingsForMap(eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.findMany({
       where: { eventId, status: 'approved' },
       select: {
@@ -76,9 +76,9 @@ export async function getApprovedSightingsForMap() {
   }
 }
 
-export async function getAllSightings(status?: string) {
+export async function getAllSightings(status?: string, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     const where: Record<string, unknown> = { eventId }
     if (status) where.status = status
     return await prisma.publicSighting.findMany({
@@ -91,9 +91,9 @@ export async function getAllSightings(status?: string) {
   }
 }
 
-export async function approveSighting(id: string, approvedByUserId: string) {
+export async function approveSighting(id: string, approvedByUserId: string, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.updateMany({
       where: { id, eventId, status: 'pending' },
       data: {
@@ -108,9 +108,9 @@ export async function approveSighting(id: string, approvedByUserId: string) {
   }
 }
 
-export async function rejectSighting(id: string, adminNotes?: string) {
+export async function rejectSighting(id: string, adminNotes?: string, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.updateMany({
       where: { id, eventId, status: 'pending' },
       data: {
@@ -128,9 +128,10 @@ export async function updateSightingLocation(
   id: string,
   correctedLatitude: number,
   correctedLongitude: number,
+  eventIdOverride?: string
 ) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.updateMany({
       where: { id, eventId },
       data: { correctedLatitude, correctedLongitude },
@@ -141,9 +142,9 @@ export async function updateSightingLocation(
   }
 }
 
-export async function updateSightingPoints(id: string, points: number) {
+export async function updateSightingPoints(id: string, points: number, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.updateMany({
       where: { id, eventId },
       data: { points },
@@ -154,9 +155,9 @@ export async function updateSightingPoints(id: string, points: number) {
   }
 }
 
-export async function deleteSighting(id: string) {
+export async function deleteSighting(id: string, eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     return await prisma.publicSighting.deleteMany({
       where: { id, eventId },
     })
@@ -166,9 +167,9 @@ export async function deleteSighting(id: string) {
   }
 }
 
-export async function getSightingStats() {
+export async function getSightingStats(eventIdOverride?: string) {
   try {
-    const eventId = await requireBachelorEventId()
+    const eventId = eventIdOverride ?? (await requireBachelorEventId())
     const [totalSightings, totalMessages, totalChallenges, totalPoints, uniqueCountries] =
       await Promise.all([
         prisma.publicSighting.count({
