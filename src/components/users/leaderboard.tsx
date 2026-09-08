@@ -99,7 +99,7 @@ export default function Leaderboard({ users, currentUserId, teamFilter, triviaPo
                       <UserAvatar user={user} size="sm" />
                       
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className={`font-semibold ${
                             isCurrentUser ? 'text-primary' : ''
                           }`}>
@@ -109,13 +109,23 @@ export default function Leaderboard({ users, currentUserId, teamFilter, triviaPo
                           {position <= 3 && getPositionBadge(position)}
                         </div>
                         
-                        {user.team && (
-                          <span className="text-sm text-muted-foreground">
-                            {user.team.name}
-                          </span>
-                        )}
+                        <div className="mt-1 flex items-center gap-2 flex-wrap">
+                          {user.team ? (
+                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-muted/70 border border-border/60 text-foreground">
+                              <span
+                                className="w-2 h-2 rounded-full shrink-0 shadow-xs"
+                                style={{ backgroundColor: user.team.color || '#3b82f6' }}
+                              />
+                              <span className="truncate max-w-[140px] sm:max-w-[200px]">{user.team.name}</span>
+                            </div>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-normal text-muted-foreground/70 bg-muted/30 border border-dashed border-border/50">
+                              Brez ekipe
+                            </span>
+                          )}
+                        </div>
                         
-                        <div className="flex items-center gap-3 mt-1">
+                        <div className="flex items-center gap-3 mt-1.5">
                           {regularDrinks > 0 && (
                             <span className="text-xs text-muted-foreground">
                               🍺 {regularDrinks}

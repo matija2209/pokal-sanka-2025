@@ -49,8 +49,21 @@ export default function RecentActivity({ recentDrinks, limit = 10 }: RecentActiv
                 </Avatar>
                 
                 <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium">{log.user.name}</span>
+                    {log.user.team ? (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[11px] font-medium bg-muted/60 border border-border/50 text-foreground">
+                        <span
+                          className="w-1.5 h-1.5 rounded-full shrink-0"
+                          style={{ backgroundColor: log.user.team.color || '#3b82f6' }}
+                        />
+                        <span className="truncate max-w-[120px]">{log.user.team.name}</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] text-muted-foreground/70 bg-muted/30 border border-dashed border-border/40">
+                        Brez ekipe
+                      </span>
+                    )}
                     <span className="text-lg">{getDrinkEmoji(log.drinkType)}</span>
                     <Badge 
                       className={`text-xs achievement-badge ${
