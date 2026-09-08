@@ -1,9 +1,9 @@
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllTeams } from '@/lib/prisma/fetchers'
+import { getAllTeamsWithUsers } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
-import { TeamSelectionForm } from '@/components/teams'
+import { TeamSelectionForm, RandomTeamSpinner } from '@/components/teams'
 import type { Metadata } from 'next'
-import { getSiteBrandParts } from '@/lib/events'
+import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -24,29 +24,50 @@ export async function generateMetadata(): Promise<Metadata> {
 export const dynamic = 'force-dynamic'
 
 export default async function SelectTeamPage() {
-  const currentUser = await getCurrentUser()
+  const currentEvent = await getActiveEvent()
+  const currentUser = await getCurrentUser(currentEvent?.id)
   
   if (!currentUser) {
     redirect('/')
   }
   
   if (currentUser.teamId) {
-    redirect('/app/players')
+    redirect('/app/feed')
   }
   
-  const availableTeams = await getAllTeams()
+  const availableTeams = await getAllTeamsWithUsers()
+  const isRandomTeams = Boolean(currentEvent?.isRandomTeams)
+
+  if (isRandomTeams) {
+    return (
+      <div className="w-full max-w-5xl mx-auto px-2 sm:px-4 py-4">
+        <RandomTeamSpinner 
+          currentUserId={currentUser.id}
+          currentUserName={currentUser.name}
+          availableTeams={availableTeams}
+          redirectUrl="/app/feed"
+        />
+      </div>
+    )
+  }
   
   return (
-    <div className="w-full max-w-none px-0 py-6">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold leading-tight mb-2">Izberite svojo ekipo</h1>
-        <p className="text-sm text-muted-foreground">Pridružite se obstoječi ekipi ali ustvarite novo, da začnete tekmovati!</p>
+    <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-6">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-extrabold tracking-tight mb-2">Izbira ekipe</h1>
+        <p className="text-base text-muted-foreground max-w-xl mx-auto">
+          Pozdravljeni, <span className="font-semibold text-foreground">{currentUser.name}</span>! Za sodelovanje na turnirju se pridružite obstoječi ekipi ali ustvarite novo.
+        </p>
       </div>
       
       <TeamSelectionForm 
         currentUserId={currentUser.id}
+        currentUserName={currentUser.name}
         availableTeams={availableTeams}
+        redirectUrl="/app/feed"
       />
     </div>
   )
 }
+
+

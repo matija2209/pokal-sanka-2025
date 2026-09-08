@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createUser, createUserForPerson, updateUserProfile, updateUserTeam, getUserByPersonAndEvent, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
-import { createTeam, getAllTeams, updateTeam } from '@/lib/prisma/fetchers/team-fetchers'
+import { createTeam, getAllTeams, getAllTeamsWithUsers, updateTeam } from '@/lib/prisma/fetchers/team-fetchers'
 import { createDrinkLog } from '@/lib/prisma/fetchers/drink-log-fetchers'
 import { setUserCookie, setPersonCookie, clearActiveUserCookie, getCurrentPersonId, getCurrentUser, clearUserCookie } from '@/lib/utils/cookies'
 import { getNextAvailableColor } from '@/lib/utils/colors'
@@ -116,7 +116,13 @@ export async function selectExistingUserAction(
       }
     }
 
-    const user = await getUserWithTeamById(userId)
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        team: true,
+        event: true,
+      },
+    })
 
     if (!user) {
       return {
@@ -129,13 +135,25 @@ export async function selectExistingUserAction(
     // Set user cookie
     await setUserCookie(user.id, user.personId ?? undefined)
 
+    if (user.personId) {
+      await setPersonCookie(user.personId)
+    }
+
+    if (user.eventId) {
+      await setActiveEventCookie(user.eventId)
+    }
+
     // Revalidate paths
     revalidatePath('/')
     revalidatePath('/app/select-team')
     revalidatePath('/app/players')
+    revalidatePath('/app/feed')
+    if (user.event?.slug) {
+      revalidatePath(`/event/${user.event.slug}`)
+    }
 
     // Redirect based on team status
-    const redirectUrl = user.teamId ? '/app/players' : '/app/select-team'
+    const redirectUrl = user.teamId ? '/app/feed' : '/app/select-team'
 
     return {
       success: true,
@@ -163,6 +181,7 @@ export async function selectExistingPersonAction(
   try {
     const personId = formData.get('personId') as string
     const returnTo = formData.get('returnTo') as string | null
+    const targetEventId = (formData.get('eventId') as string) || null
 
     if (!personId) {
       return {
@@ -182,18 +201,38 @@ export async function selectExistingPersonAction(
       }
     }
 
-    const activeEvent = await getActiveEvent()
-    if (!activeEvent) {
+    const event = targetEventId ? await getEventById(targetEventId) : await getActiveEvent()
+    if (!event) {
       return {
         success: false,
-        message: 'No active event found',
+        message: 'No event found',
         type: 'error'
       }
     }
 
     await setPersonCookie(personId)
+    await setActiveEventCookie(event.id)
 
-    const eventUser = await getUserByPersonAndEvent(personId, activeEvent.id)
+    let eventUser = await getUserByPersonAndEvent(personId, event.id)
+
+    if (!eventUser) {
+      const person = await prisma.person.findUnique({ where: { id: personId } })
+      if (person) {
+        const createdUser = await prisma.user.create({
+          data: {
+            name: person.name,
+            personId: person.id,
+            eventId: event.id,
+          },
+          include: {
+            team: true,
+            event: true,
+            person: true,
+          },
+        })
+        eventUser = createdUser
+      }
+    }
 
     if (eventUser) {
       await setUserCookie(eventUser.id, personId)
@@ -204,6 +243,9 @@ export async function selectExistingPersonAction(
     revalidatePath('/')
     revalidatePath('/app/select-team')
     revalidatePath('/app/players')
+    if (event.slug) {
+      revalidatePath(`/event/${event.slug}`)
+    }
 
     return {
       success: true,
@@ -211,8 +253,8 @@ export async function selectExistingPersonAction(
       type: 'update',
       data: {
         redirectUrl: eventUser
-          ? (eventUser.teamId ? '/app/players' : '/app/select-team')
-          : (returnTo?.trim() || '/')
+          ? (eventUser.teamId ? '/app/feed' : '/app/select-team')
+          : (returnTo?.trim() || (event.slug ? `/event/${event.slug}` : '/'))
       }
     }
   } catch (error) {
@@ -471,6 +513,7 @@ export async function createTeamAction(
 
     revalidatePath('/app/players')
     revalidatePath('/app/teams')
+    revalidatePath('/app/feed')
 
     return {
       success: true,
@@ -478,7 +521,7 @@ export async function createTeamAction(
       type: 'create',
       data: {
         teamId: team.id,
-        redirectUrl: '/app/players'
+        redirectUrl: '/app/feed'
       }
     }
   } catch (error) {
@@ -519,6 +562,8 @@ export async function joinTeamAction(
 
     revalidatePath('/app/players')
     revalidatePath('/app/teams')
+    revalidatePath('/app/feed')
+    revalidatePath('/app/select-team')
 
     return {
       success: true,
@@ -526,7 +571,7 @@ export async function joinTeamAction(
       type: 'update',
       data: {
         teamId,
-        redirectUrl: '/app/players'
+        redirectUrl: '/app/feed'
       }
     }
   } catch (error) {
@@ -534,6 +579,74 @@ export async function joinTeamAction(
     return {
       success: false,
       message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+export async function joinRandomTeamAction(
+  prevState: TeamActionState,
+  formData: FormData
+): Promise<TeamActionState> {
+  try {
+    const userId = formData.get('userId') as string
+    const targetTeamId = formData.get('teamId') as string | null
+
+    if (!userId) {
+      return {
+        success: false,
+        message: 'User ID is required',
+        type: 'error'
+      }
+    }
+
+    let teamId: string | undefined = targetTeamId || undefined
+
+    if (!teamId) {
+      const availableTeams = await getAllTeamsWithUsers()
+      if (!availableTeams || availableTeams.length === 0) {
+        return {
+          success: false,
+          message: 'Ni na voljo nobene ekipe za žreb.',
+          type: 'error'
+        }
+      }
+
+      // Balance teams: pick among teams with lowest member count
+      const minMembers = Math.min(...availableTeams.map((t: any) => t.users.length))
+      const candidates = availableTeams.filter((t: any) => t.users.length === minMembers)
+      const chosen = candidates[Math.floor(Math.random() * candidates.length)]
+      teamId = chosen.id
+    }
+
+    const updatedUser = await updateUserTeam(userId, teamId)
+
+    if (!updatedUser) {
+      return {
+        success: false,
+        message: 'Pridružitev ekipi ni uspela.',
+        type: 'error'
+      }
+    }
+
+    revalidatePath('/app/players')
+    revalidatePath('/app/teams')
+    revalidatePath('/app/feed')
+
+    return {
+      success: true,
+      message: 'Uspešno dodeljen v ekipo!',
+      type: 'update',
+      data: {
+        teamId,
+        redirectUrl: '/app/feed'
+      }
+    }
+  } catch (error) {
+    console.error('Error joining random team:', error)
+    return {
+      success: false,
+      message: 'Prišlo je do nepričakovane napake pri žrebanju ekipe.',
       type: 'error'
     }
   }
@@ -805,6 +918,17 @@ export async function updateUserProfileAction(
         success: false,
         message: 'Failed to update profile',
         type: 'error'
+      }
+    }
+
+    if (updateData.profile_image_url && currentUser.personId) {
+      try {
+        await prisma.person.update({
+          where: { id: currentUser.personId },
+          data: { profile_image_url: updateData.profile_image_url },
+        })
+      } catch (personErr) {
+        console.error('Failed to sync profile image to linked person:', personErr)
       }
     }
 
