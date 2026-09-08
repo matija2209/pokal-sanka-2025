@@ -66,6 +66,37 @@ export default async function HomePage() {
         where: { id: currentPersonId },
       })
     : null
+
+  const eventPlayers = activeEvent
+    ? await prisma.user.findMany({
+        where: { eventId: activeEvent.id },
+        include: {
+          person: {
+            select: {
+              name: true,
+            },
+          },
+          team: {
+            select: {
+              name: true,
+              color: true,
+            },
+          },
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      })
+    : []
+
+  const existingPlayers = eventPlayers.map((player) => ({
+    id: player.id,
+    name: player.name,
+    personName: player.person?.name ?? null,
+    profileImageUrl: player.profile_image_url ?? null,
+    teamName: player.team?.name ?? null,
+    teamColor: player.team?.color ?? null,
+  }))
   
   return (
     <div className="min-h-screen relative overflow-hidden bg-background text-foreground">
@@ -111,6 +142,7 @@ export default async function HomePage() {
             <EntryScreen
               knownPersonName={knownPerson?.name ?? null}
               activeEventName={activeEvent?.name ?? null}
+              existingPlayers={existingPlayers}
             />
         </div>
       </div>

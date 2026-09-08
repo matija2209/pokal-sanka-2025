@@ -2,15 +2,23 @@
 
 import { useState } from 'react'
 import { EntryScreen } from '@/components/entry'
+import type { ExistingPlayerOption } from '@/components/users/select-existing-user-form'
 
 interface Props {
   knownPersonName: string | null
   activeEventName: string
   returnTo: string
   ctaText: string
+  existingPlayers?: ExistingPlayerOption[]
 }
 
-export function EventEntryClient({ knownPersonName, activeEventName, returnTo, ctaText }: Props) {
+export function EventEntryClient({
+  knownPersonName,
+  activeEventName,
+  returnTo,
+  ctaText,
+  existingPlayers = [],
+}: Props) {
   const [showEntry, setShowEntry] = useState(false)
 
   if (showEntry) {
@@ -20,11 +28,12 @@ export function EventEntryClient({ knownPersonName, activeEventName, returnTo, c
           onClick={() => setShowEntry(false)}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          &larr; Back
+          &larr; Nazaj
         </button>
         <EntryScreen
           knownPersonName={knownPersonName}
           activeEventName={activeEventName}
+          existingPlayers={existingPlayers}
           returnTo={returnTo}
         />
       </div>

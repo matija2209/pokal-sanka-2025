@@ -43,6 +43,35 @@ export default async function BwskEntryPage() {
       })
     : null
 
+  const eventPlayers = await prisma.user.findMany({
+    where: { eventId: bachelorEvent.id },
+    include: {
+      person: {
+        select: {
+          name: true,
+        },
+      },
+      team: {
+        select: {
+          name: true,
+          color: true,
+        },
+      },
+    },
+    orderBy: {
+      name: 'asc',
+    },
+  })
+
+  const existingPlayers = eventPlayers.map((player) => ({
+    id: player.id,
+    name: player.name,
+    personName: player.person?.name ?? null,
+    profileImageUrl: player.profile_image_url ?? null,
+    teamName: player.team?.name ?? null,
+    teamColor: player.team?.color ?? null,
+  }))
+
   return (
     <div className="min-h-screen overflow-hidden bg-background text-foreground pb-10">
       <section className="relative overflow-hidden py-4 sm:py-6">
@@ -163,6 +192,7 @@ export default async function BwskEntryPage() {
           <EntryScreen
             knownPersonName={knownPerson?.name ?? null}
             activeEventName={bachelorEvent.name}
+            existingPlayers={existingPlayers}
             returnTo="/bwsk/enter"
           />
         )}

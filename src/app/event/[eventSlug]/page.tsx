@@ -63,6 +63,35 @@ export default async function EventLandingPage({ params }: Props) {
     ? await prisma.person.findUnique({ where: { id: currentPersonId } })
     : null
 
+  const eventPlayers = await prisma.user.findMany({
+    where: { eventId: event.id },
+    include: {
+      person: {
+        select: {
+          name: true,
+        },
+      },
+      team: {
+        select: {
+          name: true,
+          color: true,
+        },
+      },
+    },
+    orderBy: {
+      name: 'asc',
+    },
+  })
+
+  const existingPlayers = eventPlayers.map((player) => ({
+    id: player.id,
+    name: player.name,
+    personName: player.person?.name ?? null,
+    profileImageUrl: player.profile_image_url ?? null,
+    teamName: player.team?.name ?? null,
+    teamColor: player.team?.color ?? null,
+  }))
+
   return (
     <div className="min-h-screen overflow-hidden bg-background text-foreground pb-10">
       {galleryImages.length > 0 && (
@@ -160,6 +189,7 @@ export default async function EventLandingPage({ params }: Props) {
           <EventEntryClient
             knownPersonName={knownPerson?.name ?? null}
             activeEventName={event.name}
+            existingPlayers={existingPlayers}
             returnTo={`/event/${eventSlug}`}
             ctaText={landingPage.ctaText}
           />
