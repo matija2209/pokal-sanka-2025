@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getSiteBrandParts } from '@/lib/events'
+import { notFound } from 'next/navigation'
+import { getSiteBrandParts, getActiveEvent } from '@/lib/events'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const activeEvent = await getActiveEvent()
+  if (!activeEvent?.isTriviaEnabled) {
+    return { title: 'Ni najdeno' }
+  }
   const { brand } = await getSiteBrandParts()
   return {
     title: 'Trivia Pravila',
@@ -15,7 +20,12 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function TriviaRulesPage() {
+export default async function TriviaRulesPage() {
+  const activeEvent = await getActiveEvent()
+  if (!activeEvent?.isTriviaEnabled) {
+    notFound()
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="w-full max-w-none px-0 py-6">

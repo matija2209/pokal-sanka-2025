@@ -10,7 +10,7 @@ import { EventLandingPageForm } from '@/components/admin/event-landing-page-form
 import { upsertEventLandingPageAction } from '@/lib/actions/event-actions'
 import { updateEventAction, deleteEventAction } from '../../actions'
 import { DeleteEventButton } from './delete-button'
-import { ActiveSwitch, RandomTeamsSwitch } from './active-switch'
+import { ActiveSwitch, RandomTeamsSwitch, TriviaSwitch } from './active-switch'
 
 export const dynamic = 'force-dynamic'
 
@@ -77,6 +77,7 @@ export default async function SuperadminEventDetailPage({ params }: Props) {
 
             <ActiveSwitch defaultChecked={event.isActive} />
             <RandomTeamsSwitch defaultChecked={event.isRandomTeams} />
+            <TriviaSwitch defaultChecked={event.isTriviaEnabled} />
 
             <div className="flex gap-3">
               <Button type="submit">Save Changes</Button>
@@ -94,7 +95,7 @@ export default async function SuperadminEventDetailPage({ params }: Props) {
           <CardTitle>Event Stats</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
             <div className="text-center">
               <p className="text-2xl font-bold">{event._count.users}</p>
               <p className="text-sm text-muted-foreground">Players</p>
@@ -106,6 +107,11 @@ export default async function SuperadminEventDetailPage({ params }: Props) {
             <div className="text-center">
               <Badge variant={event.isActive ? 'default' : 'secondary'} className="text-sm">
                 {event.isActive ? 'Active' : 'Inactive'}
+              </Badge>
+            </div>
+            <div className="text-center">
+              <Badge variant={event.isTriviaEnabled ? 'default' : 'secondary'} className="text-sm">
+                Trivia: {event.isTriviaEnabled ? 'Enabled' : 'Disabled'}
               </Badge>
             </div>
             <div className="text-center">

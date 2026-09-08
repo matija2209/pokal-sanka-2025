@@ -766,6 +766,7 @@ export async function updateEventAction(formData: FormData) {
   const rawSlug = (formData.get('slug') as string | null)?.trim() ?? ''
   const isActive = formData.get('isActive') === 'true'
   const isRandomTeams = formData.get('isRandomTeams') === 'true'
+  const isTriviaEnabled = formData.get('isTriviaEnabled') === 'true'
 
   if (!eventId || name.length < 2) {
     redirect('/superadmin/events?error=invalid-fields')
@@ -788,12 +789,16 @@ export async function updateEventAction(formData: FormData) {
 
   await prisma.event.update({
     where: { id: eventId },
-    data: { name, slug, isActive, isRandomTeams },
+    data: { name, slug, isActive, isRandomTeams, isTriviaEnabled },
   })
 
   revalidatePath('/superadmin/events')
+  revalidatePath('/superadmin/trivia')
   revalidatePath('/admin')
   revalidatePath('/app/select-team')
+  revalidatePath('/app/trivia/rules')
+  revalidatePath('/app/trivia/scoreboard')
+  revalidatePath('/app/trivia/conduct')
   revalidatePath(`/event/${slug}`)
   revalidatePath(`/event/${event.slug}`)
   redirect(`/superadmin/events?updated=${encodeURIComponent(slug)}`)

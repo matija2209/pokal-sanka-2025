@@ -15,9 +15,10 @@ interface CreateUserFormProps {
   knownPersonName?: string | null
   activeEventName?: string | null
   returnTo?: string
+  backLabel?: string
 }
 
-export default function CreateUserForm({ onBack, knownPersonName, activeEventName, returnTo }: CreateUserFormProps) {
+export default function CreateUserForm({ onBack, knownPersonName, activeEventName, returnTo, backLabel }: CreateUserFormProps) {
   const router = useRouter()
   const [state, formAction, isPending] = useActionState(createUserAction, initialUserActionState)
   const [name, setName] = useState(knownPersonName ?? '')
@@ -92,7 +93,7 @@ export default function CreateUserForm({ onBack, knownPersonName, activeEventNam
               onClick={onBack}
               className="w-full"
             >
-              ← Nazaj na izbiro možnosti
+              {backLabel || '← Nazaj na izbiro možnosti'}
             </Button>
           </div>
         )}

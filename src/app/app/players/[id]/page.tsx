@@ -4,6 +4,7 @@ import { redirect, notFound } from 'next/navigation'
 import { UserStats, UserHistory, UserAchievements } from '@/components/users'
 import { getUserRanking, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
+import { getActiveEvent } from '@/lib/events'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,16 +24,18 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
     redirect('/app/select-team')
   }
 
-  const user = await getUserWithTeamAndDrinksById(resolvedParams.id)
+  const [user, allUsers, activeEvent] = await Promise.all([
+    getUserWithTeamAndDrinksById(resolvedParams.id),
+    getAllUsersWithTeamAndDrinks(),
+    getActiveEvent(),
+  ])
   
   if (!user) {
     notFound()
   }
   
-  const allUsers = await getAllUsersWithTeamAndDrinks()
-
   // Trivia score integration
-  const triviaAvailable = await isTriviaAvailable()
+  const triviaAvailable = (await isTriviaAvailable()) && Boolean(activeEvent?.isTriviaEnabled)
   let triviaPointsMap = new Map<string, number>()
   if (triviaAvailable) {
     const triviaResults = await getAllTriviaResults()

@@ -44,3 +44,29 @@ export function RandomTeamsSwitch({ defaultChecked }: { defaultChecked: boolean 
     </div>
   )
 }
+
+export function TriviaSwitch({ defaultChecked }: { defaultChecked: boolean }) {
+  return (
+    <div className="flex items-start gap-3">
+      <input type="hidden" name="isTriviaEnabled" value={defaultChecked ? 'true' : 'false'} id="isTriviaEnabledHidden" />
+      <Switch
+        id="isTriviaEnabledSwitch"
+        defaultChecked={defaultChecked}
+        onCheckedChange={(checked) => {
+          const el = document.getElementById('isTriviaEnabledHidden') as HTMLInputElement
+          if (el) el.value = String(checked)
+        }}
+        className="mt-0.5"
+      />
+      <div>
+        <Label htmlFor="isTriviaEnabledSwitch" className="font-medium">
+          Trivia Modul
+        </Label>
+        <p className="text-xs text-muted-foreground">
+          Omogoči trivia kviz, pravila (/app/trivia/rules), vodenje in točkovanje za ta dogodek.
+        </p>
+      </div>
+    </div>
+  )
+}
+

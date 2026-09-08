@@ -69,6 +69,9 @@ export default async function SuperadminEventsPage({ searchParams }: Props) {
                   <Badge variant={event.isActive ? 'default' : 'secondary'}>
                     {event.isActive ? 'Active' : 'Inactive'}
                   </Badge>
+                  <Badge variant={event.isTriviaEnabled ? 'outline' : 'secondary'} className={event.isTriviaEnabled ? 'border-primary/40 text-primary' : 'text-muted-foreground'}>
+                    Trivia: {event.isTriviaEnabled ? 'On' : 'Off'}
+                  </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
                   <code className="text-xs bg-muted px-1 py-0.5 rounded">{event.slug}</code>

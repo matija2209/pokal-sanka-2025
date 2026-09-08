@@ -8,7 +8,7 @@ import { TimelineDisplay } from '@/components/timeline'
 import { getUserRanking, sortUsersByScore, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import type { Metadata } from 'next'
-import { getSiteBrandParts } from '@/lib/events'
+import { getSiteBrandParts, getActiveEvent } from '@/lib/events'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -35,15 +35,16 @@ export default async function StatsPage() {
     redirect('/')
   }
 
-  const [allUsers, currentUserWithDrinks, recentDrinks, recentCommentaries] = await Promise.all([
+  const [allUsers, currentUserWithDrinks, recentDrinks, recentCommentaries, activeEvent] = await Promise.all([
     getAllUsersWithTeamAndDrinks(),
     getUserWithTeamAndDrinksById(currentUser.id),
     getRecentDrinkLogs(20),
-    getRecentCommentaries(15)
+    getRecentCommentaries(15),
+    getActiveEvent(),
   ])
 
   // Trivia score integration
-  const triviaAvailable = await isTriviaAvailable()
+  const triviaAvailable = (await isTriviaAvailable()) && Boolean(activeEvent?.isTriviaEnabled)
   let triviaPointsMap = new Map<string, number>()
   if (triviaAvailable) {
     const triviaResults = await getAllTriviaResults()

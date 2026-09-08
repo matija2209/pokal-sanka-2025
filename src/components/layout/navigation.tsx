@@ -37,6 +37,7 @@ interface NavigationProps {
 export default function Navigation({ currentUser, currentEvent, availableEvents, onRefresh, isRefreshing }: NavigationProps) {
   const pathname = usePathname()
   const isBachelor = isBachelorEvent(currentEvent)
+  const isTriviaEnabled = Boolean(currentEvent?.isTriviaEnabled)
 
   const navItems = useMemo(() => {
     const items: NavItem[] = [
@@ -45,7 +46,7 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
       { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
       { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
       { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
-      { href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' },
+      ...(isTriviaEnabled ? [{ href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' }] : []),
       { href: '/app/profile', icon: User, label: 'Profil' },
     ]
 
@@ -53,7 +54,7 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
       ...item,
       active: item.matchPrefix ? pathname.startsWith(item.matchPrefix) : pathname === item.href,
     }))
-  }, [pathname, isBachelor])
+  }, [pathname, isBachelor, isTriviaEnabled])
 
   return (
     <nav className=" border-b shadow-sm">

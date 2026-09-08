@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
+import { getActiveEvent } from '@/lib/events'
 import { getAllCategories, getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
 import { calculateAndSaveResultAction } from '@/app/superadmin/trivia/actions'
 import { ConductTriviaBoard } from '@/components/trivia/conduct-trivia-board'
@@ -7,6 +9,11 @@ import { ConductTriviaBoard } from '@/components/trivia/conduct-trivia-board'
 export const dynamic = 'force-dynamic'
 
 export default async function TriviaConductPage() {
+  const activeEvent = await getActiveEvent()
+  if (!activeEvent?.isTriviaEnabled) {
+    notFound()
+  }
+
   const triviaAvailable = await isTriviaAvailable()
 
   if (!triviaAvailable) {

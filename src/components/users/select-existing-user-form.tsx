@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search } from 'lucide-react'
+import { Search, UserPlus } from 'lucide-react'
 import { selectExistingUserAction } from '@/app/actions'
 import { initialUserActionState } from '@/lib/types/action-states'
 
@@ -20,13 +20,19 @@ export interface ExistingPlayerOption {
 
 interface SelectExistingUserFormProps {
   players: ExistingPlayerOption[]
-  onBack: () => void
+  onBack?: () => void
+  onCreateAccount?: () => void
+  knownPersonName?: string | null
+  onSelectKnownPerson?: () => void
   returnTo?: string
 }
 
 export default function SelectExistingUserForm({
   players = [],
   onBack,
+  onCreateAccount,
+  knownPersonName,
+  onSelectKnownPerson,
   returnTo,
 }: SelectExistingUserFormProps) {
   const router = useRouter()
@@ -53,6 +59,27 @@ export default function SelectExistingUserForm({
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4">
+      {knownPersonName && onSelectKnownPerson && (
+        <div className="rounded-2xl border border-blue-500/30 bg-blue-50/80 dark:bg-blue-950/40 p-3.5 sm:p-4 flex items-center justify-between gap-3 shadow-xs">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+              Prepoznana oseba
+            </p>
+            <p className="font-bold text-foreground text-sm sm:text-base truncate">
+              {knownPersonName}
+            </p>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            onClick={onSelectKnownPerson}
+            className="bg-blue-600 hover:bg-blue-700 text-white shrink-0"
+          >
+            Nadaljuj
+          </Button>
+        </div>
+      )}
+
       <div className="space-y-1.5">
         <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
           Izberite svojega igralca
@@ -77,7 +104,7 @@ export default function SelectExistingUserForm({
         <p className="text-destructive text-sm bg-destructive/10 p-3 rounded-lg">{state.message}</p>
       )}
 
-      <div className="max-h-[65vh] overflow-y-auto pr-1">
+      <div className="max-h-[60vh] overflow-y-auto pr-1">
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
           {filteredPlayers.map((player) => (
             <form key={player.id} action={formAction} className="h-full">
@@ -135,20 +162,56 @@ export default function SelectExistingUserForm({
       </div>
 
       {filteredPlayers.length === 0 && (
-        <p className="text-center text-sm text-muted-foreground py-8">
-          {search ? `Noben igralec se ne ujema z "${search}"` : 'V tem dogodku še ni dodeljenih igralcev'}
-        </p>
+        <div className="text-center py-6 space-y-3">
+          <p className="text-sm text-muted-foreground">
+            {search ? `Noben igralec se ne ujema z "${search}"` : 'V tem dogodku še ni dodeljenih igralcev'}
+          </p>
+          {onCreateAccount && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onCreateAccount}
+              className="gap-2"
+            >
+              <UserPlus className="h-4 w-4" />
+              {search ? `Ustvari račun z imenom "${search}"` : 'Ustvari nov račun'}
+            </Button>
+          )}
+        </div>
       )}
 
-      <div className="pt-2 border-t border-border/50">
-        <Button 
-          type="button" 
-          variant="ghost" 
-          onClick={onBack}
-          className="w-full text-muted-foreground hover:text-foreground"
-        >
-          ← Nazaj na ustvarjanje novega računa
-        </Button>
+      {/* Bottom callout: If you do not find yourself, create account */}
+      <div className="pt-2 border-t border-border/60">
+        <div className="rounded-2xl border border-border/80 bg-muted/30 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div className="space-y-0.5">
+            <h4 className="font-semibold text-sm sm:text-base text-foreground">
+              Ne najdeš svojega imena?
+            </h4>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Če še nisi dodan na seznam, si lahko ustvariš nov račun.
+            </p>
+          </div>
+          {onCreateAccount ? (
+            <Button
+              type="button"
+              onClick={onCreateAccount}
+              className="w-full sm:w-auto shrink-0 gap-2 font-semibold shadow-xs"
+            >
+              <UserPlus className="h-4 w-4" />
+              Ustvari nov račun
+            </Button>
+          ) : onBack ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBack}
+              className="w-full sm:w-auto shrink-0"
+            >
+              Nazaj
+            </Button>
+          ) : null}
+        </div>
       </div>
     </div>
   )

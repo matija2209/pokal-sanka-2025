@@ -1,11 +1,18 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
+import { getActiveEvent } from '@/lib/events'
 import { getAllPublishedResults, getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
 import { Trophy } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
 export default async function TriviaScoreboardPage() {
+  const activeEvent = await getActiveEvent()
+  if (!activeEvent?.isTriviaEnabled) {
+    notFound()
+  }
+
   const triviaAvailable = await isTriviaAvailable()
 
   if (!triviaAvailable) {

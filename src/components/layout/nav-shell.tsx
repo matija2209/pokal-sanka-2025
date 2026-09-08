@@ -25,7 +25,6 @@ const NAV_ITEMS: Array<{
   { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
   { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
   { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
-  { href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' },
   { href: '/app/profile', icon: User, label: 'Profil' },
 ]
 

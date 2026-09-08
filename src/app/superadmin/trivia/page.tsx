@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { getAllCategories } from '@/lib/prisma/fetchers'
+import { getActiveEvent } from '@/lib/events'
 import { Plus, Eye, Play, Edit, ArrowLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { DeleteCategoryButton } from '@/components/superadmin/delete-category-button'
@@ -30,7 +31,10 @@ export default async function SuperadminTriviaHubPage() {
     )
   }
 
-  const categories = await getAllCategories()
+  const [categories, activeEvent] = await Promise.all([
+    getAllCategories(),
+    getActiveEvent(),
+  ])
 
   return (
     <div className="container mx-auto px-4 py-6 md:p-8">
@@ -38,6 +42,20 @@ export default async function SuperadminTriviaHubPage() {
         <ArrowLeft className="h-5 w-5" />
         Nazaj na Superadmin
       </Link>
+
+      {activeEvent && !activeEvent.isTriviaEnabled && (
+        <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-600 dark:text-amber-400 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <span>
+            Trivia je trenutno <strong>onemogočena</strong> za aktiven dogodek (<strong>{activeEvent.name}</strong>). Igralci v aplikaciji ne vidijo zavihka Trivia niti pravil.
+          </span>
+          <Link
+            href={`/superadmin/events/${activeEvent.slug}`}
+            className="underline font-semibold hover:text-amber-500 shrink-0"
+          >
+            Vklopi v nastavitvah dogodka →
+          </Link>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">Trivia Manager</h1>

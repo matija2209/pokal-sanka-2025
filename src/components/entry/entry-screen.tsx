@@ -22,10 +22,18 @@ export default function EntryScreen({
   existingPlayers = [],
   returnTo,
 }: EntryScreenProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>(knownPersonName ? 'join' : 'selection')
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    existingPlayers.length > 0 ? 'existing' : (knownPersonName ? 'join' : 'create')
+  )
 
   if (viewMode === 'create') {
-    return <CreateUserForm onBack={() => setViewMode('selection')} returnTo={returnTo} />
+    return (
+      <CreateUserForm
+        onBack={existingPlayers.length > 0 ? () => setViewMode('existing') : undefined}
+        returnTo={returnTo}
+        backLabel="← Nazaj na seznam igralcev"
+      />
+    )
   }
 
   if (viewMode === 'join' && knownPersonName) {
@@ -34,7 +42,8 @@ export default function EntryScreen({
         knownPersonName={knownPersonName}
         activeEventName={activeEventName}
         returnTo={returnTo}
-        onBack={() => setViewMode('selection')}
+        onBack={existingPlayers.length > 0 ? () => setViewMode('existing') : undefined}
+        backLabel="← Nazaj na seznam igralcev"
       />
     )
   }
@@ -44,7 +53,9 @@ export default function EntryScreen({
       <SelectExistingUserForm
         players={existingPlayers}
         returnTo={returnTo}
-        onBack={() => setViewMode('selection')}
+        knownPersonName={knownPersonName}
+        onSelectKnownPerson={knownPersonName ? () => setViewMode('join') : undefined}
+        onCreateAccount={() => setViewMode('create')}
       />
     )
   }

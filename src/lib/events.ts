@@ -36,6 +36,7 @@ function getLegacyFallbackEvent(): Event {
     name: DEFAULT_LEGACY_EVENT_NAME,
     isActive: true,
     isRandomTeams: false,
+    isTriviaEnabled: false,
     createdAt: new Date(0),
   }
 }

@@ -105,6 +105,7 @@ model Event {
   name            String
   isActive        Boolean              @default(true)
   isRandomTeams   Boolean              @default(false)
+  isTriviaEnabled Boolean              @default(false)
   createdAt       DateTime             @default(now())
   users           User[]
   teams           Team[]

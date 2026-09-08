@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { ADMIN_ROLES } from '@/lib/auth-utils'
+import { getActiveEvent } from '@/lib/events'
 import LogoutButton from './logout-button'
 
 export default async function SuperAdminLayout({
@@ -15,6 +16,8 @@ export default async function SuperAdminLayout({
 
   const role = session.user.role
   if (!role || !ADMIN_ROLES.includes(role)) redirect('/login')
+
+  const activeEvent = await getActiveEvent()
 
   const navLinkClass =
     'rounded-md border border-border bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80'
@@ -34,14 +37,18 @@ export default async function SuperAdminLayout({
               Players
             </Link>
             <Link href="/superadmin/trivia" className={navLinkClass}>
-              Trivia
+              Trivia{activeEvent && !activeEvent.isTriviaEnabled ? ' (Off)' : ''}
             </Link>
-            <Link href="/superadmin/trivia/categories/new" className={navLinkClass}>
-              New Category
-            </Link>
-            <Link href="/superadmin/trivia/powers" className={navLinkClass}>
-              Powers
-            </Link>
+            {(!activeEvent || activeEvent.isTriviaEnabled) && (
+              <>
+                <Link href="/superadmin/trivia/categories/new" className={navLinkClass}>
+                  New Category
+                </Link>
+                <Link href="/superadmin/trivia/powers" className={navLinkClass}>
+                  Powers
+                </Link>
+              </>
+            )}
             <Link href="/superadmin/events" className={navLinkClass}>
               Events
             </Link>

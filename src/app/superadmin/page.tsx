@@ -26,7 +26,12 @@ export default async function SuperAdminPage({ searchParams }: SuperAdminPagePro
           href="/superadmin/trivia"
           className="bg-card text-card-foreground border-2 border-border rounded-xl p-6 hover:border-primary/40 hover:shadow-md transition-all group shadow-sm"
         >
-          <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Trivia Manager</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">Trivia Manager</h2>
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${activeEvent?.isTriviaEnabled ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-muted border-border text-muted-foreground'}`}>
+              {activeEvent?.isTriviaEnabled ? 'Enabled' : 'Disabled for event'}
+            </span>
+          </div>
           <p className="text-muted-foreground font-medium">Manage quiz categories, questions, results, and player powers.</p>
         </Link>
 
