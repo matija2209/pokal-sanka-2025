@@ -14,7 +14,6 @@ import {
   HelpCircle,
   ArrowLeft
 } from 'lucide-react'
-import UserMenu from './user-menu'
 import { Container } from './container'
 import type { Event, UserWithTeam } from '@/lib/prisma/types'
 import { isBachelorEvent } from '@/lib/events-shared'
@@ -43,7 +42,6 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
     const items: NavItem[] = [
       { href: '/app/feed', icon: Images, label: 'Feed' },
       ...(isBachelor ? [{ href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor' }] : []),
-      { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
       { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
       ...(isTriviaEnabled ? [{ href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' }] : []),
       { href: '/app/profile', icon: User, label: 'Profil' },
@@ -88,9 +86,13 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
             </span>
           </Link>
 
-          {/* User Info - Responsive */}
           <div className="flex items-center space-x-2 md:space-x-4">
-            <UserMenu currentUser={currentUser} currentEvent={currentEvent} availableEvents={availableEvents} />
+            <Button asChild size="sm">
+              <Link href="/app/quick-log">
+                <ClipboardList className="h-4 w-4" />
+                Dodaj
+              </Link>
+            </Button>
             
             {onRefresh && (
               <Button

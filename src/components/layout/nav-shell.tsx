@@ -11,7 +11,6 @@ import {
   RefreshCw,
   TrendingUp,
   ClipboardList,
-  HelpCircle,
   ArrowLeft
 } from 'lucide-react'
 import { Container } from './container'
@@ -23,7 +22,6 @@ const NAV_ITEMS: Array<{
   matchPrefix?: string
 }> = [
   { href: '/app/feed', icon: Images, label: 'Feed' },
-  { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
   { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
   { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
   { href: '/app/profile', icon: User, label: 'Profil' },
@@ -64,13 +62,12 @@ export default function NavShell() {
           </Link>
 
           <div className="flex items-center space-x-2 md:space-x-4">
-            {/* User menu skeleton — pulsing placeholder */}
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded bg-muted animate-pulse" />
-              <div className="w-16 h-4 rounded bg-muted animate-pulse hidden sm:block" />
-              <div className="w-12 h-5 rounded bg-muted animate-pulse hidden sm:block" />
-              <div className="w-4 h-4 rounded bg-muted animate-pulse" />
-            </div>
+            <Button asChild size="sm">
+              <Link href="/app/quick-log">
+                <ClipboardList className="h-4 w-4" />
+                Dodaj
+              </Link>
+            </Button>
 
             <Button
               variant="ghost"

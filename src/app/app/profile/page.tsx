@@ -5,8 +5,9 @@ import { getAllTeams, getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers
 import { redirect } from 'next/navigation'
 import { UserProfile, UserHistory } from '@/components/users'
 import { TeamLogoForm } from '@/components/teams'
+import UserMenu from '@/components/layout/user-menu'
 import type { Metadata } from 'next'
-import { getSiteBrandParts, getActiveEvent } from '@/lib/events'
+import { getSiteBrandParts, getActiveEvent, getAllEvents } from '@/lib/events'
 import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,13 +33,14 @@ export default async function ProfilePage() {
   const activeEvent = await getActiveEvent()
   const currentUser = await getCurrentUser(activeEvent?.id)
   
-  if (!currentUser) {
+  if (!activeEvent || !currentUser) {
     redirect('/')
   }
 
-  const [availableTeams, currentUserWithDrinks] = await Promise.all([
+  const [availableTeams, currentUserWithDrinks, availableEvents] = await Promise.all([
     getAllTeams(),
-    getUserWithTeamAndDrinksById(currentUser.id, activeEvent?.id),
+    getUserWithTeamAndDrinksById(currentUser.id, activeEvent.id),
+    getAllEvents(),
   ])
   
   return (
@@ -65,6 +67,14 @@ export default async function ProfilePage() {
         {currentUserWithDrinks && (
           <UserHistory user={currentUserWithDrinks} limit={15} />
         )}
+
+        <div className="flex justify-center pt-2">
+          <UserMenu
+            currentUser={currentUser}
+            currentEvent={activeEvent}
+            availableEvents={availableEvents}
+          />
+        </div>
       </div>
     </Container>
   )
