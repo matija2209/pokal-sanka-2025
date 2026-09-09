@@ -1,12 +1,13 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllTeams } from '@/lib/prisma/fetchers'
+import { getAllTeams, getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
-import { UserProfile } from '@/components/users'
+import { UserProfile, UserHistory } from '@/components/users'
 import { TeamLogoForm } from '@/components/teams'
 import type { Metadata } from 'next'
-import { getSiteBrandParts } from '@/lib/events'
+import { getSiteBrandParts, getActiveEvent } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -28,16 +29,20 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ProfilePage() {
   await connection()
 
-  const currentUser = await getCurrentUser()
+  const activeEvent = await getActiveEvent()
+  const currentUser = await getCurrentUser(activeEvent?.id)
   
   if (!currentUser) {
     redirect('/')
   }
 
-  const availableTeams = await getAllTeams()
+  const [availableTeams, currentUserWithDrinks] = await Promise.all([
+    getAllTeams(),
+    getUserWithTeamAndDrinksById(currentUser.id, activeEvent?.id),
+  ])
   
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 py-6">
+    <Container size="mobile" className="py-6">
       <div className="text-center mb-8 space-y-2">
         <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">
           Moj Profil
@@ -46,9 +51,9 @@ export default async function ProfilePage() {
           Prilagodite svojo izkušnjo in upravljajte nastavitve ekipe.
         </p>
       </div>
-      
+
       <div className="space-y-8">
-        <UserProfile 
+        <UserProfile
           currentUser={currentUser}
           availableTeams={availableTeams}
         />
@@ -56,7 +61,11 @@ export default async function ProfilePage() {
         {currentUser.team && (
           <TeamLogoForm currentUser={currentUser} />
         )}
+
+        {currentUserWithDrinks && (
+          <UserHistory user={currentUserWithDrinks} limit={15} />
+        )}
       </div>
-    </div>
+    </Container>
   )
 }
