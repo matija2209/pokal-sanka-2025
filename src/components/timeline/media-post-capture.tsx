@@ -31,7 +31,7 @@ type CaptureMode = 'photo' | 'video'
 type Props = {
   onClose: () => void
   onPublish: (file: File) => Promise<boolean>
-  videoOnly?: boolean
+  reel?: boolean
 }
 
 function recorderMimeType() {
@@ -43,14 +43,14 @@ function extensionForMime(mime: string) {
   return mime.split(';')[0]?.includes('mp4') ? 'mp4' : 'webm'
 }
 
-export default function MediaPostCapture({ onClose, onPublish, videoOnly = false }: Props) {
+export default function MediaPostCapture({ onClose, onPublish, reel = false }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const liveVideoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
 
-  const [mode, setMode] = useState<CaptureMode>(videoOnly ? 'video' : 'photo')
+  const [mode, setMode] = useState<CaptureMode>(reel ? 'video' : 'photo')
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment')
   const [cameraPhase, setCameraPhase] = useState<CameraPhase>('loading')
   const [media, setMedia] = useState<File | null>(null)
@@ -119,15 +119,21 @@ export default function MediaPostCapture({ onClose, onPublish, videoOnly = false
         setError(`Datoteka je prevelika. Največ ${formatFileSize(MAX_MEDIA_SIZE_BYTES)}.`)
         return
       }
-      if ((videoOnly && !isVideoMimeType(file.type)) || (!videoOnly && !isImageMimeType(file.type) && !isVideoMimeType(file.type))) {
-        setError(videoOnly ? 'Izberi video.' : 'Izberi fotografijo ali video.')
+      if (!isImageMimeType(file.type) && !isVideoMimeType(file.type)) {
+        setError('Izberi fotografijo ali video.')
         return
       }
       stopStream()
+      if (reel) {
+        void onPublish(file).then((published) => {
+          if (!published) setError('Medija ni bilo mogoče dodati. Poskusi znova.')
+        }).catch(() => setError('Medija ni bilo mogoče dodati. Poskusi znova.'))
+        return
+      }
       setMedia(file)
       setError(null)
     },
-    [stopStream],
+    [onPublish, reel, stopStream],
   )
 
   const takePhoto = useCallback(() => {
@@ -252,9 +258,9 @@ export default function MediaPostCapture({ onClose, onPublish, videoOnly = false
                 </div>
               )}
               <div className="absolute inset-x-5 bottom-28 z-10 text-center">
-                <p className="text-[11px] uppercase tracking-[0.35em] text-white/50">Objava v feed</p>
+                <p className="text-[11px] uppercase tracking-[0.35em] text-white/50">{reel ? 'Nov reel' : 'Objava v feed'}</p>
                 <p className="mt-3 text-3xl font-semibold">{cameraPhase === 'recording' ? 'Snemanje …' : mode === 'photo' ? 'Fotografiraj trenutek' : 'Posnemi video'}</p>
-                <p className="mt-2 text-sm text-white/60">{videoOnly ? 'Posnemi ali izberi video za reel.' : 'Po zajemu ga dodaj v objavo in izberi še druge medije.'}</p>
+                <p className="mt-2 text-sm text-white/60">{reel ? 'Posnemi, fotografiraj ali izberi medij za reel.' : 'Po zajemu ga dodaj v objavo in izberi še druge medije.'}</p>
               </div>
             </>
           )}
@@ -271,12 +277,12 @@ export default function MediaPostCapture({ onClose, onPublish, videoOnly = false
       ) : (
         <div className="bg-black/90 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md">
           <div className="mx-auto flex max-w-sm items-center justify-between gap-5">
-            <button type="button" onClick={() => inputRef.current?.click()} aria-label="Izberi iz naprave" className="flex size-12 items-center justify-center rounded-full bg-white/15"><Upload className="size-5" /></button>
+            <button type="button" onClick={() => inputRef.current?.click()} aria-label={reel ? 'Izberi iz galerije' : 'Izberi iz naprave'} className="flex size-12 items-center justify-center rounded-full bg-white/15">{reel ? <ImageIcon className="size-5" /> : <Upload className="size-5" />}</button>
             <div className="flex flex-col items-center gap-3">
-              {!videoOnly ? <div className="flex rounded-full bg-white/10 p-1 text-xs font-semibold">
+              <div className="flex rounded-full bg-white/10 p-1 text-xs font-semibold">
                 <button type="button" onClick={() => setMode('photo')} disabled={cameraPhase === 'recording'} className={cn('rounded-full px-4 py-1.5', mode === 'photo' && 'bg-white text-black')}>Foto</button>
                 <button type="button" onClick={() => setMode('video')} disabled={cameraPhase === 'recording'} className={cn('rounded-full px-4 py-1.5', mode === 'video' && 'bg-white text-black')}>Video</button>
-              </div> : <span className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-black">Reel video</span>}
+              </div>
               {mode === 'photo' ? (
                 <button type="button" onClick={takePhoto} disabled={cameraPhase !== 'ready'} aria-label="Posnemi fotografijo" className="size-20 rounded-full border-4 border-white bg-white/20 disabled:opacity-40"><span className="mx-auto block size-14 rounded-full bg-white" /></button>
               ) : cameraPhase === 'recording' ? (
@@ -285,11 +291,11 @@ export default function MediaPostCapture({ onClose, onPublish, videoOnly = false
                 <button type="button" onClick={startRecording} disabled={cameraPhase !== 'ready'} aria-label="Začni snemanje" className="flex size-20 items-center justify-center rounded-full border-4 border-white bg-red-500 disabled:opacity-40"><Video className="size-7" /></button>
               )}
             </div>
-            <button type="button" onClick={() => inputRef.current?.click()} aria-label="Izberi medij" className="flex size-12 items-center justify-center rounded-full bg-white/15"><ImageIcon className="size-5" /></button>
+            {reel ? <span aria-hidden className="size-12" /> : <button type="button" onClick={() => inputRef.current?.click()} aria-label="Izberi medij" className="flex size-12 items-center justify-center rounded-full bg-white/15"><ImageIcon className="size-5" /></button>}
           </div>
         </div>
       )}
-      <input ref={inputRef} type="file" accept={videoOnly ? 'video/*' : 'image/*,video/*'} capture="environment" className="sr-only" onChange={(event) => attachMedia(event.target.files?.[0] ?? null)} />
+      <input ref={inputRef} type="file" accept="image/*,video/*" className="sr-only" onChange={(event) => attachMedia(event.target.files?.[0] ?? null)} />
     </div>
   )
 }

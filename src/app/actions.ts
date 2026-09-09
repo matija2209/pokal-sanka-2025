@@ -1083,10 +1083,10 @@ export async function createPostAction(
     }
 
     if (kind === 'reel') {
-      if (imageUrl || assets.length !== 1 || assets[0]?.mediaType !== 'video') {
+      if (imageUrl || assets.length !== 1 || !['image', 'video'].includes(assets[0]?.mediaType ?? '')) {
         return {
           success: false,
-          message: 'Reel mora vsebovati natanko en video.',
+          message: 'Reel mora vsebovati natanko eno fotografijo ali video.',
           type: 'error',
         }
       }
