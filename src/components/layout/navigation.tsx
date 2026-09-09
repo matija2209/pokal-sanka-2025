@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   Images,
-  Trophy,
   User,
   RefreshCw,
   TrendingUp,
@@ -16,6 +15,7 @@ import {
   ArrowLeft
 } from 'lucide-react'
 import UserMenu from './user-menu'
+import { Container } from './container'
 import type { Event, UserWithTeam } from '@/lib/prisma/types'
 import { isBachelorEvent } from '@/lib/events-shared'
 
@@ -44,7 +44,6 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
       { href: '/app/feed', icon: Images, label: 'Feed' },
       ...(isBachelor ? [{ href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor' }] : []),
       { href: '/app/quick-log', icon: ClipboardList, label: 'Hitri vpis' },
-      { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
       { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
       ...(isTriviaEnabled ? [{ href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' }] : []),
       { href: '/app/profile', icon: User, label: 'Profil' },
@@ -58,7 +57,7 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
 
   return (
     <nav className=" border-b shadow-sm">
-      <div className="container mx-auto px-4">
+      <Container size="mobile">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Back to feed — mobile-first, hidden when already on feed */}
           {pathname !== '/app/feed' && (
@@ -125,7 +124,7 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
             )
           })}
         </div>
-      </div>
+      </Container>
     </nav>
   )
 }

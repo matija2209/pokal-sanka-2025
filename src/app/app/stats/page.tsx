@@ -1,16 +1,17 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers'
-import { getEventActivitySnapshot, getEventFeedSnapshot, getEventRankingSnapshot } from '@/lib/cache/event-read-models'
+// import { getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers'
+import { getEventActivitySnapshot, /* getEventFeedSnapshot, */ getEventRankingSnapshot } from '@/lib/cache/event-read-models'
 import { redirect } from 'next/navigation'
-import { UserHistory, Leaderboard } from '@/components/users'
+import { /* UserHistory, */ Leaderboard } from '@/components/users'
 import { RecentActivity } from '@/components/drinks'
-import { CommentaryDisplay } from '@/components/commentary'
-import { TimelineDisplay } from '@/components/timeline'
+// import { CommentaryDisplay } from '@/components/commentary'
+// import { TimelineDisplay } from '@/components/timeline'
 import { getUserRanking, sortUsersByScore, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import type { Metadata } from 'next'
 import { getSiteBrandParts, getActiveEvent } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -43,14 +44,14 @@ export default async function StatsPage() {
     redirect('/')
   }
 
-  const [rankingSnapshot, activitySnapshot, feedSnapshot, currentUserWithDrinks] = await Promise.all([
+  const [rankingSnapshot, activitySnapshot /*, feedSnapshot, currentUserWithDrinks*/] = await Promise.all([
     getEventRankingSnapshot(activeEvent.id),
     getEventActivitySnapshot(activeEvent.id),
-    getEventFeedSnapshot(activeEvent.id, false),
-    getUserWithTeamAndDrinksById(currentUser.id, activeEvent.id),
+    // getEventFeedSnapshot(activeEvent.id, false),
+    // getUserWithTeamAndDrinksById(currentUser.id, activeEvent.id),
   ])
-  const { users: allUsers, triviaResults } = rankingSnapshot
-  const { recentDrinks, recentCommentaries } = activitySnapshot
+  const { users: allUsers, teams: allTeams, triviaResults } = rankingSnapshot
+  const { recentDrinks /*, recentCommentaries*/ } = activitySnapshot
 
   // Trivia score integration
   const triviaAvailable = rankingSnapshot.triviaAvailable && activeEvent.isTriviaEnabled
@@ -63,7 +64,7 @@ export default async function StatsPage() {
   const sortedUsers = sortUsersByScore(allUsers, triviaPointsMap)
   
   return (
-    <div className="w-full max-w-none px-0 text-foreground">
+    <Container size="mobile" className="px-0 text-foreground">
       <div className="text-center mb-6 border-b border-border pb-6">
         <h1 className="text-2xl font-bold leading-tight mb-2 text-foreground">Statistike in Lestvice</h1>
         <p className="text-sm text-muted-foreground">
@@ -74,22 +75,23 @@ export default async function StatsPage() {
       <div className="space-y-5">
         <Leaderboard
           users={sortedUsers}
+          teams={allTeams}
           currentUserId={currentUser.id}
-          teamFilter={currentUser.teamId}
+          currentUserTeamId={currentUser.teamId}
           triviaPointsMap={triviaPointsMap}
         />
 
-        <CommentaryDisplay commentaries={recentCommentaries} limit={8} showTitle={true} />
+        {/* <CommentaryDisplay commentaries={recentCommentaries} limit={8} showTitle={true} /> */}
 
-        <div className="space-y-4">
+        {/* <div className="space-y-4">
           <h2 className="text-lg font-bold text-foreground">Nedavne objave</h2>
           <TimelineDisplay posts={feedSnapshot.posts.slice(0, 10)} />
-        </div>
+        </div> */}
 
         <RecentActivity recentDrinks={recentDrinks} limit={8} />
 
-        {currentUserWithDrinks && <UserHistory user={currentUserWithDrinks} limit={15} />}
+        {/* {currentUserWithDrinks && <UserHistory user={currentUserWithDrinks} limit={15} />} */}
       </div>
-    </div>
+    </Container>
   )
 }
