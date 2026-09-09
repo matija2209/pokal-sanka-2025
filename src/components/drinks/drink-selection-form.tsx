@@ -23,9 +23,10 @@ import Link from 'next/link'
 
 interface DrinkSelectionFormProps {
   selectedUser: QuickLogUser
+  isSelf: boolean
 }
 
-export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormProps) {
+export default function DrinkSelectionForm({ selectedUser, isSelf }: DrinkSelectionFormProps) {
   const [state, formAction, isPending] = useActionState(logDrinkAction, initialDrinkLogActionState)
   const categories = getDrinksByCategory()
   const [selectedDrink, setSelectedDrink] = useState<(typeof categories)[number]['drinks'][number] | null>(null)
@@ -115,10 +116,12 @@ export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormP
       >
         <AlertDialogContent size="sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Potrdi beleženje pijače</AlertDialogTitle>
+            <AlertDialogTitle>
+              {isSelf ? 'Potrdi beleženje pijače' : '⚠️ Beležiš pijačo drugi osebi'}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {selectedDrink
-                ? `Ali želiš za ${selectedUser.name} zabeležiti ${selectedDrink.label} za ${selectedDrink.points} ${selectedDrink.points === 1 ? 'točko' : selectedDrink.points === 2 ? 'točki' : 'točke'}?`
+                ? `${isSelf ? '' : 'Pozor: to ni tvoj profil! '}Ali želiš za ${selectedUser.name} zabeležiti ${selectedDrink.label} za ${selectedDrink.points} ${selectedDrink.points === 1 ? 'točko' : selectedDrink.points === 2 ? 'točki' : 'točke'}?`
                 : ''}
             </AlertDialogDescription>
           </AlertDialogHeader>

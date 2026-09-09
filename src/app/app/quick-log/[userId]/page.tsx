@@ -5,6 +5,7 @@ import { getQuickLogUserById } from '@/lib/prisma/fetchers'
 import { redirect, notFound } from 'next/navigation'
 import DrinkSelectionForm from '@/components/drinks/drink-selection-form'
 import { getActiveEvent } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 
 interface DrinkSelectionPageProps {
@@ -41,8 +42,8 @@ export default async function DrinkSelectionPage({ params }: DrinkSelectionPageP
   }
   
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 py-8">
-      <DrinkSelectionForm selectedUser={selectedUser} />
-    </div>
+    <Container size="mobile" className="py-8">
+      <DrinkSelectionForm selectedUser={selectedUser} isSelf={currentUser.id === selectedUser.id} />
+    </Container>
   )
 }
