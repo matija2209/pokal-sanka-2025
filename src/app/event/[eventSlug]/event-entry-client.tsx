@@ -23,10 +23,11 @@ export function EventEntryClient({
 
   if (showEntry) {
     return (
-      <div className="space-y-4">
+      <div className="rounded-[1.75rem] border border-white/70 bg-white/80 p-4 shadow-2xl shadow-violet-950/20 backdrop-blur-md">
         <button
+          type="button"
           onClick={() => setShowEntry(false)}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="mb-4 inline-flex min-h-11 items-center rounded-xl px-2 text-sm font-semibold text-violet-900 transition-colors hover:bg-violet-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-950"
         >
           &larr; Nazaj
         </button>
@@ -43,8 +44,9 @@ export function EventEntryClient({
   return (
     <div className="text-center">
       <button
+        type="button"
         onClick={() => setShowEntry(true)}
-        className="inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-lg font-bold text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+        className="inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-fuchsia-600 px-6 py-4 text-lg font-bold text-white shadow-xl shadow-fuchsia-600/35 transition-[transform,background-color,box-shadow] hover:bg-fuchsia-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-950 active:scale-[0.98]"
       >
         {ctaText}
       </button>
