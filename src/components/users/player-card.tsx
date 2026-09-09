@@ -24,7 +24,6 @@ export default function PlayerCard({ user, currentUserId }: PlayerCardProps) {
     >
       <Link
         href={`/app/quick-log/${user.id}`}
-        prefetch
         aria-label={`Beleži pijačo za ${user.name}`}
         className="absolute inset-0 z-20 rounded-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       />
