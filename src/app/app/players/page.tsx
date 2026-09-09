@@ -7,6 +7,7 @@ import { DrinkLogForm } from '@/components/drinks'
 import { CreatePostForm } from '@/components/timeline'
 import type { Metadata } from 'next'
 import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -52,15 +53,15 @@ export default async function PlayersPage() {
   }))
   
   return (
-    <div className="w-full max-w-none px-0">
+    <Container size="mobile" className="px-0">
       <div className="space-y-6 w-full">
-        <DrinkLogForm 
+        <DrinkLogForm
           currentUserId={currentUser.id}
           allUsers={usersForDropdown}
         />
-        
+
         <CreatePostForm currentUser={currentUser} />
       </div>
-    </div>
+    </Container>
   )
 }

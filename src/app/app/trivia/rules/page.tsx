@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSiteBrandParts, getActiveEvent } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const activeEvent = await getActiveEvent()
@@ -32,7 +33,7 @@ export default async function TriviaRulesPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="w-full max-w-none px-0 py-6">
+      <Container size="mobile" className="px-0 py-6">
         <Link
           href="/app/players"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"
@@ -157,7 +158,7 @@ export default async function TriviaRulesPage() {
             <li>Moči lahko spremenijo potek, vendar imajo omejitve.</li>
           </ul>
         </section>
-      </div>
+      </Container>
     </div>
   )
 }

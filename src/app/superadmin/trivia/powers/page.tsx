@@ -6,6 +6,7 @@ import { recordPowerUsageAction } from '../actions'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Zap } from 'lucide-react'
+import { Container } from '@/components/layout/container'
 
 
 const POWER_TYPES = ['Airstrike', 'Solo Rider', 'Cockblock', 'Zadnji v Vrsti'] as const
@@ -24,12 +25,12 @@ export default async function PowersPage() {
 
   if (!triviaAvailable) {
     return (
-      <div className="container mx-auto p-8">
+      <Container size="lg" className="py-8">
         <div className="bg-muted border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold text-foreground mb-2">Migracija potrebna</h2>
           <p className="text-muted-foreground">Trivia modul potrebuje migracijo baze.</p>
         </div>
-      </div>
+      </Container>
     )
   }
 
@@ -46,7 +47,7 @@ export default async function PowersPage() {
   }
 
   return (
-    <div className="container mx-auto p-8 max-w-4xl">
+    <Container size="lg" className="py-8">
       <Link href="/superadmin/trivia" className="text-sm text-muted-foreground hover:text-primary mb-4 inline-block py-2">
         ← Nazaj na Trivia
       </Link>
@@ -165,6 +166,6 @@ export default async function PowersPage() {
           </div>
         )}
       </div>
-    </div>
+    </Container>
   )
 }

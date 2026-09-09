@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Container } from '@/components/layout/container'
 
 const ADMIN_ROLES = ['superadmin', 'eventAdmin']
 
@@ -48,17 +49,18 @@ export default async function PromotePersonPage({
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
-        <div className="container mx-auto px-4 py-3">
+        <Container size="sm" className="py-3">
           <Link
             href="/superadmin"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             &larr; Back to Superadmin
           </Link>
-        </div>
+        </Container>
       </header>
 
-      <main className="container mx-auto max-w-lg px-4 py-8">
+      <main>
+      <Container size="sm" className="py-8">
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">Promote Person to Account</CardTitle>
@@ -132,6 +134,7 @@ export default async function PromotePersonPage({
             </form>
           </CardContent>
         </Card>
+      </Container>
       </main>
     </div>
   );

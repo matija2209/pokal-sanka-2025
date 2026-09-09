@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { TeamResultReveal } from '@/components/teams'
 import type { Metadata } from 'next'
 import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -49,12 +50,12 @@ export default async function SelectTeamResultPage({
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-2 sm:px-4 py-4">
+    <Container size="mobile" className="py-4">
       <TeamResultReveal
         currentUserId={currentUser.id}
         team={chosenTeam}
         redirectUrl="/app/feed"
       />
-    </div>
+    </Container>
   )
 }

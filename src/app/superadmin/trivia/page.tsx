@@ -7,6 +7,7 @@ import { getActiveEvent } from '@/lib/events'
 import { Plus, Eye, Play, Edit, ArrowLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { DeleteCategoryButton } from '@/components/superadmin/delete-category-button'
+import { Container } from '@/components/layout/container'
 
 
 const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
@@ -22,7 +23,7 @@ export default async function SuperadminTriviaHubPage() {
 
   if (!triviaAvailable) {
     return (
-      <div className="container mx-auto px-4 py-6 md:p-8">
+      <Container size="lg" className="py-6 md:py-8">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Trivia Manager</h1>
         <div className="bg-muted border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold text-foreground mb-2">Migracija potrebna</h2>
@@ -30,7 +31,7 @@ export default async function SuperadminTriviaHubPage() {
             Trivia modul potrebuje migracijo baze. Zaženi <code className="bg-secondary px-1 rounded text-foreground">prisma migrate deploy</code> za aktivacijo.
           </p>
         </div>
-      </div>
+      </Container>
     )
   }
 
@@ -40,7 +41,7 @@ export default async function SuperadminTriviaHubPage() {
   ])
 
   return (
-    <div className="container mx-auto px-4 py-6 md:p-8">
+    <Container size="lg" className="py-6 md:py-8">
       <Link href="/superadmin" className="inline-flex items-center gap-1 text-base text-muted-foreground hover:text-primary mb-3 py-2">
         <ArrowLeft className="h-5 w-5" />
         Nazaj na Superadmin
@@ -134,6 +135,6 @@ export default async function SuperadminTriviaHubPage() {
           })}
         </div>
       )}
-    </div>
+    </Container>
   )
 }

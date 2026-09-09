@@ -13,6 +13,7 @@ import bachelorImage2 from '../../the-bachelor/bostjan-pecar-2.jpg'
 import bachelorImage3 from '../../the-bachelor/bostjan-pecar-3.jpg'
 import bachelorImage4 from '../../the-bachelor/bostjan-pecar-4.jpg'
 import bachelorImage5 from '../../the-bachelor/bostjan-pecar-5.jpg'
+import { Container } from '@/components/layout/container'
 
 
 export default async function BwskEntryPage() {
@@ -123,10 +124,10 @@ export default async function BwskEntryPage() {
         `}</style>
       </section>
 
-      <div className="w-full px-4 pb-8 pt-3 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+      <Container size="mobile" className="pb-8 pt-3">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Boštjan Pečar Bachelor 2026</h1>
-          <div className="mx-auto max-w-2xl space-y-3 text-muted-foreground">
+          <div className="space-y-3 text-muted-foreground">
             <p className="text-lg md:text-xl font-medium text-foreground">Pozdravljen, dragi prijatelj!</p>
             <p className="text-base md:text-lg">
               Izbran si bil, da se pridružiš fantovščini našega dragega prijatelja Boštjana - znanega pod
@@ -199,7 +200,7 @@ export default async function BwskEntryPage() {
             returnTo="/bwsk/enter"
           />
         )}
-      </div>
+      </Container>
     </div>
   )
 }

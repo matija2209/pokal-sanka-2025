@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { CreateEventForm } from '@/components/admin/create-event-form'
 import { createEventAction } from '@/lib/actions/event-actions'
+import { Container } from '@/components/layout/container'
 
 
 interface Props {
@@ -24,7 +25,7 @@ export default async function AdminPage({ searchParams }: Props) {
   const params = await searchParams
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <Container size="lg" className="py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">Events</h1>
         <p className="text-muted-foreground mt-1">Manage events and their landing pages.</p>
@@ -104,6 +105,6 @@ export default async function AdminPage({ searchParams }: Props) {
       )}
 
       <CreateEventForm action={createEventAction} />
-    </div>
+    </Container>
   )
 }

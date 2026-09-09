@@ -10,6 +10,7 @@ import { getEventBySlug, getEventEntryPathBySlug } from '@/lib/events'
 import { getUserByPersonAndEvent } from '@/lib/prisma/fetchers/user-fetchers'
 import { getCurrentPersonId } from '@/lib/utils/cookies'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
+import { Container } from '@/components/layout/container'
 
 
 export default async function InviteClaimPage({
@@ -57,17 +58,18 @@ export default async function InviteClaimPage({
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
-        <div className="container mx-auto px-4 py-3">
+        <Container size="mobile" className="py-3">
           <Link
             href={getEventEntryPathBySlug(eventSlug)}
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             &larr; Back
           </Link>
-        </div>
+        </Container>
       </header>
 
-      <main className="container mx-auto max-w-4xl px-4 py-8">
+      <main>
+      <Container size="mobile" className="py-8">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-extrabold tracking-tight lg:text-4xl">
             Continue as {person.name}
@@ -77,7 +79,7 @@ export default async function InviteClaimPage({
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Join without login</CardTitle>
@@ -118,6 +120,7 @@ export default async function InviteClaimPage({
             </Card>
           </div>
         </div>
+      </Container>
       </main>
     </div>
   )

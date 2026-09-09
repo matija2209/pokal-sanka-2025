@@ -5,6 +5,7 @@ import { getQuickLogUsers } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import { PlayerGrid } from '@/components/users'
 import { getActiveEvent } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 
 export default async function QuickLogPage() {
@@ -30,19 +31,19 @@ export default async function QuickLogPage() {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 py-8">
+    <Container size="mobile" className="py-8">
       <div className="text-center mb-10 space-y-3">
         <h1 className="text-3xl font-black tracking-tight lg:text-4xl text-foreground">
           Hitro beleženje
         </h1>
-        <p className="text-base text-muted-foreground font-medium max-w-md mx-auto">
+        <p className="text-base text-muted-foreground font-medium">
           Izberite igralca s seznama, da mu hitro zabeležite pijačo in dodate točke njegovi ekipi.
         </p>
       </div>
-      
+
       <div className="bg-card/50 backdrop-blur-sm rounded-3xl p-6 border border-border/50 shadow-sm">
         <PlayerGrid users={users} currentUserId={currentUser.id} />
       </div>
-    </div>
+    </Container>
   )
 }

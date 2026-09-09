@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { getActiveEvent } from '@/lib/events'
 import { getEventTriviaScoreboardSnapshot } from '@/lib/cache/event-read-models'
 import { Trophy } from 'lucide-react'
+import { Container } from '@/components/layout/container'
 
 
 export default async function TriviaScoreboardPage() {
@@ -19,13 +20,13 @@ export default async function TriviaScoreboardPage() {
   if (!triviaSnapshot.triviaAvailable) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-12 max-w-3xl text-center">
+        <Container size="mobile" className="py-12 text-center">
           <Link href="/app/players" className="text-sm text-muted-foreground hover:text-foreground mb-8 inline-block">
             ← Nazaj na Šank
           </Link>
           <h1 className="text-4xl font-bold mb-4">Trivia Lestvica</h1>
           <p className="text-muted-foreground">Trivia modul še ni na voljo. Kmalu!</p>
-        </div>
+        </Container>
       </div>
     )
   }
@@ -48,7 +49,7 @@ export default async function TriviaScoreboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12 max-w-3xl">
+      <Container size="mobile" className="py-12">
         <Link href="/app/players" className="text-sm text-muted-foreground hover:text-foreground mb-8 inline-block">
           ← Nazaj na Šank
         </Link>
@@ -134,7 +135,7 @@ export default async function TriviaScoreboardPage() {
             )}
           </div>
         )}
-      </div>
+      </Container>
     </div>
   )
 }

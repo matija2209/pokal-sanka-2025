@@ -7,6 +7,7 @@ import { redirect, notFound } from 'next/navigation'
 import { TeamStats } from '@/components/teams'
 import { sortTeamsByScore } from '@/lib/utils/calculations'
 import { getActiveEvent } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 
 interface TeamDetailPageProps {
@@ -48,27 +49,27 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   const teamWithDrinks = allTeams.find(t => t.id === team.id)
   
   return (
-    <div className="w-full max-w-none px-0">
+    <Container size="mobile" className="px-0">
       <div className="text-center mb-6">
         <div className="flex items-center justify-center gap-2.5 mb-2">
-          <div 
-            className="w-7 h-7 shrink-0 rounded" 
+          <div
+            className="w-7 h-7 shrink-0 rounded"
             style={{ backgroundColor: team.color }}
           />
           <h1 className="text-2xl font-bold leading-tight">{team.name}</h1>
         </div>
         <p className="text-sm text-muted-foreground">Statistike ekipe in uspešnost članov</p>
       </div>
-      
+
       <div className="w-full">
         {teamWithDrinks && (
-          <TeamStats 
+          <TeamStats
             team={teamWithDrinks}
             allTeams={allTeams}
             rank={teamRank}
           />
         )}
       </div>
-    </div>
+    </Container>
   )
 }

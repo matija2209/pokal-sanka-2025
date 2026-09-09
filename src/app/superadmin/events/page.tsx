@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { CreateEventForm } from '@/components/admin/create-event-form'
 import { createEventAction } from '@/lib/actions/event-actions'
+import { Container } from '@/components/layout/container'
 
 
 interface Props {
@@ -32,7 +33,7 @@ export default async function SuperadminEventsPage({ searchParams }: Props) {
   const params = await searchParams
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <Container size="xl" className="py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">Event Management</h1>
         <p className="text-muted-foreground mt-1">Full CRUD over all events. Superadmin only.</p>
@@ -111,6 +112,6 @@ export default async function SuperadminEventsPage({ searchParams }: Props) {
       )}
 
       <CreateEventForm action={createEventAction} />
-    </div>
+    </Container>
   )
 }

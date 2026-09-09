@@ -7,6 +7,7 @@ import { getActiveEvent } from '@/lib/events'
 import { getAllCategories, getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
 import { calculateAndSaveResultAction } from '@/app/superadmin/trivia/actions'
 import { ConductTriviaBoard } from '@/components/trivia/conduct-trivia-board'
+import { Container } from '@/components/layout/container'
 
 
 export default async function TriviaConductPage() {
@@ -22,7 +23,7 @@ export default async function TriviaConductPage() {
   if (!triviaAvailable) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <Container size="mobile" className="py-12">
           <Link href="/app/trivia/rules" className="text-sm text-muted-foreground hover:text-foreground mb-8 inline-block">
             ← Nazaj na Trivia
           </Link>
@@ -30,7 +31,7 @@ export default async function TriviaConductPage() {
           <p className="text-muted-foreground">
             Trivia modul trenutno ni na voljo. Najprej zaženi migracije baze.
           </p>
-        </div>
+        </Container>
       </div>
     )
   }
@@ -42,7 +43,7 @@ export default async function TriviaConductPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6 md:py-8">
+      <Container size="mobile" className="py-6 md:py-8">
         <div className="flex flex-wrap items-center gap-4 mb-6">
           <Link href="/app/trivia/rules" className="text-sm text-muted-foreground hover:text-foreground">
             ← Nazaj na Trivia
@@ -62,7 +63,7 @@ export default async function TriviaConductPage() {
           users={users}
           saveResultAction={calculateAndSaveResultAction}
         />
-      </div>
+      </Container>
     </div>
   )
 }

@@ -13,6 +13,7 @@ import { upsertEventLandingPageAction } from '@/lib/actions/event-actions'
 import { updateEventAction, deleteEventAction } from '../../actions'
 import { DeleteEventButton } from './delete-button'
 import { ActiveSwitch, RandomTeamsSwitch, TriviaSwitch } from './active-switch'
+import { Container } from '@/components/layout/container'
 
 
 interface Props {
@@ -44,7 +45,7 @@ export default async function SuperadminEventDetailPage({ params }: Props) {
     : null
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <Container size="lg" className="py-8">
       <div className="mb-6">
         <Button variant="outline" size="sm" asChild>
           <Link href="/superadmin/events">&larr; Back to Events</Link>
@@ -156,6 +157,6 @@ export default async function SuperadminEventDetailPage({ params }: Props) {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </Container>
   )
 }

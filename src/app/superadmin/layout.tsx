@@ -7,6 +7,7 @@ import { auth } from '@/lib/auth'
 import { ADMIN_ROLES } from '@/lib/auth-utils'
 import { getActiveEvent } from '@/lib/events'
 import LogoutButton from './logout-button'
+import { Container } from '@/components/layout/container'
 
 export default async function SuperAdminLayout({
   children,
@@ -29,7 +30,7 @@ export default async function SuperAdminLayout({
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border bg-card text-card-foreground shadow-sm">
-        <div className="container mx-auto px-4 py-3">
+        <Container size="lg" className="py-3">
           <div className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Superadmin Navigation
           </div>
@@ -79,7 +80,7 @@ export default async function SuperAdminLayout({
               <LogoutButton />
             </div>
           </div>
-        </div>
+        </Container>
       </header>
       <main>{children}</main>
     </div>

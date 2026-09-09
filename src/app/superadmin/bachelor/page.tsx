@@ -16,6 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { deleteHypeVoteAction, deleteSightingAction } from './actions'
+import { Container } from '@/components/layout/container'
 
 
 type BachelorAdminPageProps = {
@@ -115,8 +116,8 @@ export default async function BachelorAdminPage({ searchParams }: BachelorAdminP
   ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-slate-50 py-10">
+      <Container size="xl">
         <header className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-rose-600 font-bold text-sm uppercase tracking-wider mb-1">
@@ -266,7 +267,7 @@ export default async function BachelorAdminPage({ searchParams }: BachelorAdminP
 
           <ResetBachelorDataForm eventName={bachelorEventName} />
         </section>
-      </div>
+      </Container>
     </div>
   )
 }

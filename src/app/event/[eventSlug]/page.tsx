@@ -7,6 +7,7 @@ import { getCurrentPersonId, getCurrentUser } from '@/lib/utils/cookies'
 import { prisma } from '@/lib/prisma/client'
 import { EntryScreen } from '@/components/entry'
 import { EventEntryClient } from './event-entry-client'
+import { Container } from '@/components/layout/container'
 
 
 interface Props {
@@ -136,13 +137,13 @@ export default async function EventLandingPage({ params }: Props) {
         </section>
       )}
 
-      <div className="w-full px-4 pb-8 pt-3 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+      <Container size="mobile" className="pb-8 pt-3">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             {landingPage.title}
           </h1>
           {landingPage.description && (
-            <div className="mx-auto max-w-2xl space-y-3 text-muted-foreground">
+            <div className="space-y-3 text-muted-foreground">
               <p className="text-base md:text-lg whitespace-pre-wrap">{landingPage.description}</p>
             </div>
           )}
@@ -198,7 +199,7 @@ export default async function EventLandingPage({ params }: Props) {
             ctaText={landingPage.ctaText}
           />
         )}
-      </div>
+      </Container>
     </div>
   )
 }

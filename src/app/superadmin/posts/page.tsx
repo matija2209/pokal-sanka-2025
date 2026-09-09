@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react'
 import { getPostsForSuperadmin } from '@/lib/prisma/fetchers/post-fetchers'
 import { TeamBadge } from '@/components/teams/team-badge'
 import { deletePostAction } from '../actions'
+import { Container } from '@/components/layout/container'
 
 type SuperadminPostsPageProps = {
   searchParams?: Promise<{
@@ -34,7 +35,7 @@ export default async function SuperadminPostsPage({ searchParams }: SuperadminPo
   const posts = await getPostsForSuperadmin(150)
 
   return (
-    <div className="container mx-auto px-4 py-6 md:p-8">
+    <Container size="lg" className="py-6 md:py-8">
       <Link href="/superadmin" className="inline-flex items-center gap-1 text-base text-muted-foreground hover:text-primary mb-3 py-2">
         <ArrowLeft className="h-5 w-5" />
         Back to Superadmin
@@ -99,6 +100,6 @@ export default async function SuperadminPostsPage({ searchParams }: SuperadminPo
           </div>
         )}
       </div>
-    </div>
+    </Container>
   )
 }

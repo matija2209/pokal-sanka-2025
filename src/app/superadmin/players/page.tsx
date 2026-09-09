@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma/client'
 import { getActiveEvent, getAllEvents } from '@/lib/events'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 import PlayerManagementDirectory from '@/components/superadmin/player-management-directory'
+import { Container } from '@/components/layout/container'
 
 type SuperadminPlayersPageProps = {
   searchParams?: Promise<{
@@ -114,7 +115,7 @@ export default async function SuperadminPlayersPage({ searchParams }: Superadmin
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 md:p-8">
+    <Container size="lg" className="py-6 md:py-8">
       <Link href="/superadmin" className="inline-flex items-center gap-1 text-base text-muted-foreground hover:text-primary mb-3 py-2">
         <ArrowLeft className="h-5 w-5" />
         Back to Superadmin
@@ -201,6 +202,6 @@ export default async function SuperadminPlayersPage({ searchParams }: Superadmin
           </>
         )}
       </div>
-    </div>
+    </Container>
   )
 }

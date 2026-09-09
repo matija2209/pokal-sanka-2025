@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma/client'
 import { Button } from '@/components/ui/button'
 import { EventLandingPageForm } from '@/components/admin/event-landing-page-form'
 import { upsertEventLandingPageAction } from '@/lib/actions/event-actions'
+import { Container } from '@/components/layout/container'
 
 
 interface Props {
@@ -36,7 +37,7 @@ export default async function AdminEventPage({ params }: Props) {
     : null
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <Container size="md" className="py-8">
       <div className="mb-6">
         <Button variant="outline" size="sm" asChild>
           <Link href="/admin">&larr; Back to Events</Link>
@@ -44,6 +45,6 @@ export default async function AdminEventPage({ params }: Props) {
       </div>
 
       <EventLandingPageForm event={event} landingPage={landingPage} action={upsertEventLandingPageAction} backUrl="/admin" />
-    </div>
+    </Container>
   )
 }

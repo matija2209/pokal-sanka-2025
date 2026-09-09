@@ -5,6 +5,7 @@ import { getActiveEvent } from '@/lib/events'
 import { updateActiveEventName } from './actions'
 
 import { ResetDatabaseForm } from '@/components/superadmin/reset-db-form'
+import { Container } from '@/components/layout/container'
 
 type SuperAdminPageProps = {
   searchParams?: Promise<{
@@ -22,7 +23,7 @@ export default async function SuperAdminPage({ searchParams }: SuperAdminPagePro
   const resetStatus = params?.reset
 
   return (
-    <div className="container mx-auto p-4 md:p-8">
+    <Container size="lg" className="py-4 md:py-8">
       <h1 className="text-3xl font-bold text-foreground mb-8">Super Admin Panel</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -160,6 +161,6 @@ export default async function SuperAdminPage({ searchParams }: SuperAdminPagePro
 
         <ResetDatabaseForm eventName={activeEvent?.name ?? 'Unknown event'} />
       </div>
-    </div>
+    </Container>
   )
 }

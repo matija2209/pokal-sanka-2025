@@ -7,6 +7,7 @@ import { getCategoryById, getQuestionsByCategoryId, getCategoryResultsByCategory
 import { calculateAndSaveResultAction, startCategoryAction, publishResultAction, unpublishResultAction, overrideResultAction } from '../../actions'
 import { Badge } from '@/components/ui/badge'
 import { Play, Send, Undo2, Calculator, Trophy, ArrowLeft } from 'lucide-react'
+import { Container } from '@/components/layout/container'
 
 
 interface PageProps {
@@ -35,12 +36,12 @@ export default async function CategoryManagePage({ params }: PageProps) {
 
   if (!triviaAvailable) {
     return (
-      <div className="container mx-auto p-4 md:p-8">
+      <Container size="lg" className="py-4 md:py-8">
         <div className="bg-muted border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold text-foreground mb-2">Migracija potrebna</h2>
           <p className="text-muted-foreground">Trivia modul potrebuje migracijo baze.</p>
         </div>
-      </div>
+      </Container>
     )
   }
 
@@ -59,7 +60,7 @@ export default async function CategoryManagePage({ params }: PageProps) {
   const userMap = new Map(allUsers.map((u) => [u.id, u]))
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-4xl">
+    <Container size="lg" className="py-4 md:py-8">
       {/* Back link — big tap target */}
       <Link href="/superadmin/trivia" className="inline-flex items-center gap-1.5 text-base text-muted-foreground hover:text-primary mb-4 py-2">
         <ArrowLeft className="h-5 w-5" />
@@ -305,6 +306,6 @@ export default async function CategoryManagePage({ params }: PageProps) {
           </div>
         </div>
       )}
-    </div>
+    </Container>
   )
 }

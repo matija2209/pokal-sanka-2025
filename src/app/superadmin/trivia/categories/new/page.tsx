@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { createCategoryAction } from '../../actions'
 import { ArrowLeft } from 'lucide-react'
+import { Container } from '@/components/layout/container'
 
 
 export default async function NewCategoryPage() {
@@ -13,18 +14,18 @@ export default async function NewCategoryPage() {
 
   if (!triviaAvailable) {
     return (
-      <div className="container mx-auto p-4 md:p-8">
+      <Container size="lg" className="py-4 md:py-8">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Nova kategorija</h1>
         <div className="bg-muted border border-border rounded-lg p-6">
           <h2 className="text-xl font-semibold text-foreground mb-2">Migracija potrebna</h2>
           <p className="text-muted-foreground">Trivia modul potrebuje migracijo baze.</p>
         </div>
-      </div>
+      </Container>
     )
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-3xl">
+    <Container size="lg" className="py-4 md:py-8">
       <Link
         href="/superadmin/trivia"
         className="inline-flex items-center gap-1.5 text-base text-muted-foreground hover:text-primary mb-4 py-2"
@@ -126,6 +127,6 @@ export default async function NewCategoryPage() {
           Ustvari kategorijo
         </button>
       </form>
-    </div>
+    </Container>
   )
 }

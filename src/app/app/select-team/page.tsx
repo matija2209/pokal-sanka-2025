@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { TeamSelectionForm, RandomTeamSpinner } from '@/components/teams'
 import type { Metadata } from 'next'
 import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -43,31 +44,31 @@ export default async function SelectTeamPage() {
 
   if (isRandomTeams) {
     return (
-      <div className="w-full max-w-5xl mx-auto px-2 sm:px-4 py-4">
+      <Container size="mobile" className="py-4">
         <RandomTeamSpinner
           currentUserId={currentUser.id}
           availableTeams={availableTeams}
         />
-      </div>
+      </Container>
     )
   }
-  
+
   return (
-    <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-6">
+    <Container size="mobile" className="py-6">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold tracking-tight mb-2">Izbira ekipe</h1>
-        <p className="text-base text-muted-foreground max-w-xl mx-auto">
+        <p className="text-base text-muted-foreground">
           Pozdravljeni, <span className="font-semibold text-foreground">{currentUser.name}</span>! Za sodelovanje na turnirju se pridružite obstoječi ekipi ali ustvarite novo.
         </p>
       </div>
-      
-      <TeamSelectionForm 
+
+      <TeamSelectionForm
         currentUserId={currentUser.id}
         currentUserName={currentUser.name}
         availableTeams={availableTeams}
         redirectUrl="/app/feed"
       />
-    </div>
+    </Container>
   )
 }
 

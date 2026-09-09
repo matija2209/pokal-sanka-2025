@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma/client'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { UserRoleSelect } from './role-select'
+import { Container } from '@/components/layout/container'
 
 
 interface Props {
@@ -34,7 +35,7 @@ export default async function SuperadminUsersPage({ searchParams }: Props) {
   const params = await searchParams
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <Container size="xl" className="py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">User Management</h1>
         <p className="text-muted-foreground mt-1">Manage admin roles for authenticated users. Superadmin only.</p>
@@ -99,6 +100,6 @@ export default async function SuperadminUsersPage({ searchParams }: Props) {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </Container>
   )
 }

@@ -7,6 +7,7 @@ import { redirect, notFound } from 'next/navigation'
 import { UserStats, UserHistory, UserAchievements } from '@/components/users'
 import { getUserRanking, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import { getActiveEvent } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 
 interface PlayerDetailPageProps {
@@ -53,12 +54,12 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
   const userRank = getUserRanking(user.id, allUsers, triviaPointsMap)
   
   return (
-    <div className="w-full max-w-none px-0">
+    <Container size="mobile" className="px-0">
       <div className="text-center mb-6">
         <div className="flex items-center justify-center gap-2.5 mb-2">
           {user.team && (
-            <div 
-              className="w-7 h-7 shrink-0 rounded" 
+            <div
+              className="w-7 h-7 shrink-0 rounded"
               style={{ backgroundColor: user.team.color }}
             />
           )}
@@ -75,17 +76,17 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
           )}
         </p>
       </div>
-      
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8 w-full">
+
+      <div className="grid grid-cols-1 gap-6 w-full">
         <div className="space-y-6">
-          <UserStats 
+          <UserStats
             user={user}
             allUsers={allUsers}
             rank={userRank}
             triviaPointsMap={triviaPointsMap}
           />
-          
-          <UserAchievements 
+
+          <UserAchievements
             user={user}
             allUsers={allUsers}
             rank={userRank}
@@ -93,12 +94,12 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
         </div>
 
         <div>
-          <UserHistory 
+          <UserHistory
             user={user}
             limit={20}
           />
         </div>
       </div>
-    </div>
+    </Container>
   )
 }

@@ -14,6 +14,7 @@ import {
   HelpCircle,
   ArrowLeft
 } from 'lucide-react'
+import { Container } from './container'
 
 const NAV_ITEMS: Array<{
   href: string
@@ -33,7 +34,7 @@ export default function NavShell() {
 
   return (
     <nav className="border-b shadow-sm">
-      <div className="container mx-auto px-4">
+      <Container size="mobile">
         <div className="flex items-center justify-between h-14 md:h-16">
           {pathname !== '/app/feed' && (
             <Link
@@ -102,7 +103,7 @@ export default function NavShell() {
             )
           })}
         </div>
-      </div>
+      </Container>
     </nav>
   )
 }

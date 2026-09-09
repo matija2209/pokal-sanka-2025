@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { TeamLeaderboard } from '@/components/teams'
 import type { Metadata } from 'next'
 import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -45,18 +46,18 @@ export default async function TeamsPage() {
   const { teams: allTeams } = await getEventRankingSnapshot(currentEvent.id)
   
   return (
-    <div className="w-full max-w-none px-0">
+    <Container size="mobile" className="px-0">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold leading-tight mb-2">Lestvica ekip</h1>
         <p className="text-sm text-muted-foreground">Poglejte, kako se vse ekipe odrežajo v turnirju!</p>
       </div>
-      
+
       <div className="w-full">
-        <TeamLeaderboard 
+        <TeamLeaderboard
           teams={allTeams}
           currentUserTeamId={currentUser.teamId}
         />
       </div>
-    </div>
+    </Container>
   )
 }
