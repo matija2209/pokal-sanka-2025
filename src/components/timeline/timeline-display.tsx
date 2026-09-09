@@ -8,10 +8,11 @@ import { isVideoUrl } from '@/lib/utils/media'
 
 interface TimelineDisplayProps {
   limit?: number
+  posts?: Awaited<ReturnType<typeof getRecentPosts>>
 }
 
-export default async function TimelineDisplay({ limit = 10 }: TimelineDisplayProps) {
-  const posts = await getRecentPosts(limit)
+export default async function TimelineDisplay({ limit = 10, posts: suppliedPosts }: TimelineDisplayProps) {
+  const posts = suppliedPosts ?? await getRecentPosts(limit)
   
   if (posts.length === 0) {
     return (

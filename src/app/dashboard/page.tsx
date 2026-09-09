@@ -1,13 +1,12 @@
 export const instant = false
 import { connection } from 'next/server'
-import { getAllUsersWithTeamAndDrinks, getAllTeams, getRecentDrinkLogsWithTeam, getUnreadCommentaries, getRecentPostsWithImages, getRecentUserProfileImages, getRecentTeamLogos, getRecentPosts, getAllTriviaResults } from '@/lib/prisma/fetchers'
+import { getEventDashboardSnapshot } from '@/lib/cache/event-read-models'
 import { sortUsersByScore, getTeamsWithStats, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
-import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { DashboardDisplay } from '@/components/dashboard'
 import BreakingNewsBanner from '@/components/dashboard/breaking-news-banner'
 import LatestImagesDisplay from '@/components/dashboard/latest-images-display'
 import type { Metadata } from 'next'
-import { getSiteBrandParts } from '@/lib/events'
+import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -37,22 +36,27 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DashboardPage() {
   await connection()
 
-  const [allUsers, allTeams, recentDrinks, unreadCommentaries, recentImages, userProfiles, teamLogos, allRecentPosts] = await Promise.all([
-    getAllUsersWithTeamAndDrinks(),
-    getAllTeams(),
-    getRecentDrinkLogsWithTeam(100),
-    getUnreadCommentaries(50),
-    getRecentPostsWithImages(5),
-    getRecentUserProfileImages(5),
-    getRecentTeamLogos(5),
-    getRecentPosts(50)
-  ])
+  const activeEvent = await getActiveEvent()
+  if (!activeEvent) {
+    return null
+  }
+
+  const {
+    users: allUsers,
+    teams: allTeams,
+    recentDrinks,
+    unreadCommentaries,
+    recentImages,
+    userProfiles,
+    teamLogos,
+    recentPosts: allRecentPosts,
+    triviaResults,
+  } = await getEventDashboardSnapshot(activeEvent.id)
 
   // Trivia score integration
-  const triviaAvailable = await isTriviaAvailable()
+  const triviaAvailable = triviaResults.length > 0 && activeEvent.isTriviaEnabled
   let triviaPointsMap = new Map<string, number>()
   if (triviaAvailable) {
-    const triviaResults = await getAllTriviaResults()
     triviaPointsMap = getAllUsersTriviaPointsMap(triviaResults)
   }
 

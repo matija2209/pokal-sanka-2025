@@ -1,14 +1,14 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllTeams, getAllUsersWithTeamAndDrinks, getUserWithTeamAndDrinksById, getRecentDrinkLogs, getRecentCommentaries, getAllTriviaResults } from '@/lib/prisma/fetchers'
+import { getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers'
+import { getEventActivitySnapshot, getEventFeedSnapshot, getEventRankingSnapshot } from '@/lib/cache/event-read-models'
 import { redirect } from 'next/navigation'
 import { UserHistory, Leaderboard } from '@/components/users'
 import { RecentActivity } from '@/components/drinks'
 import { CommentaryDisplay } from '@/components/commentary'
 import { TimelineDisplay } from '@/components/timeline'
 import { getUserRanking, sortUsersByScore, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
-import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import type { Metadata } from 'next'
 import { getSiteBrandParts, getActiveEvent } from '@/lib/events'
 
@@ -32,25 +32,30 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function StatsPage() {
   await connection()
 
-  const currentUser = await getCurrentUser()
+  const activeEvent = await getActiveEvent()
+  const currentUser = await getCurrentUser(activeEvent?.id)
   
   if (!currentUser) {
     redirect('/')
   }
 
-  const [allUsers, currentUserWithDrinks, recentDrinks, recentCommentaries, activeEvent] = await Promise.all([
-    getAllUsersWithTeamAndDrinks(),
-    getUserWithTeamAndDrinksById(currentUser.id),
-    getRecentDrinkLogs(20),
-    getRecentCommentaries(15),
-    getActiveEvent(),
+  if (!activeEvent) {
+    redirect('/')
+  }
+
+  const [rankingSnapshot, activitySnapshot, feedSnapshot, currentUserWithDrinks] = await Promise.all([
+    getEventRankingSnapshot(activeEvent.id),
+    getEventActivitySnapshot(activeEvent.id),
+    getEventFeedSnapshot(activeEvent.id, false),
+    getUserWithTeamAndDrinksById(currentUser.id, activeEvent.id),
   ])
+  const { users: allUsers, triviaResults } = rankingSnapshot
+  const { recentDrinks, recentCommentaries } = activitySnapshot
 
   // Trivia score integration
-  const triviaAvailable = (await isTriviaAvailable()) && Boolean(activeEvent?.isTriviaEnabled)
+  const triviaAvailable = rankingSnapshot.triviaAvailable && activeEvent.isTriviaEnabled
   let triviaPointsMap = new Map<string, number>()
   if (triviaAvailable) {
-    const triviaResults = await getAllTriviaResults()
     triviaPointsMap = getAllUsersTriviaPointsMap(triviaResults)
   }
 
@@ -78,7 +83,7 @@ export default async function StatsPage() {
 
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-foreground">Nedavne objave</h2>
-          <TimelineDisplay limit={10} />
+          <TimelineDisplay posts={feedSnapshot.posts.slice(0, 10)} />
         </div>
 
         <RecentActivity recentDrinks={recentDrinks} limit={8} />

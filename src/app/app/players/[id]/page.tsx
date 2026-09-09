@@ -1,11 +1,11 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getUserWithTeamAndDrinksById, getAllUsersWithTeamAndDrinks, getAllTriviaResults } from '@/lib/prisma/fetchers'
+import { getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers'
+import { getEventRankingSnapshot } from '@/lib/cache/event-read-models'
 import { redirect, notFound } from 'next/navigation'
 import { UserStats, UserHistory, UserAchievements } from '@/components/users'
 import { getUserRanking, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
-import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { getActiveEvent } from '@/lib/events'
 
 
@@ -17,7 +17,8 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
   await connection()
 
   const resolvedParams = await params
-  const currentUser = await getCurrentUser()
+  const activeEvent = await getActiveEvent()
+  const currentUser = await getCurrentUser(activeEvent?.id)
   
   if (!currentUser) {
     redirect('/')
@@ -27,10 +28,13 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
     redirect('/app/select-team')
   }
 
-  const [user, allUsers, activeEvent] = await Promise.all([
-    getUserWithTeamAndDrinksById(resolvedParams.id),
-    getAllUsersWithTeamAndDrinks(),
-    getActiveEvent(),
+  if (!activeEvent) {
+    redirect('/')
+  }
+
+  const [user, rankingSnapshot] = await Promise.all([
+    getUserWithTeamAndDrinksById(resolvedParams.id, activeEvent.id),
+    getEventRankingSnapshot(activeEvent.id),
   ])
   
   if (!user) {
@@ -38,12 +42,13 @@ export default async function PlayerDetailPage({ params }: PlayerDetailPageProps
   }
   
   // Trivia score integration
-  const triviaAvailable = (await isTriviaAvailable()) && Boolean(activeEvent?.isTriviaEnabled)
+  const triviaAvailable = rankingSnapshot.triviaAvailable && activeEvent.isTriviaEnabled
   let triviaPointsMap = new Map<string, number>()
   if (triviaAvailable) {
-    const triviaResults = await getAllTriviaResults()
-    triviaPointsMap = getAllUsersTriviaPointsMap(triviaResults)
+    triviaPointsMap = getAllUsersTriviaPointsMap(rankingSnapshot.triviaResults)
   }
+
+  const allUsers = rankingSnapshot.users
 
   const userRank = getUserRanking(user.id, allUsers, triviaPointsMap)
   

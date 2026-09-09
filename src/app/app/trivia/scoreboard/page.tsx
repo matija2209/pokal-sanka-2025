@@ -2,9 +2,8 @@ export const instant = false
 import { connection } from 'next/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { getActiveEvent } from '@/lib/events'
-import { getAllPublishedResults, getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
+import { getEventTriviaScoreboardSnapshot } from '@/lib/cache/event-read-models'
 import { Trophy } from 'lucide-react'
 
 
@@ -16,9 +15,8 @@ export default async function TriviaScoreboardPage() {
     notFound()
   }
 
-  const triviaAvailable = await isTriviaAvailable()
-
-  if (!triviaAvailable) {
+  const triviaSnapshot = await getEventTriviaScoreboardSnapshot(activeEvent.id)
+  if (!triviaSnapshot.triviaAvailable) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-12 max-w-3xl text-center">
@@ -31,11 +29,7 @@ export default async function TriviaScoreboardPage() {
       </div>
     )
   }
-
-  const [results, allUsers] = await Promise.all([
-    getAllPublishedResults(),
-    getAllUsersWithTeamAndDrinks(),
-  ])
+  const { results, users: allUsers } = triviaSnapshot
 
   const userMap = new Map(allUsers.map((u) => [u.id, u]))
 

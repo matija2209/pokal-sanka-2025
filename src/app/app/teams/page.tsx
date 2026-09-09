@@ -1,11 +1,11 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllTeamsWithUsersAndDrinks } from '@/lib/prisma/fetchers'
+import { getEventRankingSnapshot } from '@/lib/cache/event-read-models'
 import { redirect } from 'next/navigation'
 import { TeamLeaderboard } from '@/components/teams'
 import type { Metadata } from 'next'
-import { getSiteBrandParts } from '@/lib/events'
+import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -27,7 +27,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function TeamsPage() {
   await connection()
 
-  const currentUser = await getCurrentUser()
+  const currentEvent = await getActiveEvent()
+  const currentUser = await getCurrentUser(currentEvent?.id)
   
   if (!currentUser) {
     redirect('/')
@@ -37,7 +38,11 @@ export default async function TeamsPage() {
     redirect('/app/select-team')
   }
 
-  const allTeams = await getAllTeamsWithUsersAndDrinks()
+  if (!currentEvent) {
+    redirect('/')
+  }
+
+  const { teams: allTeams } = await getEventRankingSnapshot(currentEvent.id)
   
   return (
     <div className="w-full max-w-none px-0">

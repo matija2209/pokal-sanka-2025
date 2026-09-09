@@ -1,10 +1,12 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getTeamWithUsersById, getAllTeamsWithUsersAndDrinks } from '@/lib/prisma/fetchers'
+import { getTeamWithUsersById } from '@/lib/prisma/fetchers'
+import { getEventRankingSnapshot } from '@/lib/cache/event-read-models'
 import { redirect, notFound } from 'next/navigation'
 import { TeamStats } from '@/components/teams'
 import { sortTeamsByScore } from '@/lib/utils/calculations'
+import { getActiveEvent } from '@/lib/events'
 
 
 interface TeamDetailPageProps {
@@ -15,7 +17,8 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   await connection()
 
   const resolvedParams = await params
-  const currentUser = await getCurrentUser()
+  const currentEvent = await getActiveEvent()
+  const currentUser = await getCurrentUser(currentEvent?.id)
   
   if (!currentUser) {
     redirect('/')
@@ -25,13 +28,20 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
     redirect('/app/select-team')
   }
 
-  const team = await getTeamWithUsersById(resolvedParams.id)
+  if (!currentEvent) {
+    redirect('/')
+  }
+
+  const [team, rankingSnapshot] = await Promise.all([
+    getTeamWithUsersById(resolvedParams.id, currentEvent.id),
+    getEventRankingSnapshot(currentEvent.id),
+  ])
   
   if (!team) {
     notFound()
   }
   
-  const allTeams = await getAllTeamsWithUsersAndDrinks()
+  const allTeams = rankingSnapshot.teams
   const sortedTeams = sortTeamsByScore(allTeams)
   const teamRank = sortedTeams.findIndex(t => t.id === team.id) + 1
   

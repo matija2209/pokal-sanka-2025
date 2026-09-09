@@ -1,12 +1,12 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fetchers'
+import { getEventRosterOptions } from '@/lib/cache/event-read-models'
 import { redirect } from 'next/navigation'
 import { DrinkLogForm } from '@/components/drinks'
 import { CreatePostForm } from '@/components/timeline'
 import type { Metadata } from 'next'
-import { getSiteBrandParts } from '@/lib/events'
+import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand } = await getSiteBrandParts()
@@ -28,7 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PlayersPage() {
   await connection()
 
-  const currentUser = await getCurrentUser()
+  const currentEvent = await getActiveEvent()
+  const currentUser = await getCurrentUser(currentEvent?.id)
   
   if (!currentUser) {
     redirect('/')
@@ -38,7 +39,11 @@ export default async function PlayersPage() {
     redirect('/app/select-team')
   }
 
-  const allUsers = await getAllUsersWithTeamAndDrinks()
+  if (!currentEvent) {
+    redirect('/')
+  }
+
+  const { users: allUsers } = await getEventRosterOptions(currentEvent.id)
   
   const usersForDropdown = allUsers.map(user => ({
     id: user.id,

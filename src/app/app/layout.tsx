@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
+import { connection } from 'next/server'
 import type { Metadata } from 'next'
 import { DashboardLayout } from '@/components/layout'
 import NavShell from '@/components/layout/nav-shell'
@@ -18,6 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
+  await connection()
+
   const [currentEvent, availableEvents] = await Promise.all([
     getActiveEvent(),
     getAllEvents(),

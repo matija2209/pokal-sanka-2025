@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma/client'
 import { requireActiveEventId } from '@/lib/events'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 
-export async function getRecentPosts(limit: number = 10) {
+export async function getRecentPosts(limit: number = 10, eventIdOverride?: string) {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.post.findMany({
       take: limit,
@@ -17,7 +17,7 @@ export async function getRecentPosts(limit: number = 10) {
     })
   }
 
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
 
   return await prisma.post.findMany({
     where: { eventId },
@@ -222,7 +222,7 @@ export async function getRecentPostsWithImages(limit: number = 5, eventIdOverrid
   })
 }
 
-export async function getRecentUserProfileImages(limit: number = 5) {
+export async function getRecentUserProfileImages(limit: number = 5, eventIdOverride?: string) {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.user.findMany({
       where: {
@@ -238,7 +238,7 @@ export async function getRecentUserProfileImages(limit: number = 5) {
     })
   }
 
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
 
   return await prisma.user.findMany({
     where: {
@@ -259,7 +259,7 @@ export async function getRecentUserProfileImages(limit: number = 5) {
   })
 }
 
-export async function getRecentTeamLogos(limit: number = 5) {
+export async function getRecentTeamLogos(limit: number = 5, eventIdOverride?: string) {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.team.findMany({
       where: {
@@ -272,7 +272,7 @@ export async function getRecentTeamLogos(limit: number = 5) {
     })
   }
 
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
 
   return await prisma.team.findMany({
     where: {

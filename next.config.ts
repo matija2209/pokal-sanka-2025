@@ -3,6 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  cacheLife: {
+    eventLive: {
+      stale: 30,
+      revalidate: 15,
+      expire: 300,
+    },
+  },
   images: {
     remotePatterns: [
       {

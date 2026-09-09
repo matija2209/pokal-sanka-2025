@@ -37,7 +37,7 @@ export async function getRecentCommentaries(limit: number = 10, eventIdOverride?
   })
 }
 
-export async function getUnreadCommentaries(limit: number = 5): Promise<Commentary[]> {
+export async function getUnreadCommentaries(limit: number = 5, eventIdOverride?: string): Promise<Commentary[]> {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.commentary.findMany({
       where: {
@@ -51,7 +51,7 @@ export async function getUnreadCommentaries(limit: number = 5): Promise<Commenta
     }) as Commentary[]
   }
 
-  const eventId = await requireActiveEventId()
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
 
   return await prisma.commentary.findMany({
     where: {

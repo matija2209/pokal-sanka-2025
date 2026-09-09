@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, updateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createUser, createUserForPerson, updateUserProfile, updateUserTeam, getUserByPersonAndEvent, getUserWithTeamById } from '@/lib/prisma/fetchers/user-fetchers'
 import { createTeam, getAllTeams, getAllTeamsWithUsers, updateTeam } from '@/lib/prisma/fetchers/team-fetchers'
@@ -18,11 +18,18 @@ import { getDrinkPoints, getDrinkLabel } from '@/lib/utils/drinks'
 import { getActiveEvent, getEventById, getEventBySlug, getEventEntryPathBySlug, setActiveEventCookie } from '@/lib/events'
 import { getAuthSession } from '@/lib/auth-utils'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
+import { eventReadTag } from '@/lib/cache/event-read-models'
 import type { 
   UserActionState, 
   TeamActionState, 
   DrinkLogActionState 
 } from '@/lib/types/action-states'
+
+function invalidateEventReadCache(eventId: string | null | undefined) {
+  if (eventId) {
+    updateTag(eventReadTag(eventId))
+  }
+}
 
 // User Actions
 export async function createUserAction(
@@ -81,6 +88,7 @@ export async function createUserAction(
     }
 
     await setUserCookie(user.id, user.personId ?? undefined)
+    invalidateEventReadCache(activeEvent.id)
 
     return {
       success: true,
@@ -131,6 +139,8 @@ export async function selectExistingUserAction(
         type: 'error'
       }
     }
+
+    invalidateEventReadCache(user.eventId)
 
     // Set user cookie
     await setUserCookie(user.id, user.personId ?? undefined)
@@ -442,6 +452,8 @@ export async function updateUserTeamAction(
       }
     }
 
+    invalidateEventReadCache(user.eventId)
+
     revalidatePath('/app/players')
     revalidatePath('/app/profile')
 
@@ -511,6 +523,8 @@ export async function createTeamAction(
       }
     }
 
+    invalidateEventReadCache(team.eventId)
+
     revalidatePath('/app/players')
     revalidatePath('/app/teams')
     revalidatePath('/app/feed')
@@ -559,6 +573,8 @@ export async function joinTeamAction(
         type: 'error'
       }
     }
+
+    invalidateEventReadCache(updatedUser.eventId)
 
     revalidatePath('/app/players')
     revalidatePath('/app/teams')
@@ -629,6 +645,8 @@ export async function joinRandomTeamAction(
       }
     }
 
+    invalidateEventReadCache(updatedUser.eventId)
+
     revalidatePath('/app/players')
     revalidatePath('/app/teams')
     revalidatePath('/app/feed')
@@ -694,6 +712,8 @@ export async function logDrinkAction(
         type: 'error'
       }
     }
+
+    invalidateEventReadCache(drinkLog.eventId)
 
     // ✨ NEW: Capture state AFTER drink logging and compare
     console.log('📊 Capturing state after drink logging and comparing...')
@@ -794,6 +814,8 @@ export async function logMultipleDrinksAction(
         type: 'error'
       }
     }
+
+    invalidateEventReadCache(drinkLogs[0]?.eventId)
 
     // ✨ NEW: Capture state AFTER bulk logging and compare
     console.log('📊 Capturing state after bulk logging and comparing...')
@@ -921,6 +943,8 @@ export async function updateUserProfileAction(
       }
     }
 
+    invalidateEventReadCache(updatedUser.eventId)
+
     if (updateData.profile_image_url && currentUser.personId) {
       try {
         await prisma.person.update({
@@ -997,6 +1021,8 @@ export async function updateTeamLogoAction(
         }
       }
 
+      invalidateEventReadCache(updatedTeam.eventId)
+
       revalidatePath('/app/profile')
       revalidatePath('/app/players')
       revalidatePath('/app/feed')
@@ -1072,6 +1098,7 @@ export async function createPostAction(
         isPrivate: isPrivateValue !== 'false'
       }
     })
+    invalidateEventReadCache(post.eventId)
     
     revalidatePath('/app/profile')
     revalidatePath('/app/feed')
@@ -1121,19 +1148,19 @@ export async function logoutAction(): Promise<UserActionState> {
 }
 
 // Dashboard Refresh Action
-export async function refreshDashboardAction(): Promise<void> {
+export async function refreshDashboardAction(path: string = '/dashboard'): Promise<void> {
   try {
     // Revalidate all dashboard-related paths to clear cache
-    revalidatePath('/dashboard')
-    revalidatePath('/app/players') 
+    revalidatePath(path)
+    revalidatePath('/app/players')
     revalidatePath('/app/teams')
     revalidatePath('/')
-    
+
     // Force hard refresh by redirecting to current page
-    redirect('/dashboard')
+    redirect(path)
   } catch (error) {
     console.error('Error refreshing dashboard:', error)
     // Graceful fallback - still try to redirect
-    redirect('/dashboard')
+    redirect(path)
   }
 }

@@ -1,11 +1,5 @@
-import {
-  getPostsWithUsers,
-  getRecentCommentaries,
-  getRecentPostsWithImages,
-  getApprovedSightings,
-  getHypeEvents,
-  getHypeVoteCount,
-} from '@/lib/prisma/fetchers'
+import { getEventFeedSnapshot } from '@/lib/cache/event-read-models'
+import type { getRecentCommentaries } from '@/lib/prisma/fetchers'
 import { UserAvatar } from '@/components/users'
 import { TeamLogo } from '@/components/teams'
 import { Card } from '@/components/ui/card'
@@ -70,9 +64,9 @@ type FeedHighlightGroup = {
   }>
 }
 
-type FeedPost = Awaited<ReturnType<typeof getPostsWithUsers>>[number]
-type FeedSighting = Awaited<ReturnType<typeof getApprovedSightings>>[number]
-type FeedHypeEvent = Awaited<ReturnType<typeof getHypeEvents>>[number]
+type FeedPost = Awaited<ReturnType<typeof getEventFeedSnapshot>>['posts'][number]
+type FeedSighting = Awaited<ReturnType<typeof getEventFeedSnapshot>>['sightings'][number]
+type FeedHypeEvent = Awaited<ReturnType<typeof getEventFeedSnapshot>>['hypeEvents'][number]
 
 type FeedItem =
   | {
@@ -233,14 +227,18 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
   const eventId = activeEvent?.id
   const isBachelor = isBachelorEvent(activeEvent)
 
-  const [posts, recentCommentaries, recentImagePosts, recentSightings, hypeEvents, hypeVoteCount] = await Promise.all([
-    getPostsWithUsers(24, eventId),
-    getRecentCommentaries(30, eventId),
-    getRecentPostsWithImages(10, eventId),
-    isBachelor && eventId ? getApprovedSightings(10, 0, eventId) : Promise.resolve([]),
-    isBachelor && eventId ? getHypeEvents(eventId) : Promise.resolve([]),
-    isBachelor && eventId ? getHypeVoteCount(eventId) : Promise.resolve(0),
-  ])
+  if (!eventId) {
+    return null
+  }
+
+  const {
+    posts,
+    commentaries: recentCommentaries,
+    imagePosts: recentImagePosts,
+    sightings: recentSightings,
+    hypeEvents,
+    hypeVoteCount,
+  } = await getEventFeedSnapshot(eventId, isBachelor)
 
   const highlightGroups = getGroupedHighlights(recentCommentaries)
   const feedItems = getFeedItems(posts, highlightGroups, recentSightings, hypeEvents)
