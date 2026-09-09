@@ -36,6 +36,8 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
+  await connection()
+
   const { eventName, brand } = await getSiteBrandParts();
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   return {

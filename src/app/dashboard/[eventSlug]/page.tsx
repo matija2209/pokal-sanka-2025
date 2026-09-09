@@ -14,6 +14,8 @@ interface EventDashboardPageProps {
 }
 
 export async function generateMetadata({ params }: EventDashboardPageProps): Promise<Metadata> {
+  await connection()
+
   const { eventSlug } = await params
   const event = await getEventBySlug(eventSlug)
   const eventName = event?.name?.trim() || 'Turnir'
