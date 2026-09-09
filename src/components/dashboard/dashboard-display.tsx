@@ -19,6 +19,7 @@ interface DashboardDisplayProps {
   topPlayers: UserWithTeamAndDrinks[]
   recentActivity: DrinkLogWithUserAndTeam[]
   commentaries: Commentary[]
+  refreshPath?: string
 }
 
 type DisplayMode = 'teams' | 'players' | 'activity' | 'commentary'
@@ -42,7 +43,7 @@ function SlideHeader({ title, icon }: SlideHeaderProps) {
   )
 }
 
-export default function DashboardDisplay({ teams, topPlayers, recentActivity, commentaries }: DashboardDisplayProps) {
+export default function DashboardDisplay({ teams, topPlayers, recentActivity, commentaries, refreshPath = '/dashboard' }: DashboardDisplayProps) {
   const [currentMode, setCurrentMode] = useState<DisplayMode>('teams')
   const [currentTime, setCurrentTime] = useState(new Date())
   const [countdown, setCountdown] = useState(15)
@@ -88,10 +89,10 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   useEffect(() => {
     if (cycleCount > 0) {
       startTransition(() => {
-        refreshDashboardAction()
+        refreshDashboardAction(refreshPath)
       })
     }
-  }, [cycleCount])
+  }, [cycleCount, refreshPath])
 
   const getDrinkEmoji = (drinkType: string) => {
     const points = getDrinkPoints(drinkType)
