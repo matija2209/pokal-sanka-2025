@@ -1,4 +1,4 @@
-import { Prisma, User, Team, DrinkLog, Event, Person, Post, Commentary, PublicSighting, HypeVote, HypeEvent } from '@prisma/client'
+import { Prisma, User, Team, DrinkLog, Event, Person, Post, Commentary, PublicSighting, HypeVote, HypeEvent } from '@/generated/prisma/client'
 
 // Re-export base types
 export type { User, Team, DrinkLog, Event, Person, Post, Commentary, PublicSighting, HypeVote, HypeEvent, Prisma }

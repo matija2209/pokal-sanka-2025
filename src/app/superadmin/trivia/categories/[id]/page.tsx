@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
@@ -6,7 +8,6 @@ import { calculateAndSaveResultAction, startCategoryAction, publishResultAction,
 import { Badge } from '@/components/ui/badge'
 import { Play, Send, Undo2, Calculator, Trophy, ArrowLeft } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -27,6 +28,8 @@ const SCENARIO_LABELS: Record<string, string> = {
 }
 
 export default async function CategoryManagePage({ params }: PageProps) {
+  await connection()
+
   const resolvedParams = await params
   const triviaAvailable = await isTriviaAvailable()
 

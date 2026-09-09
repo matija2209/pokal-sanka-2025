@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getAllTeamsWithUsers } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
@@ -19,13 +21,14 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function SelectTeamResultPage({
   searchParams,
 }: {
   searchParams: Promise<{ team?: string }>
 }) {
+  await connection()
+
   const currentEvent = await getActiveEvent()
   const currentUser = await getCurrentUser(currentEvent?.id)
 

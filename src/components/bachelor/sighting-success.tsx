@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ACTION_DESCRIPTIONS, ACTION_LABELS, ACTION_ORDER, ACTION_POINTS } from '@/lib/utils/bachelor-points'
 import type { ActionType } from '@/lib/utils/bachelor-points'
-import type { PublicSighting } from '@prisma/client'
+import type { PublicSighting } from '@/generated/prisma/client'
 import { CheckCircle2, ArrowRight, Star } from 'lucide-react'
 
 interface SightingSuccessProps {

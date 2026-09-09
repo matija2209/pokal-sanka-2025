@@ -1,16 +1,19 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getTeamWithUsersById, getAllTeamsWithUsersAndDrinks } from '@/lib/prisma/fetchers'
 import { redirect, notFound } from 'next/navigation'
 import { TeamStats } from '@/components/teams'
 import { sortTeamsByScore } from '@/lib/utils/calculations'
 
-export const dynamic = 'force-dynamic'
 
 interface TeamDetailPageProps {
   params: Promise<{ id: string }>
 }
 
 export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
+  await connection()
+
   const resolvedParams = await params
   const currentUser = await getCurrentUser()
   

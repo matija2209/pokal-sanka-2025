@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getAllUsersWithTeamAndDrinks, getAllTeams, getRecentDrinkLogsWithTeam, getUnreadCommentaries, getRecentPostsWithImages, getRecentUserProfileImages, getRecentTeamLogos, getRecentPosts, getAllTriviaResults } from '@/lib/prisma/fetchers'
 import { sortUsersByScore, getTeamsWithStats, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
@@ -31,9 +33,10 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
+  await connection()
+
   const [allUsers, allTeams, recentDrinks, unreadCommentaries, recentImages, userProfiles, teamLogos, allRecentPosts] = await Promise.all([
     getAllUsersWithTeamAndDrinks(),
     getAllTeams(),

@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { getAllCategories } from '@/lib/prisma/fetchers'
@@ -6,7 +8,6 @@ import { Plus, Eye, Play, Edit, ArrowLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { DeleteCategoryButton } from '@/components/superadmin/delete-category-button'
 
-export const dynamic = 'force-dynamic'
 
 const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
   draft: { label: 'Osnutek', variant: 'secondary' },
@@ -15,6 +16,8 @@ const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secon
 }
 
 export default async function SuperadminTriviaHubPage() {
+  await connection()
+
   const triviaAvailable = await isTriviaAvailable()
 
   if (!triviaAvailable) {

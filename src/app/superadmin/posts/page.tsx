@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { sl } from 'date-fns/locale'
@@ -22,9 +24,10 @@ const postErrorLabels: Record<string, string> = {
   'delete-post-failed': 'Failed to delete post.',
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function SuperadminPostsPage({ searchParams }: SuperadminPostsPageProps) {
+  await connection()
+
   const params = searchParams ? await searchParams : undefined
   const postStatus = params?.post
   const postError = params?.postError

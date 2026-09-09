@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { HypeVoteForm } from '@/components/bachelor/hype-vote-form'
 import { Flame, Lock, Unlock, CheckCircle2, Target, Clock3 } from 'lucide-react'
-import type { HypeEvent } from '@prisma/client'
+import type { HypeEvent } from '@/generated/prisma/client'
 
 type HypeVoteItem = {
   id: string

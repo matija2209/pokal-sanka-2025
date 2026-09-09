@@ -21,6 +21,7 @@ export default function EventSwitcher({ events, currentEventId, className }: Eve
       defaultValue={currentEventId}
       disabled={isPending}
       onValueChange={(eventId) => {
+        if (!eventId) return
         startTransition(async () => {
           const result = await switchActiveEventAction(eventId)
           if (result.success) {

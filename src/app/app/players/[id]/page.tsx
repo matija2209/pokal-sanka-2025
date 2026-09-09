@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getUserWithTeamAndDrinksById, getAllUsersWithTeamAndDrinks, getAllTriviaResults } from '@/lib/prisma/fetchers'
 import { redirect, notFound } from 'next/navigation'
@@ -6,13 +8,14 @@ import { getUserRanking, getAllUsersTriviaPointsMap } from '@/lib/utils/calculat
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { getActiveEvent } from '@/lib/events'
 
-export const dynamic = 'force-dynamic'
 
 interface PlayerDetailPageProps {
   params: Promise<{ id: string }>
 }
 
 export default async function PlayerDetailPage({ params }: PlayerDetailPageProps) {
+  await connection()
+
   const resolvedParams = await params
   const currentUser = await getCurrentUser()
   

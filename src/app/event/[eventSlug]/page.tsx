@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getEventBySlug } from '@/lib/events'
@@ -6,13 +8,14 @@ import { prisma } from '@/lib/prisma/client'
 import { EntryScreen } from '@/components/entry'
 import { EventEntryClient } from './event-entry-client'
 
-export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ eventSlug: string }>
 }
 
 export default async function EventLandingPage({ params }: Props) {
+  await connection()
+
   const { eventSlug } = await params
   const event = await getEventBySlug(eventSlug)
 

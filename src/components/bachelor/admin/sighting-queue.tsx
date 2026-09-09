@@ -11,7 +11,7 @@ import {
 import { Check, X, MapPin, ClipboardList } from 'lucide-react'
 import { toast } from 'sonner'
 import Image from 'next/image'
-import type { PublicSighting } from '@prisma/client'
+import type { PublicSighting } from '@/generated/prisma/client'
 import { formatDistanceToNow } from 'date-fns'
 
 interface SightingQueueProps {

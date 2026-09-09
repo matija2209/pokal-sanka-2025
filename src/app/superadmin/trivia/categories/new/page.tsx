@@ -1,11 +1,14 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { createCategoryAction } from '../../actions'
 import { ArrowLeft } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
 
 export default async function NewCategoryPage() {
+  await connection()
+
   const triviaAvailable = await isTriviaAvailable()
 
   if (!triviaAvailable) {

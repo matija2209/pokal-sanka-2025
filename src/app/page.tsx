@@ -1,11 +1,12 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getCurrentPersonId } from '@/lib/utils/cookies'
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
-import { EntryScreen } from '@/components/entry'
+import { HomeEntryFlow } from '@/components/entry'
 import type { Metadata } from 'next'
 import { getActiveEvent, getAllEvents, getSiteBrandParts } from '@/lib/events'
-import EventSwitcher from '@/components/events/event-switcher'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 import { prisma } from '@/lib/prisma/client'
 
@@ -42,9 +43,10 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
+  await connection()
+
   const [activeEvent, allEvents] = await Promise.all([
     getActiveEvent(),
     getAllEvents(),
@@ -97,7 +99,27 @@ export default async function HomePage() {
     teamName: player.team?.name ?? null,
     teamColor: player.team?.color ?? null,
   }))
-  
+
+  const eventIds = allEvents.map((event) => event.id)
+  const [playerCountsByEvent, activeLandingPages] = eventIds.length > 0
+    ? await Promise.all([
+        prisma.user.groupBy({
+          by: ['eventId'],
+          where: { eventId: { in: eventIds } },
+          _count: { _all: true },
+        }),
+        prisma.eventLandingPage.findMany({
+          where: { eventId: { in: eventIds }, isActive: true },
+          select: { eventId: true },
+        }),
+      ])
+    : [[], []]
+
+  const playerCounts = Object.fromEntries(
+    playerCountsByEvent.map((entry) => [entry.eventId, entry._count._all])
+  )
+  const landingPageEventIds = activeLandingPages.map((entry) => entry.eventId)
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-background text-foreground">
       {/* Full screen logo background */}
@@ -126,24 +148,20 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {activeEvent && allEvents.length > 0 && (
-            <div className="mb-6 rounded-xl bg-card p-4 shadow-sm border border-border">
-              <p className="mb-2 text-sm font-medium text-muted-foreground">Aktivni dogodek</p>
-              <EventSwitcher
-                events={allEvents}
-                currentEventId={activeEvent.id}
-                className="w-full bg-secondary text-secondary-foreground"
-              />
-            </div>
-          )}
-          
-          {/* Entry options */}
-
-            <EntryScreen
-              knownPersonName={knownPerson?.name ?? null}
-              activeEventName={activeEvent?.name ?? null}
+          {activeEvent && allEvents.length > 0 ? (
+            <HomeEntryFlow
+              events={allEvents}
+              activeEvent={activeEvent}
+              playerCounts={playerCounts}
+              landingPageEventIds={landingPageEventIds}
               existingPlayers={existingPlayers}
+              knownPersonName={knownPerson?.name ?? null}
             />
+          ) : (
+            <p className="text-center text-muted-foreground">
+              Trenutno ni aktivnih dogodkov.
+            </p>
+          )}
         </div>
       </div>
     </div>

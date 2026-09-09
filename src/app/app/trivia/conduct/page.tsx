@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
@@ -6,9 +8,10 @@ import { getAllCategories, getAllUsersWithTeamAndDrinks } from '@/lib/prisma/fet
 import { calculateAndSaveResultAction } from '@/app/superadmin/trivia/actions'
 import { ConductTriviaBoard } from '@/components/trivia/conduct-trivia-board'
 
-export const dynamic = 'force-dynamic'
 
 export default async function TriviaConductPage() {
+  await connection()
+
   const activeEvent = await getActiveEvent()
   if (!activeEvent?.isTriviaEnabled) {
     notFound()

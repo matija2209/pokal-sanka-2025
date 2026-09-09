@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -11,6 +13,8 @@ export default async function SuperAdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await connection()
+
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) redirect('/login')
 

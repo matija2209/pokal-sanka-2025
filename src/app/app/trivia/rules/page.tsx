@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -21,6 +23,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TriviaRulesPage() {
+  await connection()
+
   const activeEvent = await getActiveEvent()
   if (!activeEvent?.isTriviaEnabled) {
     notFound()

@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma/client'
 import { requireBachelorEventId } from '@/lib/events'
-import type { HypeVote } from '@prisma/client'
+import type { HypeVote } from '@/generated/prisma/client'
 
 export async function createHypeVote(data: {
   suggestion?: string

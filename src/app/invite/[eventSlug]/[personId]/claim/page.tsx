@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,13 +11,14 @@ import { getUserByPersonAndEvent } from '@/lib/prisma/fetchers/user-fetchers'
 import { getCurrentPersonId } from '@/lib/utils/cookies'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 
-export const dynamic = 'force-dynamic'
 
 export default async function InviteClaimPage({
   params,
 }: {
   params: Promise<{ eventSlug: string; personId: string }>
 }) {
+  await connection()
+
   const { eventSlug, personId } = await params
 
   if (!(await isMultiEventSchemaAvailable())) {

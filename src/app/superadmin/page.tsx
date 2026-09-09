@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { getActiveEvent } from '@/lib/events'
 import { updateActiveEventName } from './actions'
@@ -12,6 +14,8 @@ type SuperAdminPageProps = {
 }
 
 export default async function SuperAdminPage({ searchParams }: SuperAdminPageProps) {
+  await connection()
+
   const params = searchParams ? await searchParams : undefined
   const activeEvent = await getActiveEvent()
   const eventStatus = params?.event

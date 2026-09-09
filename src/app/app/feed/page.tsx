@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { redirect } from 'next/navigation'
 import { EventFeed } from '@/components/timeline'
@@ -19,9 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function FeedPage() {
+  await connection()
+
   const currentEvent = await getActiveEvent()
   const currentUser = await getCurrentUser(currentEvent?.id)
 

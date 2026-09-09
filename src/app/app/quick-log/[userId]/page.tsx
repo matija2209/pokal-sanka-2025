@@ -1,9 +1,10 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getUserWithTeamById } from '@/lib/prisma/fetchers'
 import { redirect, notFound } from 'next/navigation'
 import DrinkSelectionForm from '@/components/drinks/drink-selection-form'
 
-export const dynamic = 'force-dynamic'
 
 interface DrinkSelectionPageProps {
   params: Promise<{
@@ -12,6 +13,8 @@ interface DrinkSelectionPageProps {
 }
 
 export default async function DrinkSelectionPage({ params }: DrinkSelectionPageProps) {
+  await connection()
+
   const currentUser = await getCurrentUser()
   const { userId } = await params
   

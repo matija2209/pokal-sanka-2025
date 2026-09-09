@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { prisma } from '@/lib/prisma/client'
@@ -52,9 +54,10 @@ const manageErrorLabels: Record<string, string> = {
   'delete-team-failed': 'Failed to delete team.',
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function SuperadminPlayersPage({ searchParams }: SuperadminPlayersPageProps) {
+  await connection()
+
   const params = searchParams ? await searchParams : undefined
   const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/+$/, '') ?? ''
   const manageStatus = params?.manage

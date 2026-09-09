@@ -1,11 +1,18 @@
+export const instant = false
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { connection } from "next/server";
+import { Geist, Geist_Mono, Inter, Roboto_Slab } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { getSiteBrandParts } from "@/lib/events";
 
 import { Luckiest_Guy, Roboto } from 'next/font/google'
- 
+import { cn } from "@/lib/utils";
+
+const robotoSlabHeading = Roboto_Slab({subsets:['latin'],variable:'--font-heading'});
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+
 const lucky = Luckiest_Guy({
   weight: ["400"],
   subsets: ["latin"],
@@ -41,13 +48,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await connection();
+
   return (
-    <html lang="sl" style={{ colorScheme: "light" }}>
+    <html lang="sl" style={{ colorScheme: "light" }} className={cn("font-sans", inter.variable, robotoSlabHeading.variable)}>
       <body
         className={`${roboto.variable} ${lucky.variable} antialiased`}
         style={{ colorScheme: "light" }}

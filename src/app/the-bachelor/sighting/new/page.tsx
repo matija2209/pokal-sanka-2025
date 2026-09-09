@@ -1,7 +1,8 @@
+export const instant = false
+import { connection } from 'next/server'
 import { SightingForm } from '@/components/bachelor/sighting-form'
 import { ACTION_TYPES, isActionType } from '@/lib/utils/bachelor-points'
 
-export const dynamic = 'force-dynamic'
 
 type NewSightingPageProps = {
   searchParams?: Promise<{
@@ -10,6 +11,8 @@ type NewSightingPageProps = {
 }
 
 export default async function NewSightingPage({ searchParams }: NewSightingPageProps) {
+  await connection()
+
   const params = searchParams ? await searchParams : undefined
   const initialAction = params?.action && isActionType(params.action)
     ? params.action

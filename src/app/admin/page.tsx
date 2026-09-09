@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma/client'
 import { Button } from '@/components/ui/button'
@@ -6,13 +8,14 @@ import { Card, CardContent } from '@/components/ui/card'
 import { CreateEventForm } from '@/components/admin/create-event-form'
 import { createEventAction } from '@/lib/actions/event-actions'
 
-export const dynamic = 'force-dynamic'
 
 interface Props {
   searchParams: Promise<{ created?: string; updated?: string; error?: string; slug?: string }>
 }
 
 export default async function AdminPage({ searchParams }: Props) {
+  await connection()
+
   const events = await prisma.event.findMany({
     include: { landingPage: true },
     orderBy: { createdAt: 'desc' },

@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Toaster } from '@/components/ui/sonner'
@@ -22,13 +24,14 @@ export const metadata: Metadata = {
   },
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function BachelorLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  await connection()
+
   const currentUser = await getCurrentUser()
 
   return (

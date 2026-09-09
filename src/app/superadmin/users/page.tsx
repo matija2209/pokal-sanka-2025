@@ -1,9 +1,10 @@
+export const instant = false
+import { connection } from 'next/server'
 import { prisma } from '@/lib/prisma/client'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { UserRoleSelect } from './role-select'
 
-export const dynamic = 'force-dynamic'
 
 interface Props {
   searchParams: Promise<{ updated?: string; error?: string }>
@@ -16,6 +17,8 @@ const roleBadgeVariant: Record<string, 'default' | 'secondary' | 'outline'> = {
 }
 
 export default async function SuperadminUsersPage({ searchParams }: Props) {
+  await connection()
+
   const users = await prisma.authUser.findMany({
     orderBy: { createdAt: 'desc' },
     select: {

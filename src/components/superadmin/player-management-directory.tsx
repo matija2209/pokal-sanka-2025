@@ -660,7 +660,8 @@ function AddToEventTab({
               <TableRow>
                 <TableHead className="w-[44px]">
                   <Checkbox
-                    checked={isAllFilteredSelected ? true : isSomeFilteredSelected ? 'indeterminate' : false}
+                    checked={isAllFilteredSelected}
+                    indeterminate={isSomeFilteredSelected}
                     onCheckedChange={handleToggleAll}
                     aria-label="Select all people"
                   />

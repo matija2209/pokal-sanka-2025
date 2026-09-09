@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
@@ -5,13 +7,14 @@ import { Button } from '@/components/ui/button'
 import { EventLandingPageForm } from '@/components/admin/event-landing-page-form'
 import { upsertEventLandingPageAction } from '@/lib/actions/event-actions'
 
-export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ eventSlug: string }>
 }
 
 export default async function AdminEventPage({ params }: Props) {
+  await connection()
+
   const { eventSlug } = await params
 
   const event = await prisma.event.findUnique({

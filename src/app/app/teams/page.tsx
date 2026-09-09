@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getAllTeamsWithUsersAndDrinks } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
@@ -21,9 +23,10 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export const dynamic = 'force-dynamic'
 
 export default async function TeamsPage() {
+  await connection()
+
   const currentUser = await getCurrentUser()
   
   if (!currentUser) {

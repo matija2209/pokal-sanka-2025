@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { isTriviaAvailable } from '@/lib/prisma/schema-capabilities'
 import { getAllUsersWithTeamAndDrinks, getAllPowerUsage } from '@/lib/prisma/fetchers'
 import { recordPowerUsageAction } from '../actions'
@@ -5,7 +7,6 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Zap } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
 
 const POWER_TYPES = ['Airstrike', 'Solo Rider', 'Cockblock', 'Zadnji v Vrsti'] as const
 
@@ -17,6 +18,8 @@ const POWER_BADGES: Record<string, 'default' | 'secondary' | 'destructive' | 'ou
 }
 
 export default async function PowersPage() {
+  await connection()
+
   const triviaAvailable = await isTriviaAvailable()
 
   if (!triviaAvailable) {

@@ -420,7 +420,7 @@ export function SightingForm({ initialAction = ACTION_TYPES.SPOT }: SightingForm
           className="h-10 text-sm"
         />
         <input type="hidden" name="submitterCountry" value={selectedCountry} />
-        <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+        <Select value={selectedCountry} onValueChange={(value) => setSelectedCountry(value ?? '')}>
           <SelectTrigger className="h-10 w-full text-sm">
             <SelectValue placeholder="Your country (optional)" />
           </SelectTrigger>

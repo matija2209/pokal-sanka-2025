@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select'
 import { Send } from 'lucide-react'
 import { toast } from 'sonner'
-import type { HypeEvent } from '@prisma/client'
+import type { HypeEvent } from '@/generated/prisma/client'
 
 interface HypeVoteFormProps {
   events: HypeEvent[]
@@ -55,7 +55,7 @@ export function HypeVoteForm({ events, onClose }: HypeVoteFormProps) {
     <form ref={formRef} action={formAction} className="space-y-3">
       <input type="hidden" name="hypeEventId" value={selectedEventId} />
 
-      <Select value={selectedEventId} onValueChange={setSelectedEventId}>
+      <Select value={selectedEventId} onValueChange={(value) => setSelectedEventId(value ?? '')}>
         <SelectTrigger className="h-10 w-full text-sm">
           <SelectValue placeholder="Choose a hype event" />
         </SelectTrigger>

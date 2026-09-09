@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -19,6 +21,8 @@ export default async function PromotePersonPage({
   params: Promise<{ personId: string }>
   searchParams?: Promise<{ error?: string }>
 }) {
+  await connection()
+
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) redirect('/login')
   const role = session.user.role

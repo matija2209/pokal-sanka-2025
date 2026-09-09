@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getAllSightings } from '@/lib/prisma/fetchers/sighting-fetchers'
 import { getHypeEvents, getHypeVotes } from '@/lib/prisma/fetchers/hype-fetchers'
 import { SightingQueue } from '@/components/bachelor/admin/sighting-queue'
@@ -15,7 +17,6 @@ import {
 } from '@/components/ui/table'
 import { deleteHypeVoteAction, deleteSightingAction } from './actions'
 
-export const dynamic = 'force-dynamic'
 
 type BachelorAdminPageProps = {
   searchParams?: Promise<{
@@ -58,6 +59,8 @@ type HypeVoteTimelineSource = {
 }
 
 export default async function BachelorAdminPage({ searchParams }: BachelorAdminPageProps) {
+  await connection()
+
   const [pendingSightings, approvedSightings, rejectedSightings, allSightings, hypeEvents, hypeVotes] =
     await Promise.all([
       getAllSightings('pending'),

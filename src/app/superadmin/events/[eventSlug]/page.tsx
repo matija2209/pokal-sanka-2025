@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma/client'
@@ -12,13 +14,14 @@ import { updateEventAction, deleteEventAction } from '../../actions'
 import { DeleteEventButton } from './delete-button'
 import { ActiveSwitch, RandomTeamsSwitch, TriviaSwitch } from './active-switch'
 
-export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ eventSlug: string }>
 }
 
 export default async function SuperadminEventDetailPage({ params }: Props) {
+  await connection()
+
   const { eventSlug } = await params
 
   const event = await prisma.event.findUnique({

@@ -6,7 +6,6 @@ import NavShell from '@/components/layout/nav-shell'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getActiveEvent, getAllEvents } from '@/lib/events'
 
-export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   const currentEvent = await getActiveEvent()

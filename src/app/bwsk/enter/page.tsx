@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,9 +14,10 @@ import bachelorImage3 from '../../the-bachelor/bostjan-pecar-3.jpg'
 import bachelorImage4 from '../../the-bachelor/bostjan-pecar-4.jpg'
 import bachelorImage5 from '../../the-bachelor/bostjan-pecar-5.jpg'
 
-export const dynamic = 'force-dynamic'
 
 export default async function BwskEntryPage() {
+  await connection()
+
   const bachelorGallery = [
     { src: bachelorImage1, alt: 'Portret Boštjana Pečarja za fantovščino 1' },
     { src: bachelorImage2, alt: 'Portret Boštjana Pečarja za fantovščino 2' },

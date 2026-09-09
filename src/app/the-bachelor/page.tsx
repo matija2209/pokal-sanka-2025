@@ -1,3 +1,5 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getApprovedSightings, getSightingStats } from '@/lib/prisma/fetchers/sighting-fetchers'
 import { getHypeVoteCount } from '@/lib/prisma/fetchers/hype-fetchers'
 import { getPublicPosts } from '@/lib/prisma/fetchers/post-fetchers'
@@ -16,7 +18,6 @@ import { Camera, Beer } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { requireBachelorEventId } from '@/lib/events'
 
-export const dynamic = 'force-dynamic'
 
 type BachelorMapSighting = {
   id: string
@@ -35,6 +36,8 @@ type BachelorMapSighting = {
 type PublicPost = Awaited<ReturnType<typeof getPublicPosts>>[number]
 
 export default async function BachelorPage() {
+  await connection()
+
   const bachelorEventId = await requireBachelorEventId()
 
   const [sightings, stats, hypeVoteCount, publicPosts] = await Promise.all([

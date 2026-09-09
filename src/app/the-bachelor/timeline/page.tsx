@@ -1,12 +1,15 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getApprovedSightings } from '@/lib/prisma/fetchers/sighting-fetchers'
 import { SightingTimeline } from '@/components/bachelor/sighting-timeline'
 import { headers } from 'next/headers'
 import { auth } from '@/lib/auth'
 import { deleteSightingFromTimelineAction } from '@/app/the-bachelor/timeline/actions'
 
-export const dynamic = 'force-dynamic'
 
 export default async function TimelinePage() {
+  await connection()
+
   const [sightings, session] = await Promise.all([
     getApprovedSightings(50, 0),
     auth.api.getSession({ headers: await headers() }).catch(() => null),

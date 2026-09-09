@@ -1,11 +1,14 @@
+export const instant = false
+import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
 import { getAllUsersForQuickLog } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import { PlayerGrid } from '@/components/users'
 
-export const dynamic = 'force-dynamic'
 
 export default async function QuickLogPage() {
+  await connection()
+
   const currentUser = await getCurrentUser()
   
   if (!currentUser) {
