@@ -204,6 +204,8 @@ export type UserWhereInput = {
   drinkLogs?: Prisma.DrinkLogListRelationFilter
   posts?: Prisma.PostListRelationFilter
   approvedSightings?: Prisma.PublicSightingListRelationFilter
+  likes?: Prisma.LikeListRelationFilter
+  comments?: Prisma.CommentListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -220,6 +222,8 @@ export type UserOrderByWithRelationInput = {
   drinkLogs?: Prisma.DrinkLogOrderByRelationAggregateInput
   posts?: Prisma.PostOrderByRelationAggregateInput
   approvedSightings?: Prisma.PublicSightingOrderByRelationAggregateInput
+  likes?: Prisma.LikeOrderByRelationAggregateInput
+  comments?: Prisma.CommentOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -240,6 +244,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   drinkLogs?: Prisma.DrinkLogListRelationFilter
   posts?: Prisma.PostListRelationFilter
   approvedSightings?: Prisma.PublicSightingListRelationFilter
+  likes?: Prisma.LikeListRelationFilter
+  comments?: Prisma.CommentListRelationFilter
 }, "id" | "eventId_personId">
 
 export type UserOrderByWithAggregationInput = {
@@ -279,6 +285,8 @@ export type UserCreateInput = {
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutUserInput
   posts?: Prisma.PostCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -292,6 +300,8 @@ export type UserUncheckedCreateInput = {
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutUserInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -305,6 +315,8 @@ export type UserUpdateInput = {
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -318,6 +330,8 @@ export type UserUncheckedUpdateInput = {
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -484,6 +498,34 @@ export type UserUpdateOneRequiredWithoutPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPostsInput, Prisma.UserUpdateWithoutPostsInput>, Prisma.UserUncheckedUpdateWithoutPostsInput>
 }
 
+export type UserCreateNestedOneWithoutLikesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLikesInput, Prisma.UserUncheckedCreateWithoutLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutLikesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLikesInput, Prisma.UserUncheckedCreateWithoutLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLikesInput
+  upsert?: Prisma.UserUpsertWithoutLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLikesInput, Prisma.UserUpdateWithoutLikesInput>, Prisma.UserUncheckedUpdateWithoutLikesInput>
+}
+
+export type UserCreateNestedOneWithoutCommentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommentsInput, Prisma.UserUncheckedCreateWithoutCommentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommentsInput, Prisma.UserUncheckedCreateWithoutCommentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommentsInput
+  upsert?: Prisma.UserUpsertWithoutCommentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommentsInput, Prisma.UserUpdateWithoutCommentsInput>, Prisma.UserUncheckedUpdateWithoutCommentsInput>
+}
+
 export type UserCreateNestedManyWithoutEventInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutEventInput, Prisma.UserUncheckedCreateWithoutEventInput> | Prisma.UserCreateWithoutEventInput[] | Prisma.UserUncheckedCreateWithoutEventInput[]
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutEventInput | Prisma.UserCreateOrConnectWithoutEventInput[]
@@ -594,6 +636,8 @@ export type UserCreateWithoutTeamInput = {
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutUserInput
   posts?: Prisma.PostCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTeamInput = {
@@ -606,6 +650,8 @@ export type UserUncheckedCreateWithoutTeamInput = {
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutUserInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTeamInput = {
@@ -657,6 +703,8 @@ export type UserCreateWithoutDrinkLogsInput = {
   team?: Prisma.TeamCreateNestedOneWithoutUsersInput
   posts?: Prisma.PostCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDrinkLogsInput = {
@@ -669,6 +717,8 @@ export type UserUncheckedCreateWithoutDrinkLogsInput = {
   createdAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDrinkLogsInput = {
@@ -697,6 +747,8 @@ export type UserUpdateWithoutDrinkLogsInput = {
   team?: Prisma.TeamUpdateOneWithoutUsersNestedInput
   posts?: Prisma.PostUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDrinkLogsInput = {
@@ -709,6 +761,8 @@ export type UserUncheckedUpdateWithoutDrinkLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPostsInput = {
@@ -721,6 +775,8 @@ export type UserCreateWithoutPostsInput = {
   team?: Prisma.TeamCreateNestedOneWithoutUsersInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPostsInput = {
@@ -733,6 +789,8 @@ export type UserUncheckedCreateWithoutPostsInput = {
   createdAt?: Date | string
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPostsInput = {
@@ -761,6 +819,8 @@ export type UserUpdateWithoutPostsInput = {
   team?: Prisma.TeamUpdateOneWithoutUsersNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPostsInput = {
@@ -773,6 +833,152 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutLikesInput = {
+  id?: string
+  name: string
+  profile_image_url?: string | null
+  createdAt?: Date | string
+  person?: Prisma.PersonCreateNestedOneWithoutUsersInput
+  event?: Prisma.EventCreateNestedOneWithoutUsersInput
+  team?: Prisma.TeamCreateNestedOneWithoutUsersInput
+  drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostCreateNestedManyWithoutUserInput
+  approvedSightings?: Prisma.PublicSightingCreateNestedManyWithoutAdminInput
+  comments?: Prisma.CommentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutLikesInput = {
+  id?: string
+  personId?: string | null
+  eventId?: string | null
+  name: string
+  teamId?: string | null
+  profile_image_url?: string | null
+  createdAt?: Date | string
+  drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutUserInput
+  approvedSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutAdminInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutLikesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutLikesInput, Prisma.UserUncheckedCreateWithoutLikesInput>
+}
+
+export type UserUpsertWithoutLikesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutLikesInput, Prisma.UserUncheckedUpdateWithoutLikesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutLikesInput, Prisma.UserUncheckedCreateWithoutLikesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutLikesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutLikesInput, Prisma.UserUncheckedUpdateWithoutLikesInput>
+}
+
+export type UserUpdateWithoutLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  person?: Prisma.PersonUpdateOneWithoutUsersNestedInput
+  event?: Prisma.EventUpdateOneWithoutUsersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutUsersNestedInput
+  drinkLogs?: Prisma.DrinkLogUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUpdateManyWithoutUserNestedInput
+  approvedSightings?: Prisma.PublicSightingUpdateManyWithoutAdminNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  personId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutUserNestedInput
+  approvedSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutAdminNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCommentsInput = {
+  id?: string
+  name: string
+  profile_image_url?: string | null
+  createdAt?: Date | string
+  person?: Prisma.PersonCreateNestedOneWithoutUsersInput
+  event?: Prisma.EventCreateNestedOneWithoutUsersInput
+  team?: Prisma.TeamCreateNestedOneWithoutUsersInput
+  drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostCreateNestedManyWithoutUserInput
+  approvedSightings?: Prisma.PublicSightingCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCommentsInput = {
+  id?: string
+  personId?: string | null
+  eventId?: string | null
+  name: string
+  teamId?: string | null
+  profile_image_url?: string | null
+  createdAt?: Date | string
+  drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutUserInput
+  approvedSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCommentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommentsInput, Prisma.UserUncheckedCreateWithoutCommentsInput>
+}
+
+export type UserUpsertWithoutCommentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommentsInput, Prisma.UserUncheckedUpdateWithoutCommentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommentsInput, Prisma.UserUncheckedCreateWithoutCommentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCommentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommentsInput, Prisma.UserUncheckedUpdateWithoutCommentsInput>
+}
+
+export type UserUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profile_image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  person?: Prisma.PersonUpdateOneWithoutUsersNestedInput
+  event?: Prisma.EventUpdateOneWithoutUsersNestedInput
+  team?: Prisma.TeamUpdateOneWithoutUsersNestedInput
+  drinkLogs?: Prisma.DrinkLogUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUpdateManyWithoutUserNestedInput
+  approvedSightings?: Prisma.PublicSightingUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  personId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  teamId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profile_image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutUserNestedInput
+  approvedSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEventInput = {
@@ -785,6 +991,8 @@ export type UserCreateWithoutEventInput = {
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutUserInput
   posts?: Prisma.PostCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEventInput = {
@@ -797,6 +1005,8 @@ export type UserUncheckedCreateWithoutEventInput = {
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutUserInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEventInput = {
@@ -835,6 +1045,8 @@ export type UserCreateWithoutPersonInput = {
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutUserInput
   posts?: Prisma.PostCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPersonInput = {
@@ -847,6 +1059,8 @@ export type UserUncheckedCreateWithoutPersonInput = {
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutUserInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutUserInput
   approvedSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutAdminInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPersonInput = {
@@ -885,6 +1099,8 @@ export type UserCreateWithoutApprovedSightingsInput = {
   team?: Prisma.TeamCreateNestedOneWithoutUsersInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutUserInput
   posts?: Prisma.PostCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApprovedSightingsInput = {
@@ -897,6 +1113,8 @@ export type UserUncheckedCreateWithoutApprovedSightingsInput = {
   createdAt?: Date | string
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutUserInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApprovedSightingsInput = {
@@ -925,6 +1143,8 @@ export type UserUpdateWithoutApprovedSightingsInput = {
   team?: Prisma.TeamUpdateOneWithoutUsersNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovedSightingsInput = {
@@ -937,6 +1157,8 @@ export type UserUncheckedUpdateWithoutApprovedSightingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyTeamInput = {
@@ -958,6 +1180,8 @@ export type UserUpdateWithoutTeamInput = {
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTeamInput = {
@@ -970,6 +1194,8 @@ export type UserUncheckedUpdateWithoutTeamInput = {
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutTeamInput = {
@@ -1000,6 +1226,8 @@ export type UserUpdateWithoutEventInput = {
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEventInput = {
@@ -1012,6 +1240,8 @@ export type UserUncheckedUpdateWithoutEventInput = {
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutEventInput = {
@@ -1042,6 +1272,8 @@ export type UserUpdateWithoutPersonInput = {
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonInput = {
@@ -1054,6 +1286,8 @@ export type UserUncheckedUpdateWithoutPersonInput = {
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutUserNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutUserNestedInput
   approvedSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutAdminNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutPersonInput = {
@@ -1074,12 +1308,16 @@ export type UserCountOutputType = {
   drinkLogs: number
   posts: number
   approvedSightings: number
+  likes: number
+  comments: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   drinkLogs?: boolean | UserCountOutputTypeCountDrinkLogsArgs
   posts?: boolean | UserCountOutputTypeCountPostsArgs
   approvedSightings?: boolean | UserCountOutputTypeCountApprovedSightingsArgs
+  likes?: boolean | UserCountOutputTypeCountLikesArgs
+  comments?: boolean | UserCountOutputTypeCountCommentsArgs
 }
 
 /**
@@ -1113,6 +1351,20 @@ export type UserCountOutputTypeCountApprovedSightingsArgs<ExtArgs extends runtim
   where?: Prisma.PublicSightingWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LikeWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommentWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1128,6 +1380,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   drinkLogs?: boolean | Prisma.User$drinkLogsArgs<ExtArgs>
   posts?: boolean | Prisma.User$postsArgs<ExtArgs>
   approvedSightings?: boolean | Prisma.User$approvedSightingsArgs<ExtArgs>
+  likes?: boolean | Prisma.User$likesArgs<ExtArgs>
+  comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1175,6 +1429,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   drinkLogs?: boolean | Prisma.User$drinkLogsArgs<ExtArgs>
   posts?: boolean | Prisma.User$postsArgs<ExtArgs>
   approvedSightings?: boolean | Prisma.User$approvedSightingsArgs<ExtArgs>
+  likes?: boolean | Prisma.User$likesArgs<ExtArgs>
+  comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1197,6 +1453,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     drinkLogs: Prisma.$DrinkLogPayload<ExtArgs>[]
     posts: Prisma.$PostPayload<ExtArgs>[]
     approvedSightings: Prisma.$PublicSightingPayload<ExtArgs>[]
+    likes: Prisma.$LikePayload<ExtArgs>[]
+    comments: Prisma.$CommentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1606,6 +1864,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   drinkLogs<T extends Prisma.User$drinkLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$drinkLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DrinkLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   posts<T extends Prisma.User$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   approvedSightings<T extends Prisma.User$approvedSightingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvedSightingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicSightingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  likes<T extends Prisma.User$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  comments<T extends Prisma.User$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2169,6 +2429,54 @@ export type User$approvedSightingsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.PublicSightingScalarFieldEnum | Prisma.PublicSightingScalarFieldEnum[]
+}
+
+/**
+ * User.likes
+ */
+export type User$likesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Like
+   */
+  select?: Prisma.LikeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Like
+   */
+  omit?: Prisma.LikeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LikeInclude<ExtArgs> | null
+  where?: Prisma.LikeWhereInput
+  orderBy?: Prisma.LikeOrderByWithRelationInput | Prisma.LikeOrderByWithRelationInput[]
+  cursor?: Prisma.LikeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LikeScalarFieldEnum | Prisma.LikeScalarFieldEnum[]
+}
+
+/**
+ * User.comments
+ */
+export type User$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Comment
+   */
+  select?: Prisma.CommentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Comment
+   */
+  omit?: Prisma.CommentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommentInclude<ExtArgs> | null
+  where?: Prisma.CommentWhereInput
+  orderBy?: Prisma.CommentOrderByWithRelationInput | Prisma.CommentOrderByWithRelationInput[]
+  cursor?: Prisma.CommentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommentScalarFieldEnum | Prisma.CommentScalarFieldEnum[]
 }
 
 /**

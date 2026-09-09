@@ -55,6 +55,8 @@ export const ModelName = {
   Team: 'Team',
   DrinkLog: 'DrinkLog',
   Post: 'Post',
+  Like: 'Like',
+  Comment: 'Comment',
   Commentary: 'Commentary',
   Event: 'Event',
   EventLandingPage: 'EventLandingPage',
@@ -137,6 +139,29 @@ export const PostScalarFieldEnum = {
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+
+
+export const LikeScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  postId: 'postId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type LikeScalarFieldEnum = (typeof LikeScalarFieldEnum)[keyof typeof LikeScalarFieldEnum]
+
+
+export const CommentScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  postId: 'postId',
+  userId: 'userId',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
 
 
 export const CommentaryScalarFieldEnum = {

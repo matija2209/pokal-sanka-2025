@@ -50,6 +50,25 @@ export const initialMultiDrinkLogActionState: DrinkLogActionState = {
   type: 'idle'
 }
 
+export interface PostInteractionActionState extends BaseActionState {
+  data?: {
+    commentId?: string
+    postId?: string
+    comment?: {
+      id: string
+      message: string
+      createdAt: Date
+      user: { id: string; name: string; profile_image_url: string | null }
+    }
+  }
+}
+
+export const initialPostInteractionActionState: PostInteractionActionState = {
+  success: false,
+  message: '',
+  type: 'idle'
+}
+
 export interface BachelorActionState extends BaseActionState {
   data?: {
     sightingId?: string

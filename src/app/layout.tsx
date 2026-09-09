@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import { Geist, Geist_Mono, Inter, Roboto_Slab } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { getSiteBrandParts } from "@/lib/events";
 
 import { Luckiest_Guy, Roboto } from 'next/font/google'

@@ -1,4 +1,5 @@
 import { getEventFeedSnapshot } from '@/lib/cache/event-read-models'
+import { getLikedPostIds } from '@/lib/prisma/fetchers/post-fetchers'
 import type { getRecentCommentaries } from '@/lib/prisma/fetchers'
 import { UserAvatar } from '@/components/users'
 import { TeamLogo } from '@/components/teams'
@@ -16,18 +17,14 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import {
-  Bookmark,
   CheckCircle2,
   ChevronDown,
   Flame,
-  Heart,
   ImageIcon,
   Lock,
   MapPin,
-  MessageCircle,
   MoreHorizontal,
   Plus,
-  Send,
   Unlock,
 } from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
@@ -35,6 +32,7 @@ import { sl } from 'date-fns/locale'
 import Image from 'next/image'
 import Link from 'next/link'
 import CreatePostForm from './create-post-form'
+import PostActions from './post-actions'
 import { ACTION_LABELS } from '@/lib/utils/bachelor-points'
 import type { ActionType } from '@/lib/utils/bachelor-points'
 import { isVideoUrl } from '@/lib/utils/media'
@@ -242,6 +240,7 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
 
   const highlightGroups = getGroupedHighlights(recentCommentaries)
   const feedItems = getFeedItems(posts, highlightGroups, recentSightings, hypeEvents)
+  const likedPostIds = await getLikedPostIds(currentUser.id, posts.map(post => post.id))
 
   return (
     <div className="w-full">
@@ -604,22 +603,12 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
 
                     {/* Post Actions */}
                     <div className="px-3 py-3 space-y-2.5">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <button className="hover:opacity-60 transition-opacity">
-                            <Heart className="h-6 w-6" />
-                          </button>
-                          <button className="hover:opacity-60 transition-opacity">
-                            <MessageCircle className="h-6 w-6" />
-                          </button>
-                          <button className="hover:opacity-60 transition-opacity">
-                            <Send className="h-6 w-6" />
-                          </button>
-                        </div>
-                        <button className="hover:opacity-60 transition-opacity">
-                          <Bookmark className="h-6 w-6" />
-                        </button>
-                      </div>
+                      <PostActions
+                        postId={post.id}
+                        initialLiked={likedPostIds.has(post.id)}
+                        initialLikeCount={post._count.likes}
+                        initialComments={post.comments}
+                      />
 
                       {/* Likes/Points */}
                       <div className="flex items-center gap-1.5">
@@ -641,9 +630,6 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
                           <span className="font-bold mr-2">{post.user.name}</span>
                           {post.message}
                         </p>
-                        <button className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors uppercase tracking-tight">
-                          Poglej vseh {Math.floor(Math.random() * 5) + 1} komentarjev
-                        </button>
                       </div>
 
                       {/* Timestamp */}

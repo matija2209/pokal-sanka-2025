@@ -5,7 +5,7 @@ import type {
   User,
   UserWithTeam,
   UserWithTeamAndDrinks,
-  UserWithTeamAndScore,
+  QuickLogUser,
 } from '../types'
 
 function withLegacyRelations<T extends { team?: any }>(user: T) {
@@ -296,73 +296,61 @@ export async function getAllUsersWithTeamAndDrinks(eventIdOverride?: string): Pr
   }
 }
 
-export async function getAllUsersForQuickLog(eventIdOverride?: string): Promise<UserWithTeamAndScore[]> {
+export async function getQuickLogUsers(eventIdOverride?: string): Promise<QuickLogUser[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {
-      const [users, scoreRows] = await Promise.all([
-        prisma.user.findMany({
-          include: {
-            team: true,
+      return await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          profile_image_url: true,
+          team: {
+            select: { name: true, color: true },
           },
-          orderBy: {
-            name: 'asc',
-          },
-        }),
-        prisma.drinkLog.groupBy({
-          by: ['userId'],
-          _sum: {
-            points: true,
-          },
-        }),
-      ])
-
-      const scoresByUserId = new Map(
-        scoreRows.map((row) => [row.userId, row._sum.points ?? 0])
-      )
-
-      return users
-        .map((user) => ({
-          ...withLegacyRelations(user),
-          score: scoresByUserId.get(user.id) ?? 0,
-        }) as UserWithTeamAndScore)
-        .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+        },
+        orderBy: { name: 'asc' },
+      })
     }
 
     const eventId = eventIdOverride ?? (await requireActiveEventId())
-    const [users, scoreRows] = await Promise.all([
-      prisma.user.findMany({
-        where: { eventId },
-        include: {
-          team: true,
-          event: true,
-          person: true,
+    return await prisma.user.findMany({
+      where: { eventId },
+      select: {
+        id: true,
+        name: true,
+        profile_image_url: true,
+        team: {
+          select: { name: true, color: true },
         },
-        orderBy: {
-          name: 'asc',
-        },
-      }),
-      prisma.drinkLog.groupBy({
-        by: ['userId'],
-        where: { eventId },
-        _sum: {
-          points: true,
-        },
-      }),
-    ])
-
-    const scoresByUserId = new Map(
-      scoreRows.map((row) => [row.userId, row._sum.points ?? 0])
-    )
-
-    return users
-      .map((user) => ({
-        ...user,
-        score: scoresByUserId.get(user.id) ?? 0,
-      }))
-      .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+      },
+      orderBy: { name: 'asc' },
+    })
   } catch (error) {
     console.error('Error fetching users for quick log:', error)
     return []
+  }
+}
+
+export async function getQuickLogUserById(id: string, eventIdOverride?: string): Promise<QuickLogUser | null> {
+  try {
+    const select = {
+      id: true,
+      name: true,
+      profile_image_url: true,
+      team: {
+        select: { name: true, color: true },
+      },
+    } as const
+
+    if (!(await isMultiEventSchemaAvailable())) {
+      return await prisma.user.findUnique({ where: { id }, select })
+    }
+
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
+    return await prisma.user.findFirst({ where: { id, eventId }, select })
+  } catch (error) {
+    console.error('Error fetching quick-log user:', error)
+    return null
   }
 }
 

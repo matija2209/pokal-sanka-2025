@@ -1,18 +1,21 @@
 'use client'
 
-import { useActionState, useState, useTransition, useEffect } from 'react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { upload } from '@vercel/blob/client'
+import { Camera, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import MobileImageInput from '@/components/ui/mobile-image-input'
+import UserAvatar from '@/components/users/user-avatar'
+import MediaPostCapture from './media-post-capture'
 import { createPostAction } from '@/app/actions'
 import { initialDrinkLogActionState } from '@/lib/types/action-states'
-import { upload } from '@vercel/blob/client'
 import { compressImage, shouldCompress } from '@/lib/utils/client-image-compression'
-import { toast } from 'sonner'
-import UserAvatar from '@/components/users/user-avatar'
-import { Checkbox } from '@/components/ui/checkbox'
 import { formatFileSize, isImageMimeType } from '@/lib/utils/media'
+
+const MAX_UPLOAD_SIZE_BYTES = 100 * 1024 * 1024
 
 interface CreatePostFormProps {
   currentUser?: {
@@ -23,160 +26,114 @@ interface CreatePostFormProps {
 }
 
 export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
-  const maxUploadSizeBytes = 100 * 1024 * 1024
+  const router = useRouter()
   const [message, setMessage] = useState('')
   const [isPrivate, setIsPrivate] = useState(true)
-  const [uploadingMedia, setUploadingMedia] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [isPending, startTransition] = useTransition()
-  const [state, formAction] = useActionState(createPostAction, initialDrinkLogActionState)
-  
-  useEffect(() => {
-    if (state.success) {
-      toast.success(state.message || 'Objava uspešno ustvarjena!')
+  const [isPosting, setIsPosting] = useState(false)
+  const [showCapture, setShowCapture] = useState(false)
+
+  const uploadMedia = async (file: File, onProgress?: (progress: number) => void): Promise<string> => {
+    if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+      throw new Error(`Datoteka je prevelika. Največ ${formatFileSize(MAX_UPLOAD_SIZE_BYTES)}.`)
+    }
+
+    let fileToUpload = file
+    if (isImageMimeType(file.type) && shouldCompress(file)) {
+      fileToUpload = await compressImage(file, { maxWidth: 1920, maxHeight: 1080, quality: 0.85 })
+    }
+
+    const blob = await upload(fileToUpload.name, fileToUpload, {
+      access: 'public',
+      handleUploadUrl: '/api/upload',
+      multipart: fileToUpload.size > 1024 * 1024,
+      onUploadProgress: (progress) => onProgress?.(progress.percentage),
+    })
+    return blob.url
+  }
+
+  const publishPost = async (
+    caption: string,
+    media?: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<boolean> => {
+    const trimmedCaption = caption.trim()
+    if (!trimmedCaption && !media) {
+      toast.error('Dodaj besedilo ali medij.')
+      return false
+    }
+
+    setIsPosting(true)
+    try {
+      const imageUrl = media ? await uploadMedia(media, onProgress) : undefined
+      const data = new FormData()
+      data.set('message', trimmedCaption)
+      data.set('isPrivate', String(isPrivate))
+      if (imageUrl) data.set('imageUrl', imageUrl)
+
+      const result = await createPostAction(initialDrinkLogActionState, data)
+      if (!result.success) {
+        toast.error(result.message || 'Objave ni bilo mogoče ustvariti.')
+        return false
+      }
+
+      toast.success(result.message || 'Objava uspešno ustvarjena!')
       setMessage('')
       setIsPrivate(true)
-    } else if (state.message && !state.success) {
-      toast.error(state.message)
-    }
-  }, [state.success, state.message])
-  
-  const handleMediaUpload = async (file: File): Promise<string | null> => {
-    try {
-      setUploadingMedia(true)
-      setUploadProgress(0)
-      
-      let fileToUpload = file
-      if (isImageMimeType(file.type) && shouldCompress(file)) {
-        fileToUpload = await compressImage(file, {
-          maxWidth: 1920,
-          maxHeight: 1080,
-          quality: 0.85
-        })
-      }
-
-      const blob = await upload(fileToUpload.name, fileToUpload, {
-        access: 'public',
-        handleUploadUrl: '/api/upload',
-        multipart: fileToUpload.size > 1024 * 1024,
-        onUploadProgress: (progress) => {
-          setUploadProgress(progress.percentage)
-        }
-      })
-
-      return blob.url
+      setShowCapture(false)
+      router.refresh()
+      return true
     } catch (error) {
-      console.error('Media upload failed:', error)
-      return null
+      toast.error(error instanceof Error ? error.message : 'Nalaganje medija ni uspelo.')
+      return false
     } finally {
-      setUploadingMedia(false)
-      setUploadProgress(0)
+      setIsPosting(false)
     }
   }
-  
-  const handleSubmit = async (formData: FormData) => {
-    try {
-      const mediaFile = formData.get('post-image') as File
-      let imageUrl = ''
-      
-      if (mediaFile && mediaFile.size > 0) {
-        if (mediaFile.size > maxUploadSizeBytes) {
-          toast.error(`Datoteka je prevelika. Največ ${formatFileSize(maxUploadSizeBytes)}.`)
-          return
-        }
 
-        const uploadedUrl = await handleMediaUpload(mediaFile)
-        if (uploadedUrl) {
-          imageUrl = uploadedUrl
-        } else {
-          toast.error('Nalaganje datoteke ni uspelo.')
-          return
-        }
-      }
-
-      const postData = new FormData()
-      postData.append('message', formData.get('message') as string)
-      postData.append('isPrivate', String(isPrivate))
-      if (imageUrl) {
-        postData.append('imageUrl', imageUrl)
-      }
-
-      startTransition(async () => {
-        await formAction(postData)
-      })
-    } catch (error) {
-      console.error('Post submission failed:', error)
-    }
+  const handleTextSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    await publishPost(message)
   }
-  
+
   const placeholder = `Kaj se dogaja, ${currentUser?.name?.split(' ')[0] || 'ti'}?`
 
   return (
-    <div className="px-4 py-3">
-      <form id="post-form" action={handleSubmit} className="space-y-4">
-        <div className="flex items-start gap-3">
-          <UserAvatar
-            user={{
-              name: currentUser?.name || 'Uporabnik',
-              profile_image_url: currentUser?.profile_image_url,
-            }}
-            size="md"
-            className="mt-1"
-          />
-          <div className="flex-1">
-            <Textarea
-              name="message"
-              placeholder={placeholder}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="min-h-[60px] w-full border-0 bg-transparent p-0 text-base shadow-none focus-visible:ring-0 placeholder:text-muted-foreground/60 resize-none"
-              required
+    <>
+      <div className="px-4 py-3">
+        <form onSubmit={handleTextSubmit} className="space-y-4">
+          <div className="flex items-start gap-3">
+            <UserAvatar
+              user={{ name: currentUser?.name || 'Uporabnik', profile_image_url: currentUser?.profile_image_url }}
+              size="md"
+              className="mt-1"
             />
-            
-            <div className="mt-2 flex flex-col gap-3 border-t border-border/40 pt-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-4">
-                <MobileImageInput
-                  name="post-image"
-                  label="Fotografija ali video"
-                  variant="compact"
-                  accept="image/*,video/*"
-                  maxSizeBytes={maxUploadSizeBytes}
-                />
-                <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-                  <Checkbox
-                    checked={isPrivate}
-                    onCheckedChange={(checked) => setIsPrivate(checked === true)}
-                  />
-                  Private
-                </label>
-              </div>
-              <Button 
-                type="submit"
-                disabled={!message.trim() || isPending || uploadingMedia}
-                size="sm"
-                className="w-full rounded-full bg-primary px-6 font-semibold sm:w-auto sm:self-center"
-              >
-                {uploadingMedia ? 'Nalaganje...' : isPending ? 'Objavljanje...' : 'Objavi'}
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {uploadingMedia && (
-          <div className="rounded-xl bg-muted/50 p-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-muted-foreground">Priprava datoteke...</span>
-              <span className="text-xs font-bold text-primary">{Math.round(uploadProgress)}%</span>
-            </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
-              <div 
-                className="h-full bg-primary transition-all duration-300 ease-out" 
-                style={{ width: `${uploadProgress}%` }}
+            <div className="flex-1">
+              <Textarea
+                name="message"
+                placeholder={placeholder}
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                className="min-h-[60px] w-full resize-none border-0 bg-transparent p-0 text-base shadow-none placeholder:text-muted-foreground/60 focus-visible:ring-0"
               />
+              <div className="mt-2 flex flex-col gap-3 border-t border-border/40 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-4">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setShowCapture(true)} disabled={isPosting} className="gap-2 rounded-full">
+                    <Camera className="size-4" /> Fotografija ali video
+                  </Button>
+                  <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
+                    <Checkbox checked={isPrivate} onCheckedChange={(checked) => setIsPrivate(checked === true)} />
+                    Private
+                  </label>
+                </div>
+                <Button type="submit" disabled={!message.trim() || isPosting} size="sm" className="w-full rounded-full bg-primary px-6 font-semibold sm:w-auto">
+                  {isPosting ? <><Loader2 className="size-4 animate-spin" /> Objavljam …</> : 'Objavi'}
+                </Button>
+              </div>
             </div>
           </div>
-        )}
-      </form>
-    </div>
+        </form>
+      </div>
+      {showCapture ? <MediaPostCapture onClose={() => setShowCapture(false)} onPublish={(file, caption, onProgress) => publishPost(caption, file, onProgress)} /> : null}
+    </>
   )
 }

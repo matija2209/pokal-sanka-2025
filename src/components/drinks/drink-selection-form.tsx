@@ -1,34 +1,43 @@
 'use client'
 
-import { useActionState, useEffect } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { logDrinkAction } from '@/app/actions'
 import { initialDrinkLogActionState } from '@/lib/types/action-states'
 import { getDrinksByCategory } from '@/lib/utils/drinks'
 import { TeamBadge } from '@/components/teams/team-badge'
-import type { UserWithTeam } from '@/lib/prisma/types'
+import type { QuickLogUser } from '@/lib/prisma/types'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 interface DrinkSelectionFormProps {
-  selectedUser: UserWithTeam
+  selectedUser: QuickLogUser
 }
 
 export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormProps) {
   const [state, formAction, isPending] = useActionState(logDrinkAction, initialDrinkLogActionState)
   const categories = getDrinksByCategory()
-  const router = useRouter()
+  const [selectedDrink, setSelectedDrink] = useState<(typeof categories)[number]['drinks'][number] | null>(null)
 
   useEffect(() => {
     if (state.success) {
       toast.success(state.message)
-      router.push('/app/quick-log')
+      setSelectedDrink(null)
     } else if (state.message && !state.success && state.type === 'error') {
       toast.error(state.message)
     }
-  }, [state.success, state.message, state.type, router])
+  }, [state])
 
   return (
     <div className="space-y-6">
@@ -50,7 +59,7 @@ export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormP
         <TeamBadge team={selectedUser.team} className="text-xs font-bold uppercase tracking-wider" />
       </div>
       
-      <form action={formAction} className="space-y-8 relative">
+      <form id="quick-log-drink-form" action={formAction} className="space-y-8 relative">
         <input type="hidden" name="userId" value={selectedUser.id} />
         
         <div className="space-y-8">
@@ -67,9 +76,8 @@ export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormP
                 {category.drinks.map((drink) => (
                   <Button 
                     key={drink.type}
-                    type="submit" 
-                    name="drinkType" 
-                    value={drink.type}
+                    type="button"
+                    onClick={() => setSelectedDrink(drink)}
                     variant={drink.points >= 3 ? "destructive" : "default"}
                     disabled={isPending}
                     className="h-16 text-lg font-bold shadow-md transition-all active:scale-[0.98] rounded-2xl"
@@ -96,6 +104,38 @@ export default function DrinkSelectionForm({ selectedUser }: DrinkSelectionFormP
           </div>
         )}
       </form>
+
+      <AlertDialog
+        open={selectedDrink !== null}
+        onOpenChange={(open) => {
+          if (!open && !isPending) {
+            setSelectedDrink(null)
+          }
+        }}
+      >
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Potrdi beleženje pijače</AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedDrink
+                ? `Ali želiš za ${selectedUser.name} zabeležiti ${selectedDrink.label} za ${selectedDrink.points} ${selectedDrink.points === 1 ? 'točko' : selectedDrink.points === 2 ? 'točki' : 'točke'}?`
+                : ''}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending}>Prekliči</AlertDialogCancel>
+            <AlertDialogAction
+              type="submit"
+              form="quick-log-drink-form"
+              name="drinkType"
+              value={selectedDrink?.type}
+              disabled={!selectedDrink || isPending}
+            >
+              {isPending ? 'Beležim...' : 'Potrdi'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

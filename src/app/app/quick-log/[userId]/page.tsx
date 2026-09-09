@@ -1,9 +1,10 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getUserWithTeamById } from '@/lib/prisma/fetchers'
+import { getQuickLogUserById } from '@/lib/prisma/fetchers'
 import { redirect, notFound } from 'next/navigation'
 import DrinkSelectionForm from '@/components/drinks/drink-selection-form'
+import { getActiveEvent } from '@/lib/events'
 
 
 interface DrinkSelectionPageProps {
@@ -15,8 +16,17 @@ interface DrinkSelectionPageProps {
 export default async function DrinkSelectionPage({ params }: DrinkSelectionPageProps) {
   await connection()
 
-  const currentUser = await getCurrentUser()
   const { userId } = await params
+  const currentEvent = await getActiveEvent()
+
+  if (!currentEvent) {
+    redirect('/')
+  }
+
+  const [currentUser, selectedUser] = await Promise.all([
+    getCurrentUser(currentEvent.id),
+    getQuickLogUserById(userId, currentEvent.id),
+  ])
   
   if (!currentUser) {
     redirect('/')
@@ -26,8 +36,6 @@ export default async function DrinkSelectionPage({ params }: DrinkSelectionPageP
     redirect('/app/select-team')
   }
 
-  const selectedUser = await getUserWithTeamById(userId)
-  
   if (!selectedUser) {
     notFound()
   }

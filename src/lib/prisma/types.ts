@@ -50,6 +50,17 @@ export type UserWithTeamAndScore = UserWithTeam & {
   score: number
 }
 
+/** The minimal player shape rendered by the quick drink logger. */
+export type QuickLogUser = {
+  id: string
+  name: string
+  profile_image_url: string | null
+  team: {
+    name: string
+    color: string
+  } | null
+}
+
 export type TeamWithUsers = Prisma.TeamGetPayload<{
   include: { event: true, users: true }
 }>

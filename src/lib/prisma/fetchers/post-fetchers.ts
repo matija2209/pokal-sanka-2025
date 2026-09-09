@@ -139,6 +139,15 @@ export async function deletePostForSuperadmin(postId: string) {
 }
 
 export async function getPostsWithUsers(limit: number = 20, eventIdOverride?: string) {
+  const withInteractions = {
+    _count: { select: { likes: true, comments: true } },
+    comments: {
+      orderBy: { createdAt: 'asc' as const },
+      take: 100,
+      include: { user: { select: { id: true, name: true, profile_image_url: true } } },
+    },
+  }
+
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.post.findMany({
       take: limit,
@@ -150,6 +159,7 @@ export async function getPostsWithUsers(limit: number = 20, eventIdOverride?: st
             drinkLogs: true,
           },
         },
+        ...withInteractions,
       },
     })
   }
@@ -172,8 +182,18 @@ export async function getPostsWithUsers(limit: number = 20, eventIdOverride?: st
           },
         },
       },
+      ...withInteractions,
     },
   })
+}
+
+export async function getLikedPostIds(userId: string, postIds: string[]): Promise<Set<string>> {
+  if (postIds.length === 0) return new Set()
+  const rows = await prisma.like.findMany({
+    where: { userId, postId: { in: postIds } },
+    select: { postId: true },
+  })
+  return new Set(rows.map(r => r.postId))
 }
 
 export async function getRecentPostsWithImages(limit: number = 5, eventIdOverride?: string) {

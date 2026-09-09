@@ -1,21 +1,14 @@
 'use client'
 
 import PlayerCard from './player-card'
-import type { UserWithTeamAndScore } from '@/lib/prisma/types'
-import { useRouter } from 'next/navigation'
+import type { QuickLogUser } from '@/lib/prisma/types'
 
 interface PlayerGridProps {
-  users: UserWithTeamAndScore[]
+  users: QuickLogUser[]
   currentUserId: string
 }
 
 export default function PlayerGrid({ users, currentUserId }: PlayerGridProps) {
-  const router = useRouter()
-
-  const handleSelectPlayer = (user: UserWithTeamAndScore) => {
-    router.push(`/app/quick-log/${user.id}`)
-  }
-
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {users.map(user => (
@@ -23,7 +16,6 @@ export default function PlayerGrid({ users, currentUserId }: PlayerGridProps) {
           key={user.id}
           user={user}
           currentUserId={currentUserId}
-          onSelectPlayer={handleSelectPlayer}
         />
       ))}
     </div>

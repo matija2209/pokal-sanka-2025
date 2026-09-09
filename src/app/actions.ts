@@ -19,10 +19,11 @@ import { getActiveEvent, getEventById, getEventBySlug, getEventEntryPathBySlug, 
 import { getAuthSession } from '@/lib/auth-utils'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 import { eventReadTag } from '@/lib/cache/event-read-models'
-import type { 
-  UserActionState, 
-  TeamActionState, 
-  DrinkLogActionState 
+import type {
+  UserActionState,
+  TeamActionState,
+  DrinkLogActionState,
+  PostInteractionActionState
 } from '@/lib/types/action-states'
 
 function invalidateEventReadCache(eventId: string | null | undefined) {
@@ -1067,14 +1068,14 @@ export async function createPostAction(
       }
     }
     
-    const message = formData.get('message') as string
-    const imageUrl = formData.get('imageUrl') as string | null
+    const message = (formData.get('message') as string | null)?.trim() ?? ''
+    const imageUrl = (formData.get('imageUrl') as string | null)?.trim() || null
     const isPrivateValue = formData.get('isPrivate') as string | null
     
-    if (!message || !message.trim()) {
+    if (!message && !imageUrl) {
       return {
         success: false,
-        message: 'Message is required',
+        message: 'Message or media is required',
         type: 'error'
       }
     }
@@ -1093,7 +1094,7 @@ export async function createPostAction(
       data: {
         ...(activeEvent ? { eventId: activeEvent.id } : {}),
         userId: currentUser.id,
-        message: message.trim(),
+        message,
         image_url: imageUrl,
         isPrivate: isPrivateValue !== 'false'
       }
@@ -1116,6 +1117,104 @@ export async function createPostAction(
     }
   } catch (error) {
     console.error('Error creating post:', error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred',
+      type: 'error'
+    }
+  }
+}
+
+// Like Actions
+export async function toggleLikeAction(
+  postId: string
+): Promise<{ success: boolean; liked: boolean; likeCount: number; message?: string }> {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return { success: false, liked: false, likeCount: 0, message: 'Not authenticated' }
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { id: true, eventId: true }
+    })
+    if (!post) {
+      return { success: false, liked: false, likeCount: 0, message: 'Post not found' }
+    }
+
+    const existing = await prisma.like.findUnique({
+      where: { postId_userId: { postId, userId: currentUser.id } }
+    })
+
+    if (existing) {
+      await prisma.like.delete({ where: { id: existing.id } })
+    } else {
+      await prisma.like.create({
+        data: { postId, userId: currentUser.id, eventId: post.eventId }
+      })
+    }
+
+    const likeCount = await prisma.like.count({ where: { postId } })
+
+    invalidateEventReadCache(post.eventId)
+    revalidatePath('/app/feed')
+
+    return { success: true, liked: !existing, likeCount }
+  } catch (error) {
+    console.error('Error toggling like:', error)
+    return { success: false, liked: false, likeCount: 0, message: 'An unexpected error occurred' }
+  }
+}
+
+// Comment Actions
+export async function addCommentAction(
+  prevState: PostInteractionActionState,
+  formData: FormData
+): Promise<PostInteractionActionState> {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return { success: false, message: 'Not authenticated', type: 'error' }
+    }
+
+    const postId = formData.get('postId') as string
+    const message = (formData.get('message') as string)?.trim()
+
+    if (!postId) {
+      return { success: false, message: 'Missing post', type: 'error' }
+    }
+    if (!message) {
+      return { success: false, message: 'Comment cannot be empty', type: 'error' }
+    }
+    if (message.length > 500) {
+      return { success: false, message: 'Comment is too long (max 500 characters)', type: 'error' }
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { id: true, eventId: true }
+    })
+    if (!post) {
+      return { success: false, message: 'Post not found', type: 'error' }
+    }
+
+    const comment = await prisma.comment.create({
+      data: { postId, userId: currentUser.id, eventId: post.eventId, message },
+      include: { user: { select: { id: true, name: true, profile_image_url: true } } }
+    })
+
+    invalidateEventReadCache(post.eventId)
+    revalidatePath('/app/feed')
+
+    return {
+      success: true,
+      message: 'Comment added',
+      type: 'create',
+      data: { commentId: comment.id, postId, comment }
+    }
+  } catch (error) {
+    console.error('Error adding comment:', error)
     return {
       success: false,
       message: 'An unexpected error occurred',

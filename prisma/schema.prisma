@@ -22,6 +22,8 @@ model User {
   drinkLogs        DrinkLog[]
   posts            Post[]
   approvedSightings PublicSighting[]
+  likes            Like[]
+  comments         Comment[]
 
   @@index([eventId])
   @@index([personId])
@@ -60,6 +62,7 @@ model DrinkLog {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([eventId])
+  @@index([eventId, userId])
 
   @@map("drink_logs")
 }
@@ -75,10 +78,46 @@ model Post {
 
   event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes    Like[]
+  comments Comment[]
 
   @@index([eventId])
 
   @@map("posts")
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  eventId   String?
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  post  Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([eventId])
+  @@index([postId])
+  @@map("likes")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  eventId   String?
+  postId    String
+  userId    String
+  message   String
+  createdAt DateTime @default(now())
+
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  post  Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([postId])
+  @@map("comments")
 }
 
 model Commentary {
@@ -111,6 +150,8 @@ model Event {
   teams           Team[]
   drinkLogs       DrinkLog[]
   posts           Post[]
+  likes           Like[]
+  comments        Comment[]
   commentary       Commentary[]
   triviaCategories TriviaCategory[]
   triviaPowerUsage TriviaPowerUsage[]

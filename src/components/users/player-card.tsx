@@ -3,33 +3,38 @@
 import { Card, CardContent } from '@/components/ui/card'
 import UserAvatar from './user-avatar'
 import { TeamBadge } from '@/components/teams/team-badge'
-import type { UserWithTeamAndScore } from '@/lib/prisma/types'
+import type { QuickLogUser } from '@/lib/prisma/types'
+import Link from 'next/link'
 
 interface PlayerCardProps {
-  user: UserWithTeamAndScore
+  user: QuickLogUser
   currentUserId: string
-  onSelectPlayer: (user: UserWithTeamAndScore) => void
 }
 
-export default function PlayerCard({ user, currentUserId, onSelectPlayer }: PlayerCardProps) {
+export default function PlayerCard({ user, currentUserId }: PlayerCardProps) {
   const isCurrentUser = user.id === currentUserId
   const teamColor = user.team?.color || '#6B7280'
   
   return (
-    <Card 
+    <Card
       className={`relative cursor-pointer transition-all hover:shadow-xl hover:scale-[1.03] border-2 group overflow-hidden ${
         isCurrentUser ? 'ring-2 ring-primary/40 bg-primary/5 border-primary/50' : 'hover:border-primary/30'
       }`}
       style={{ borderColor: isCurrentUser ? undefined : teamColor }}
-      onClick={() => onSelectPlayer(user)}
     >
+      <Link
+        href={`/app/quick-log/${user.id}`}
+        prefetch
+        aria-label={`Beleži pijačo za ${user.name}`}
+        className="absolute inset-0 z-20 rounded-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+      />
       {/* Decorative background element for team color */}
       <div 
         className="absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 rounded-full opacity-10 transition-opacity group-hover:opacity-20"
         style={{ backgroundColor: teamColor }}
       />
 
-      <CardContent className="p-4 relative z-10">
+      <CardContent className="p-4 relative z-10 pointer-events-none">
         <div className="flex flex-col items-center text-center space-y-3">
           {/* Avatar */}
           <div className="relative">
@@ -53,15 +58,6 @@ export default function PlayerCard({ user, currentUserId, onSelectPlayer }: Play
             </div>
           </div>
           
-          {/* Score */}
-          <div className="pt-1 w-full border-t border-border/40 mt-1">
-            <div className="text-xl font-black text-primary tracking-tighter">
-              {user.score}
-            </div>
-            <div className="text-[10px] uppercase font-bold text-muted-foreground/80 tracking-widest">
-              točk
-            </div>
-          </div>
         </div>
       </CardContent>
     </Card>

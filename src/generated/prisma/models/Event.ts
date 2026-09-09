@@ -202,6 +202,8 @@ export type EventWhereInput = {
   teams?: Prisma.TeamListRelationFilter
   drinkLogs?: Prisma.DrinkLogListRelationFilter
   posts?: Prisma.PostListRelationFilter
+  likes?: Prisma.LikeListRelationFilter
+  comments?: Prisma.CommentListRelationFilter
   commentary?: Prisma.CommentaryListRelationFilter
   triviaCategories?: Prisma.TriviaCategoryListRelationFilter
   triviaPowerUsage?: Prisma.TriviaPowerUsageListRelationFilter
@@ -223,6 +225,8 @@ export type EventOrderByWithRelationInput = {
   teams?: Prisma.TeamOrderByRelationAggregateInput
   drinkLogs?: Prisma.DrinkLogOrderByRelationAggregateInput
   posts?: Prisma.PostOrderByRelationAggregateInput
+  likes?: Prisma.LikeOrderByRelationAggregateInput
+  comments?: Prisma.CommentOrderByRelationAggregateInput
   commentary?: Prisma.CommentaryOrderByRelationAggregateInput
   triviaCategories?: Prisma.TriviaCategoryOrderByRelationAggregateInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageOrderByRelationAggregateInput
@@ -247,6 +251,8 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   teams?: Prisma.TeamListRelationFilter
   drinkLogs?: Prisma.DrinkLogListRelationFilter
   posts?: Prisma.PostListRelationFilter
+  likes?: Prisma.LikeListRelationFilter
+  comments?: Prisma.CommentListRelationFilter
   commentary?: Prisma.CommentaryListRelationFilter
   triviaCategories?: Prisma.TriviaCategoryListRelationFilter
   triviaPowerUsage?: Prisma.TriviaPowerUsageListRelationFilter
@@ -294,6 +300,8 @@ export type EventCreateInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -315,6 +323,8 @@ export type EventUncheckedCreateInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -336,6 +346,8 @@ export type EventUpdateInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -357,6 +369,8 @@ export type EventUncheckedUpdateInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -500,6 +514,38 @@ export type EventUpdateOneWithoutPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutPostsInput, Prisma.EventUpdateWithoutPostsInput>, Prisma.EventUncheckedUpdateWithoutPostsInput>
 }
 
+export type EventCreateNestedOneWithoutLikesInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutLikesInput, Prisma.EventUncheckedCreateWithoutLikesInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutLikesInput
+  connect?: Prisma.EventWhereUniqueInput
+}
+
+export type EventUpdateOneWithoutLikesNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutLikesInput, Prisma.EventUncheckedCreateWithoutLikesInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutLikesInput
+  upsert?: Prisma.EventUpsertWithoutLikesInput
+  disconnect?: Prisma.EventWhereInput | boolean
+  delete?: Prisma.EventWhereInput | boolean
+  connect?: Prisma.EventWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutLikesInput, Prisma.EventUpdateWithoutLikesInput>, Prisma.EventUncheckedUpdateWithoutLikesInput>
+}
+
+export type EventCreateNestedOneWithoutCommentsInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutCommentsInput, Prisma.EventUncheckedCreateWithoutCommentsInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutCommentsInput
+  connect?: Prisma.EventWhereUniqueInput
+}
+
+export type EventUpdateOneWithoutCommentsNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutCommentsInput, Prisma.EventUncheckedCreateWithoutCommentsInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutCommentsInput
+  upsert?: Prisma.EventUpsertWithoutCommentsInput
+  disconnect?: Prisma.EventWhereInput | boolean
+  delete?: Prisma.EventWhereInput | boolean
+  connect?: Prisma.EventWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutCommentsInput, Prisma.EventUpdateWithoutCommentsInput>, Prisma.EventUncheckedUpdateWithoutCommentsInput>
+}
+
 export type EventCreateNestedOneWithoutCommentaryInput = {
   create?: Prisma.XOR<Prisma.EventCreateWithoutCommentaryInput, Prisma.EventUncheckedCreateWithoutCommentaryInput>
   connectOrCreate?: Prisma.EventCreateOrConnectWithoutCommentaryInput
@@ -621,6 +667,8 @@ export type EventCreateWithoutUsersInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -641,6 +689,8 @@ export type EventUncheckedCreateWithoutUsersInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -677,6 +727,8 @@ export type EventUpdateWithoutUsersInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -697,6 +749,8 @@ export type EventUncheckedUpdateWithoutUsersInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -717,6 +771,8 @@ export type EventCreateWithoutTeamsInput = {
   users?: Prisma.UserCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -737,6 +793,8 @@ export type EventUncheckedCreateWithoutTeamsInput = {
   users?: Prisma.UserUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -773,6 +831,8 @@ export type EventUpdateWithoutTeamsInput = {
   users?: Prisma.UserUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -793,6 +853,8 @@ export type EventUncheckedUpdateWithoutTeamsInput = {
   users?: Prisma.UserUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -813,6 +875,8 @@ export type EventCreateWithoutDrinkLogsInput = {
   users?: Prisma.UserCreateNestedManyWithoutEventInput
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -833,6 +897,8 @@ export type EventUncheckedCreateWithoutDrinkLogsInput = {
   users?: Prisma.UserUncheckedCreateNestedManyWithoutEventInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -869,6 +935,8 @@ export type EventUpdateWithoutDrinkLogsInput = {
   users?: Prisma.UserUpdateManyWithoutEventNestedInput
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -889,6 +957,8 @@ export type EventUncheckedUpdateWithoutDrinkLogsInput = {
   users?: Prisma.UserUncheckedUpdateManyWithoutEventNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -909,6 +979,8 @@ export type EventCreateWithoutPostsInput = {
   users?: Prisma.UserCreateNestedManyWithoutEventInput
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -929,6 +1001,8 @@ export type EventUncheckedCreateWithoutPostsInput = {
   users?: Prisma.UserUncheckedCreateNestedManyWithoutEventInput
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -965,6 +1039,8 @@ export type EventUpdateWithoutPostsInput = {
   users?: Prisma.UserUpdateManyWithoutEventNestedInput
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -985,6 +1061,216 @@ export type EventUncheckedUpdateWithoutPostsInput = {
   users?: Prisma.UserUncheckedUpdateManyWithoutEventNestedInput
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
+  commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
+  triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
+  triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
+  publicSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutEventNestedInput
+  hypeVotes?: Prisma.HypeVoteUncheckedUpdateManyWithoutEventNestedInput
+  hypeEvents?: Prisma.HypeEventUncheckedUpdateManyWithoutEventNestedInput
+  landingPage?: Prisma.EventLandingPageUncheckedUpdateOneWithoutEventNestedInput
+}
+
+export type EventCreateWithoutLikesInput = {
+  id?: string
+  slug: string
+  name: string
+  isActive?: boolean
+  isRandomTeams?: boolean
+  isTriviaEnabled?: boolean
+  createdAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutEventInput
+  teams?: Prisma.TeamCreateNestedManyWithoutEventInput
+  drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
+  posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
+  commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
+  triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
+  triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
+  publicSightings?: Prisma.PublicSightingCreateNestedManyWithoutEventInput
+  hypeVotes?: Prisma.HypeVoteCreateNestedManyWithoutEventInput
+  hypeEvents?: Prisma.HypeEventCreateNestedManyWithoutEventInput
+  landingPage?: Prisma.EventLandingPageCreateNestedOneWithoutEventInput
+}
+
+export type EventUncheckedCreateWithoutLikesInput = {
+  id?: string
+  slug: string
+  name: string
+  isActive?: boolean
+  isRandomTeams?: boolean
+  isTriviaEnabled?: boolean
+  createdAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutEventInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
+  drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
+  commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
+  triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
+  triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
+  publicSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutEventInput
+  hypeVotes?: Prisma.HypeVoteUncheckedCreateNestedManyWithoutEventInput
+  hypeEvents?: Prisma.HypeEventUncheckedCreateNestedManyWithoutEventInput
+  landingPage?: Prisma.EventLandingPageUncheckedCreateNestedOneWithoutEventInput
+}
+
+export type EventCreateOrConnectWithoutLikesInput = {
+  where: Prisma.EventWhereUniqueInput
+  create: Prisma.XOR<Prisma.EventCreateWithoutLikesInput, Prisma.EventUncheckedCreateWithoutLikesInput>
+}
+
+export type EventUpsertWithoutLikesInput = {
+  update: Prisma.XOR<Prisma.EventUpdateWithoutLikesInput, Prisma.EventUncheckedUpdateWithoutLikesInput>
+  create: Prisma.XOR<Prisma.EventCreateWithoutLikesInput, Prisma.EventUncheckedCreateWithoutLikesInput>
+  where?: Prisma.EventWhereInput
+}
+
+export type EventUpdateToOneWithWhereWithoutLikesInput = {
+  where?: Prisma.EventWhereInput
+  data: Prisma.XOR<Prisma.EventUpdateWithoutLikesInput, Prisma.EventUncheckedUpdateWithoutLikesInput>
+}
+
+export type EventUpdateWithoutLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRandomTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTriviaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutEventNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
+  drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
+  posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
+  commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
+  triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
+  triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
+  publicSightings?: Prisma.PublicSightingUpdateManyWithoutEventNestedInput
+  hypeVotes?: Prisma.HypeVoteUpdateManyWithoutEventNestedInput
+  hypeEvents?: Prisma.HypeEventUpdateManyWithoutEventNestedInput
+  landingPage?: Prisma.EventLandingPageUpdateOneWithoutEventNestedInput
+}
+
+export type EventUncheckedUpdateWithoutLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRandomTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTriviaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutEventNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
+  drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
+  commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
+  triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
+  triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
+  publicSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutEventNestedInput
+  hypeVotes?: Prisma.HypeVoteUncheckedUpdateManyWithoutEventNestedInput
+  hypeEvents?: Prisma.HypeEventUncheckedUpdateManyWithoutEventNestedInput
+  landingPage?: Prisma.EventLandingPageUncheckedUpdateOneWithoutEventNestedInput
+}
+
+export type EventCreateWithoutCommentsInput = {
+  id?: string
+  slug: string
+  name: string
+  isActive?: boolean
+  isRandomTeams?: boolean
+  isTriviaEnabled?: boolean
+  createdAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutEventInput
+  teams?: Prisma.TeamCreateNestedManyWithoutEventInput
+  drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
+  posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
+  triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
+  triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
+  publicSightings?: Prisma.PublicSightingCreateNestedManyWithoutEventInput
+  hypeVotes?: Prisma.HypeVoteCreateNestedManyWithoutEventInput
+  hypeEvents?: Prisma.HypeEventCreateNestedManyWithoutEventInput
+  landingPage?: Prisma.EventLandingPageCreateNestedOneWithoutEventInput
+}
+
+export type EventUncheckedCreateWithoutCommentsInput = {
+  id?: string
+  slug: string
+  name: string
+  isActive?: boolean
+  isRandomTeams?: boolean
+  isTriviaEnabled?: boolean
+  createdAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutEventInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
+  drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
+  triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
+  triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
+  publicSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutEventInput
+  hypeVotes?: Prisma.HypeVoteUncheckedCreateNestedManyWithoutEventInput
+  hypeEvents?: Prisma.HypeEventUncheckedCreateNestedManyWithoutEventInput
+  landingPage?: Prisma.EventLandingPageUncheckedCreateNestedOneWithoutEventInput
+}
+
+export type EventCreateOrConnectWithoutCommentsInput = {
+  where: Prisma.EventWhereUniqueInput
+  create: Prisma.XOR<Prisma.EventCreateWithoutCommentsInput, Prisma.EventUncheckedCreateWithoutCommentsInput>
+}
+
+export type EventUpsertWithoutCommentsInput = {
+  update: Prisma.XOR<Prisma.EventUpdateWithoutCommentsInput, Prisma.EventUncheckedUpdateWithoutCommentsInput>
+  create: Prisma.XOR<Prisma.EventCreateWithoutCommentsInput, Prisma.EventUncheckedCreateWithoutCommentsInput>
+  where?: Prisma.EventWhereInput
+}
+
+export type EventUpdateToOneWithWhereWithoutCommentsInput = {
+  where?: Prisma.EventWhereInput
+  data: Prisma.XOR<Prisma.EventUpdateWithoutCommentsInput, Prisma.EventUncheckedUpdateWithoutCommentsInput>
+}
+
+export type EventUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRandomTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTriviaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutEventNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
+  drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
+  posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
+  triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
+  triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
+  publicSightings?: Prisma.PublicSightingUpdateManyWithoutEventNestedInput
+  hypeVotes?: Prisma.HypeVoteUpdateManyWithoutEventNestedInput
+  hypeEvents?: Prisma.HypeEventUpdateManyWithoutEventNestedInput
+  landingPage?: Prisma.EventLandingPageUpdateOneWithoutEventNestedInput
+}
+
+export type EventUncheckedUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRandomTeams?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTriviaEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutEventNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
+  drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -1006,6 +1292,8 @@ export type EventCreateWithoutCommentaryInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
   publicSightings?: Prisma.PublicSightingCreateNestedManyWithoutEventInput
@@ -1026,6 +1314,8 @@ export type EventUncheckedCreateWithoutCommentaryInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
   publicSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutEventInput
@@ -1062,6 +1352,8 @@ export type EventUpdateWithoutCommentaryInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
   publicSightings?: Prisma.PublicSightingUpdateManyWithoutEventNestedInput
@@ -1082,6 +1374,8 @@ export type EventUncheckedUpdateWithoutCommentaryInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
   publicSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutEventNestedInput
@@ -1102,6 +1396,8 @@ export type EventCreateWithoutLandingPageInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -1122,6 +1418,8 @@ export type EventUncheckedCreateWithoutLandingPageInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -1158,6 +1456,8 @@ export type EventUpdateWithoutLandingPageInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -1178,6 +1478,8 @@ export type EventUncheckedUpdateWithoutLandingPageInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -1198,6 +1500,8 @@ export type EventCreateWithoutTriviaCategoriesInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
   publicSightings?: Prisma.PublicSightingCreateNestedManyWithoutEventInput
@@ -1218,6 +1522,8 @@ export type EventUncheckedCreateWithoutTriviaCategoriesInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
   publicSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutEventInput
@@ -1254,6 +1560,8 @@ export type EventUpdateWithoutTriviaCategoriesInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
   publicSightings?: Prisma.PublicSightingUpdateManyWithoutEventNestedInput
@@ -1274,6 +1582,8 @@ export type EventUncheckedUpdateWithoutTriviaCategoriesInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
   publicSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutEventNestedInput
@@ -1294,6 +1604,8 @@ export type EventCreateWithoutTriviaPowerUsageInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   publicSightings?: Prisma.PublicSightingCreateNestedManyWithoutEventInput
@@ -1314,6 +1626,8 @@ export type EventUncheckedCreateWithoutTriviaPowerUsageInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   publicSightings?: Prisma.PublicSightingUncheckedCreateNestedManyWithoutEventInput
@@ -1350,6 +1664,8 @@ export type EventUpdateWithoutTriviaPowerUsageInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   publicSightings?: Prisma.PublicSightingUpdateManyWithoutEventNestedInput
@@ -1370,6 +1686,8 @@ export type EventUncheckedUpdateWithoutTriviaPowerUsageInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   publicSightings?: Prisma.PublicSightingUncheckedUpdateManyWithoutEventNestedInput
@@ -1390,6 +1708,8 @@ export type EventCreateWithoutPublicSightingsInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -1410,6 +1730,8 @@ export type EventUncheckedCreateWithoutPublicSightingsInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -1446,6 +1768,8 @@ export type EventUpdateWithoutPublicSightingsInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -1466,6 +1790,8 @@ export type EventUncheckedUpdateWithoutPublicSightingsInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -1486,6 +1812,8 @@ export type EventCreateWithoutHypeVotesInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -1506,6 +1834,8 @@ export type EventUncheckedCreateWithoutHypeVotesInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -1542,6 +1872,8 @@ export type EventUpdateWithoutHypeVotesInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -1562,6 +1894,8 @@ export type EventUncheckedUpdateWithoutHypeVotesInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -1582,6 +1916,8 @@ export type EventCreateWithoutHypeEventsInput = {
   teams?: Prisma.TeamCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogCreateNestedManyWithoutEventInput
   posts?: Prisma.PostCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageCreateNestedManyWithoutEventInput
@@ -1602,6 +1938,8 @@ export type EventUncheckedCreateWithoutHypeEventsInput = {
   teams?: Prisma.TeamUncheckedCreateNestedManyWithoutEventInput
   drinkLogs?: Prisma.DrinkLogUncheckedCreateNestedManyWithoutEventInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutEventInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutEventInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutEventInput
   commentary?: Prisma.CommentaryUncheckedCreateNestedManyWithoutEventInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedCreateNestedManyWithoutEventInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedCreateNestedManyWithoutEventInput
@@ -1638,6 +1976,8 @@ export type EventUpdateWithoutHypeEventsInput = {
   teams?: Prisma.TeamUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUpdateManyWithoutEventNestedInput
@@ -1658,6 +1998,8 @@ export type EventUncheckedUpdateWithoutHypeEventsInput = {
   teams?: Prisma.TeamUncheckedUpdateManyWithoutEventNestedInput
   drinkLogs?: Prisma.DrinkLogUncheckedUpdateManyWithoutEventNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutEventNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutEventNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutEventNestedInput
   commentary?: Prisma.CommentaryUncheckedUpdateManyWithoutEventNestedInput
   triviaCategories?: Prisma.TriviaCategoryUncheckedUpdateManyWithoutEventNestedInput
   triviaPowerUsage?: Prisma.TriviaPowerUsageUncheckedUpdateManyWithoutEventNestedInput
@@ -1676,6 +2018,8 @@ export type EventCountOutputType = {
   teams: number
   drinkLogs: number
   posts: number
+  likes: number
+  comments: number
   commentary: number
   triviaCategories: number
   triviaPowerUsage: number
@@ -1689,6 +2033,8 @@ export type EventCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   teams?: boolean | EventCountOutputTypeCountTeamsArgs
   drinkLogs?: boolean | EventCountOutputTypeCountDrinkLogsArgs
   posts?: boolean | EventCountOutputTypeCountPostsArgs
+  likes?: boolean | EventCountOutputTypeCountLikesArgs
+  comments?: boolean | EventCountOutputTypeCountCommentsArgs
   commentary?: boolean | EventCountOutputTypeCountCommentaryArgs
   triviaCategories?: boolean | EventCountOutputTypeCountTriviaCategoriesArgs
   triviaPowerUsage?: boolean | EventCountOutputTypeCountTriviaPowerUsageArgs
@@ -1733,6 +2079,20 @@ export type EventCountOutputTypeCountDrinkLogsArgs<ExtArgs extends runtime.Types
  */
 export type EventCountOutputTypeCountPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PostWhereInput
+}
+
+/**
+ * EventCountOutputType without action
+ */
+export type EventCountOutputTypeCountLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LikeWhereInput
+}
+
+/**
+ * EventCountOutputType without action
+ */
+export type EventCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommentWhereInput
 }
 
 /**
@@ -1790,6 +2150,8 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   teams?: boolean | Prisma.Event$teamsArgs<ExtArgs>
   drinkLogs?: boolean | Prisma.Event$drinkLogsArgs<ExtArgs>
   posts?: boolean | Prisma.Event$postsArgs<ExtArgs>
+  likes?: boolean | Prisma.Event$likesArgs<ExtArgs>
+  comments?: boolean | Prisma.Event$commentsArgs<ExtArgs>
   commentary?: boolean | Prisma.Event$commentaryArgs<ExtArgs>
   triviaCategories?: boolean | Prisma.Event$triviaCategoriesArgs<ExtArgs>
   triviaPowerUsage?: boolean | Prisma.Event$triviaPowerUsageArgs<ExtArgs>
@@ -1836,6 +2198,8 @@ export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   teams?: boolean | Prisma.Event$teamsArgs<ExtArgs>
   drinkLogs?: boolean | Prisma.Event$drinkLogsArgs<ExtArgs>
   posts?: boolean | Prisma.Event$postsArgs<ExtArgs>
+  likes?: boolean | Prisma.Event$likesArgs<ExtArgs>
+  comments?: boolean | Prisma.Event$commentsArgs<ExtArgs>
   commentary?: boolean | Prisma.Event$commentaryArgs<ExtArgs>
   triviaCategories?: boolean | Prisma.Event$triviaCategoriesArgs<ExtArgs>
   triviaPowerUsage?: boolean | Prisma.Event$triviaPowerUsageArgs<ExtArgs>
@@ -1855,6 +2219,8 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     teams: Prisma.$TeamPayload<ExtArgs>[]
     drinkLogs: Prisma.$DrinkLogPayload<ExtArgs>[]
     posts: Prisma.$PostPayload<ExtArgs>[]
+    likes: Prisma.$LikePayload<ExtArgs>[]
+    comments: Prisma.$CommentPayload<ExtArgs>[]
     commentary: Prisma.$CommentaryPayload<ExtArgs>[]
     triviaCategories: Prisma.$TriviaCategoryPayload<ExtArgs>[]
     triviaPowerUsage: Prisma.$TriviaPowerUsagePayload<ExtArgs>[]
@@ -2269,6 +2635,8 @@ export interface Prisma__EventClient<T, Null = never, ExtArgs extends runtime.Ty
   teams<T extends Prisma.Event$teamsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   drinkLogs<T extends Prisma.Event$drinkLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$drinkLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DrinkLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   posts<T extends Prisma.Event$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  likes<T extends Prisma.Event$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  comments<T extends Prisma.Event$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   commentary<T extends Prisma.Event$commentaryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$commentaryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentaryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   triviaCategories<T extends Prisma.Event$triviaCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$triviaCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TriviaCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   triviaPowerUsage<T extends Prisma.Event$triviaPowerUsageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$triviaPowerUsageArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TriviaPowerUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2798,6 +3166,54 @@ export type Event$postsArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   distinct?: Prisma.PostScalarFieldEnum | Prisma.PostScalarFieldEnum[]
+}
+
+/**
+ * Event.likes
+ */
+export type Event$likesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Like
+   */
+  select?: Prisma.LikeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Like
+   */
+  omit?: Prisma.LikeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LikeInclude<ExtArgs> | null
+  where?: Prisma.LikeWhereInput
+  orderBy?: Prisma.LikeOrderByWithRelationInput | Prisma.LikeOrderByWithRelationInput[]
+  cursor?: Prisma.LikeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LikeScalarFieldEnum | Prisma.LikeScalarFieldEnum[]
+}
+
+/**
+ * Event.comments
+ */
+export type Event$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Comment
+   */
+  select?: Prisma.CommentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Comment
+   */
+  omit?: Prisma.CommentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommentInclude<ExtArgs> | null
+  where?: Prisma.CommentWhereInput
+  orderBy?: Prisma.CommentOrderByWithRelationInput | Prisma.CommentOrderByWithRelationInput[]
+  cursor?: Prisma.CommentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CommentScalarFieldEnum | Prisma.CommentScalarFieldEnum[]
 }
 
 /**

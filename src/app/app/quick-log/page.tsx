@@ -1,15 +1,25 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-import { getAllUsersForQuickLog } from '@/lib/prisma/fetchers'
+import { getQuickLogUsers } from '@/lib/prisma/fetchers'
 import { redirect } from 'next/navigation'
 import { PlayerGrid } from '@/components/users'
+import { getActiveEvent } from '@/lib/events'
 
 
 export default async function QuickLogPage() {
   await connection()
 
-  const currentUser = await getCurrentUser()
+  const currentEvent = await getActiveEvent()
+
+  if (!currentEvent) {
+    redirect('/')
+  }
+
+  const [currentUser, users] = await Promise.all([
+    getCurrentUser(currentEvent.id),
+    getQuickLogUsers(currentEvent.id),
+  ])
   
   if (!currentUser) {
     redirect('/')
@@ -19,8 +29,6 @@ export default async function QuickLogPage() {
     redirect('/app/select-team')
   }
 
-  const users = await getAllUsersForQuickLog()
-  
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8">
       <div className="text-center mb-10 space-y-3">
@@ -33,10 +41,7 @@ export default async function QuickLogPage() {
       </div>
       
       <div className="bg-card/50 backdrop-blur-sm rounded-3xl p-6 border border-border/50 shadow-sm">
-        <PlayerGrid 
-          users={users}
-          currentUserId={currentUser.id}
-        />
+        <PlayerGrid users={users} currentUserId={currentUser.id} />
       </div>
     </div>
   )

@@ -140,10 +140,10 @@ export default async function HomePage() {
         <div className="w-full px-4 pb-12 pt-6 sm:px-6 lg:px-8">
           {/* Welcome text */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
               Dobrodošli!
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground">
+            <p className="text-lg md:text-xl text-white/90 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
               Pridružite se turnirju in pokažite svoje spretnosti
             </p>
           </div>
