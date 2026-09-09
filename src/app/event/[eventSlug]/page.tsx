@@ -146,7 +146,6 @@ export default async function EventLandingPage({ params }: Props) {
               <p className="text-base md:text-lg whitespace-pre-wrap">{landingPage.description}</p>
             </div>
           )}
-          <p className="text-sm text-muted-foreground mt-4">Active event: {event.name}</p>
         </div>
 
         {currentUser ? (
@@ -169,24 +168,26 @@ export default async function EventLandingPage({ params }: Props) {
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm font-semibold uppercase tracking-wide text-primary">Already signed in</p>
+                <p className="text-sm font-semibold uppercase tracking-wide text-primary">Že prijavljen</p>
                 <h2 className="text-2xl font-bold text-foreground">
-                  You are signed in as {currentUser.name}
+                  Prijavljen si kot {currentUser.name}
                 </h2>
                 <p className="text-muted-foreground">
                   {currentUser.teamId
-                    ? 'Your player is ready. Continue to the event.'
-                    : 'Your player is ready, but you need to pick a team first.'}
+                    ? 'Tvoj igralec je pripravljen. Nadaljuj na dogodek.'
+                    : 'Tvoj igralec je pripravljen, vendar moraš najprej izbrati ekipo.'}
                 </p>
               </div>
             </div>
 
-            <Link
-              href={currentUser.teamId ? '/app/feed' : '/app/select-team'}
-              className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              {landingPage.ctaText}
-            </Link>
+            <div className="flex justify-center">
+              <Link
+                href={currentUser.teamId ? '/app/feed' : '/app/select-team'}
+                className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                {landingPage.ctaText}
+              </Link>
+            </div>
           </div>
         ) : (
           <EventEntryClient

@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  allowedDevOrigins: ['95.217.200.105'],
   cacheLife: {
     eventLive: {
       stale: 30,

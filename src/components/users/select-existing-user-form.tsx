@@ -1,11 +1,10 @@
 'use client'
 
-import { useActionState, useEffect, useMemo, useState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Search, UserPlus } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import { selectExistingUserAction } from '@/app/actions'
 import { initialUserActionState } from '@/lib/types/action-states'
 import { TeamBadge } from '@/components/teams/team-badge'
@@ -37,7 +36,6 @@ export default function SelectExistingUserForm({
   returnTo,
 }: SelectExistingUserFormProps) {
   const router = useRouter()
-  const [search, setSearch] = useState('')
   const [state, formAction, isPending] = useActionState(
     selectExistingUserAction,
     initialUserActionState
@@ -48,15 +46,6 @@ export default function SelectExistingUserForm({
       router.push(state.data.redirectUrl)
     }
   }, [state.success, state.data?.redirectUrl, router])
-
-  const filteredPlayers = useMemo(() => {
-    if (!search.trim()) return players
-    const q = search.toLowerCase()
-    return players.filter((p) =>
-      p.name.toLowerCase().includes(q) ||
-      (p.personName && p.personName.toLowerCase().includes(q))
-    )
-  }, [players, search])
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4">
@@ -81,33 +70,13 @@ export default function SelectExistingUserForm({
         </div>
       )}
 
-      <div className="space-y-1.5">
-        <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-          Izberite svojega igralca
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          Poiščite svoje ime ali vzdevek na seznamu igralcev tega dogodka in vstopite v turnir.
-        </p>
-
-        <div className="relative pt-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Poiščite po vzdevku ali imenu..."
-            className="pl-9 h-10 bg-background"
-            autoFocus
-          />
-        </div>
-      </div>
-
       {state.message && !state.success && (
         <p className="text-destructive text-sm bg-destructive/10 p-3 rounded-lg">{state.message}</p>
       )}
 
       <div className="max-h-[60vh] overflow-y-auto pr-1">
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
-          {filteredPlayers.map((player) => (
+          {players.map((player) => (
             <form key={player.id} action={formAction} className="h-full">
               <input type="hidden" name="userId" value={player.id} />
               {returnTo && <input type="hidden" name="returnTo" value={returnTo} />}
@@ -117,7 +86,7 @@ export default function SelectExistingUserForm({
                 className="w-full h-full text-left rounded-2xl border border-border/70 bg-card p-3 sm:p-3.5 shadow-xs hover:shadow-md hover:border-primary/50 active:scale-[0.98] transition-all flex flex-col justify-between gap-2.5 group relative cursor-pointer"
               >
                 <div className="flex items-start justify-between gap-2 w-full">
-                  <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-primary/10 text-primary flex items-center justify-center font-bold text-sm sm:text-base shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm sm:text-base shrink-0 transition-colors">
                     {player.profileImageUrl ? (
                       <Image
                         src={player.profileImageUrl}
@@ -151,10 +120,10 @@ export default function SelectExistingUserForm({
         </div>
       </div>
 
-      {filteredPlayers.length === 0 && (
+      {players.length === 0 && (
         <div className="text-center py-6 space-y-3">
           <p className="text-sm text-muted-foreground">
-            {search ? `Noben igralec se ne ujema z "${search}"` : 'V tem dogodku še ni dodeljenih igralcev'}
+            V tem dogodku še ni dodeljenih igralcev
           </p>
           {onCreateAccount && (
             <Button
@@ -165,7 +134,7 @@ export default function SelectExistingUserForm({
               className="gap-2"
             >
               <UserPlus className="h-4 w-4" />
-              {search ? `Ustvari račun z imenom "${search}"` : 'Ustvari nov račun'}
+              Ustvari nov račun
             </Button>
           )}
         </div>
