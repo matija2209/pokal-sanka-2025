@@ -5,6 +5,7 @@ import { SightingTimeline } from '@/components/bachelor/sighting-timeline'
 import { headers } from 'next/headers'
 import { auth } from '@/lib/auth'
 import { deleteSightingFromTimelineAction } from '@/app/the-bachelor/timeline/actions'
+import { Container } from '@/components/layout/container'
 
 
 export default async function TimelinePage() {
@@ -21,8 +22,8 @@ export default async function TimelinePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-background py-8">
+      <Container size="mobile">
         <h1 className="text-3xl font-lucky text-center mb-2">Sighting Timeline</h1>
         <p className="text-center text-muted-foreground mb-8">
           Every approved sighting of BWSK across Malta.
@@ -32,7 +33,7 @@ export default async function TimelinePage() {
           canDelete={isSuperadmin}
           onDeleteSighting={onDeleteSighting}
         />
-      </div>
+      </Container>
     </div>
   )
 }

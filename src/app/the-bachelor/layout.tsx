@@ -12,6 +12,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { getCurrentUser } from '@/lib/utils/cookies'
+import { Container } from '@/components/layout/container'
 import '@/app/globals.css'
 
 export const metadata: Metadata = {
@@ -42,7 +43,7 @@ export default async function BachelorLayout({
       >
         {currentUser ? (
           <div className="sticky top-0 z-50 border-b border-primary/10 bg-background/95 backdrop-blur">
-            <div className="mx-auto flex max-w-6xl items-center px-4 py-3">
+            <Container size="mobile" className="flex items-center py-3">
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
@@ -56,7 +57,7 @@ export default async function BachelorLayout({
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
-            </div>
+            </Container>
           </div>
         ) : null}
         {children}

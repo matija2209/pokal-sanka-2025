@@ -17,6 +17,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Camera, Beer } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { requireBachelorEventId } from '@/lib/events'
+import { Container } from '@/components/layout/container'
 
 
 type BachelorMapSighting = {
@@ -63,14 +64,17 @@ export default async function BachelorPage() {
     <div className="min-h-screen bg-stone-50 pb-20 text-slate-950 [color-scheme:light] sm:pb-0">
       <HeroSection />
 
-      <section id="timeline" className="mx-auto max-w-4xl px-4 py-4 sm:py-8">
-        <h2 className="mb-3 text-center font-lucky text-2xl sm:mb-6 sm:text-3xl">Recent Sightings</h2>
-        <SightingTimeline sightings={sightings} />
+      <section id="timeline" className="py-4 sm:py-8">
+        <Container size="mobile">
+          <h2 className="mb-3 text-center font-lucky text-2xl sm:mb-6 sm:text-3xl">Recent Sightings</h2>
+          <SightingTimeline sightings={sightings} />
+        </Container>
       </section>
 
       <div className="space-y-4 sm:space-y-0">
-        <section className="relative z-10 mx-auto -mt-1 max-w-5xl px-4 sm:-mt-6">
-          <div className="grid gap-2.5 sm:gap-4 md:grid-cols-2">
+        <section className="relative z-10 -mt-1 sm:-mt-6">
+          <Container size="mobile">
+          <div className="grid gap-2.5 sm:gap-4">
             <Card className="border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
               <CardContent className="p-3.5 sm:p-7">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -124,53 +128,60 @@ export default async function BachelorPage() {
               </CardContent>
             </Card>
           </div>
+          </Container>
         </section>
 
-        <section id="stats" className="mx-auto max-w-4xl px-4 py-4 sm:py-12">
-          <StatsCards stats={stats} hypeVotes={hypeVoteCount} />
+        <section id="stats" className="py-4 sm:py-12">
+          <Container size="mobile">
+            <StatsCards stats={stats} hypeVotes={hypeVoteCount} />
+          </Container>
         </section>
 
-        <section id="map" className="mx-auto max-w-6xl px-4 py-4 sm:py-12">
-          <h2 className="mb-3 text-center font-lucky text-2xl sm:mb-6 sm:text-3xl">Malta Sighting Map</h2>
-          <MaltaMap sightings={mapSightings} />
+        <section id="map" className="py-4 sm:py-12">
+          <Container size="mobile">
+            <h2 className="mb-3 text-center font-lucky text-2xl sm:mb-6 sm:text-3xl">Malta Sighting Map</h2>
+            <MaltaMap sightings={mapSightings} />
+          </Container>
         </section>
 
-        <section id="public-posts" className="mx-auto max-w-4xl px-4 py-4 sm:py-12">
-          <h2 className="mb-3 text-center font-lucky text-2xl sm:mb-6 sm:text-3xl">Public Posts</h2>
-          {publicPosts.length === 0 ? (
-            <Card className="border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
-              <CardContent className="p-5 text-center text-base text-muted-foreground">
-                No public posts yet.
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {publicPosts.map((post: PublicPost) => (
-                <Card key={post.id} className="overflow-hidden border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
-                  {post.image_url && (
-                    <div className="relative h-56 sm:h-80">
-                      <Image
-                        src={post.image_url}
-                        alt={`Public post by ${post.user.name}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 768px) 100vw, 768px"
-                      />
-                    </div>
-                  )}
-                  <CardContent className="p-3.5 sm:p-5">
-                    <div className="mb-1.5 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                      <p className="text-base font-semibold sm:text-sm">{post.user.name}</p>
-                      <p className="text-sm text-muted-foreground sm:text-xs">
-                        {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-                      </p>
-                    </div>
-                    <p className="whitespace-pre-wrap text-base leading-snug sm:text-sm sm:leading-relaxed">{post.message}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+        <section id="public-posts" className="py-4 sm:py-12">
+          <Container size="mobile">
+            <h2 className="mb-3 text-center font-lucky text-2xl sm:mb-6 sm:text-3xl">Public Posts</h2>
+            {publicPosts.length === 0 ? (
+              <Card className="border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
+                <CardContent className="p-5 text-center text-base text-muted-foreground">
+                  No public posts yet.
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {publicPosts.map((post: PublicPost) => (
+                  <Card key={post.id} className="overflow-hidden border-amber-200/80 bg-white/95 shadow-lg shadow-amber-950/10">
+                    {post.image_url && (
+                      <div className="relative h-56 sm:h-80">
+                        <Image
+                          src={post.image_url}
+                          alt={`Public post by ${post.user.name}`}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 768px) 100vw, 768px"
+                        />
+                      </div>
+                    )}
+                    <CardContent className="p-3.5 sm:p-5">
+                      <div className="mb-1.5 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                        <p className="text-base font-semibold sm:text-sm">{post.user.name}</p>
+                        <p className="text-sm text-muted-foreground sm:text-xs">
+                          {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                        </p>
+                      </div>
+                      <p className="whitespace-pre-wrap text-base leading-snug sm:text-sm sm:leading-relaxed">{post.message}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </Container>
         </section>
       </div>
 

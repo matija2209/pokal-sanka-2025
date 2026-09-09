@@ -3,6 +3,7 @@ import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 import { getSightingById } from '@/lib/prisma/fetchers/sighting-fetchers'
 import { SightingSuccess } from '@/components/bachelor/sighting-success'
+import { Container } from '@/components/layout/container'
 
 
 export default async function SightingSuccessPage({
@@ -20,10 +21,10 @@ export default async function SightingSuccessPage({
   }
 
   return (
-    <div className="min-h-screen bg-background py-12 px-4">
-      <div className="max-w-lg mx-auto">
+    <div className="min-h-screen bg-background py-12">
+      <Container size="mobile">
         <SightingSuccess sighting={sighting} />
-      </div>
+      </Container>
     </div>
   )
 }
