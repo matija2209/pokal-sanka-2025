@@ -80,7 +80,7 @@ export default async function SuperadminPostsPage({ searchParams }: SuperadminPo
 
                     <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                       <span className="font-mono">Post ID: {post.id}</span>
-                      {post.image_url && <span>Has image</span>}
+                      {post.assets.length > 0 ? <span>{post.assets.length} media asset{post.assets.length === 1 ? '' : 's'}</span> : post.image_url ? <span>Has legacy media</span> : null}
                     </div>
                   </div>
 

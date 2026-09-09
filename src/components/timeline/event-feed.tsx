@@ -33,6 +33,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import CreatePostForm from './create-post-form'
 import PostActions from './post-actions'
+import PostMedia from './post-media'
 import { ACTION_LABELS } from '@/lib/utils/bachelor-points'
 import type { ActionType } from '@/lib/utils/bachelor-points'
 import { isVideoUrl } from '@/lib/utils/media'
@@ -181,6 +182,13 @@ function getPostPoints(drinkLogs: Array<{ points: number }>) {
   return drinkLogs.reduce((sum, log) => sum + log.points, 0)
 }
 
+function getPostCover(post: { assets: Array<{ url: string; mediaType: string }>; image_url: string | null }) {
+  const asset = post.assets[0]
+  if (asset) return { url: asset.url, isVideo: asset.mediaType === 'video' }
+  if (post.image_url) return { url: post.image_url, isVideo: isVideoUrl(post.image_url) }
+  return null
+}
+
 function getFeedItems(
   posts: FeedPost[],
   highlightGroups: FeedHighlightGroup[],
@@ -270,15 +278,18 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
                   </div>
                 </CarouselItem>
                 
-                {recentImagePosts.map(post => (
+                {recentImagePosts.map(post => {
+                  const cover = getPostCover(post)
+                  if (!cover) return null
+                  return (
                   <CarouselItem key={post.id} className="basis-auto pl-2">
                     <div className="flex flex-col items-center gap-1.5 w-[72px]">
                       <div className="h-[66px] w-[66px] rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] p-[2.5px]">
                         <div className="h-full w-full rounded-full bg-background p-[2px]">
                           <div className="relative h-full w-full overflow-hidden rounded-full bg-muted">
-                            {isVideoUrl(post.image_url) ? (
+                            {cover.isVideo ? (
                               <video
-                                src={post.image_url!}
+                                src={cover.url}
                                 className="h-full w-full object-cover"
                                 muted
                                 playsInline
@@ -286,7 +297,7 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
                               />
                             ) : (
                               <Image
-                                src={post.image_url!}
+                                src={cover.url}
                                 alt={`Story ${post.user.name}`}
                                 fill
                                 sizes="66px"
@@ -299,7 +310,8 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
                       <span className="text-[11px] font-medium truncate w-full text-center">{post.user.name.split(' ')[0]}</span>
                     </div>
                   </CarouselItem>
-                ))}
+                  )
+                })}
 
                 {recentSightings.map(sighting => (
                   <CarouselItem key={sighting.id} className="basis-auto pl-2">
@@ -572,27 +584,13 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
                     </div>
 
                     {/* Post Image/Content */}
-                    {post.image_url ? (
-                      <div className="relative aspect-square w-full bg-muted overflow-hidden">
-                        {isVideoUrl(post.image_url) ? (
-                          <video
-                            src={post.image_url}
-                            controls
-                            playsInline
-                            preload="metadata"
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <Image
-                            src={post.image_url}
-                            alt={`Objava uporabnika ${post.user.name}`}
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 760px"
-                            className="object-cover"
-                            priority={index < 2}
-                          />
-                        )}
-                      </div>
+                    {post.assets.length > 0 || post.image_url ? (
+                      <PostMedia
+                        assets={post.assets}
+                        legacyUrl={post.image_url}
+                        alt={`Objava uporabnika ${post.user.name}`}
+                        priority={index < 2}
+                      />
                     ) : (
                       <div className="flex min-h-[300px] items-center justify-center bg-gradient-to-br from-secondary/30 via-card to-accent/10 p-10 border-y border-border/30">
                         <p className="text-center text-xl font-medium leading-relaxed italic text-foreground/80">

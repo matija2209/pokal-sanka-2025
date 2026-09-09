@@ -55,6 +55,7 @@ export const ModelName = {
   Team: 'Team',
   DrinkLog: 'DrinkLog',
   Post: 'Post',
+  PostAsset: 'PostAsset',
   Like: 'Like',
   Comment: 'Comment',
   Commentary: 'Commentary',
@@ -139,6 +140,18 @@ export const PostScalarFieldEnum = {
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+
+
+export const PostAssetScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  url: 'url',
+  mediaType: 'mediaType',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type PostAssetScalarFieldEnum = (typeof PostAssetScalarFieldEnum)[keyof typeof PostAssetScalarFieldEnum]
 
 
 export const LikeScalarFieldEnum = {

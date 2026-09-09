@@ -30,7 +30,7 @@ type CaptureMode = 'photo' | 'video'
 
 type Props = {
   onClose: () => void
-  onPublish: (file: File, caption: string, onProgress: (progress: number) => void) => Promise<boolean>
+  onPublish: (file: File) => Promise<boolean>
 }
 
 function recorderMimeType() {
@@ -54,10 +54,8 @@ export default function MediaPostCapture({ onClose, onPublish }: Props) {
   const [cameraPhase, setCameraPhase] = useState<CameraPhase>('loading')
   const [media, setMedia] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [caption, setCaption] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isPublishing, setIsPublishing] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null)
 
   const stopStream = useCallback(() => {
     recorderRef.current = null
@@ -189,9 +187,7 @@ export default function MediaPostCapture({ onClose, onPublish }: Props) {
 
   const retake = useCallback(() => {
     setMedia(null)
-    setCaption('')
     setError(null)
-    setUploadProgress(null)
     if (inputRef.current) inputRef.current.value = ''
   }, [])
 
@@ -204,16 +200,14 @@ export default function MediaPostCapture({ onClose, onPublish }: Props) {
   const publish = async () => {
     if (!media || isPublishing) return
     setIsPublishing(true)
-    setUploadProgress(0)
     setError(null)
     try {
-      const published = await onPublish(media, caption, setUploadProgress)
-      if (!published) setError('Objave ni bilo mogoče ustvariti. Poskusi znova.')
+      const published = await onPublish(media)
+      if (!published) setError('Medija ni bilo mogoče dodati. Poskusi znova.')
     } catch {
-      setError('Objave ni bilo mogoče ustvariti. Poskusi znova.')
+      setError('Medija ni bilo mogoče dodati. Poskusi znova.')
     } finally {
       setIsPublishing(false)
-      setUploadProgress(null)
     }
   }
 
@@ -238,18 +232,7 @@ export default function MediaPostCapture({ onClose, onPublish }: Props) {
               <button type="button" onClick={onClose} disabled={isPublishing} aria-label="Zapri" className="absolute right-4 top-4 z-10 rounded-full bg-black/45 p-2.5 backdrop-blur-sm">
                 <X className="size-5" />
               </button>
-              <div className="absolute inset-x-6 top-1/2 z-10 -translate-y-1/2">
-                <textarea
-                  value={caption}
-                  onChange={(event) => setCaption(event.target.value)}
-                  disabled={isPublishing}
-                  placeholder="Dodaj napis…"
-                  rows={3}
-                  aria-label="Napis objave"
-                  className="w-full resize-none rounded-2xl bg-black/10 px-3 py-2 text-center text-2xl font-bold text-white outline-none placeholder:text-white/45 focus:bg-black/30 [text-shadow:0_2px_12px_rgba(0,0,0,1)]"
-                />
-                <p className="mt-2 text-center text-xs text-white/55">{caption.trim().length} znakov</p>
-              </div>
+              <p className="absolute inset-x-6 top-1/2 z-10 -translate-y-1/2 text-center text-xl font-semibold text-white [text-shadow:0_2px_12px_rgba(0,0,0,1)]">Dodaj ta medij v objavo</p>
             </>
           ) : (
             <>
@@ -270,7 +253,7 @@ export default function MediaPostCapture({ onClose, onPublish }: Props) {
               <div className="absolute inset-x-5 bottom-28 z-10 text-center">
                 <p className="text-[11px] uppercase tracking-[0.35em] text-white/50">Objava v feed</p>
                 <p className="mt-3 text-3xl font-semibold">{cameraPhase === 'recording' ? 'Snemanje …' : mode === 'photo' ? 'Fotografiraj trenutek' : 'Posnemi video'}</p>
-                <p className="mt-2 text-sm text-white/60">Po zajemu lahko dodaš napis.</p>
+                <p className="mt-2 text-sm text-white/60">Po zajemu ga dodaj v objavo in izberi še druge medije.</p>
               </div>
             </>
           )}
@@ -280,14 +263,8 @@ export default function MediaPostCapture({ onClose, onPublish }: Props) {
 
       {media ? (
         <div className="bg-black/90 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-md">
-          {isPublishing && uploadProgress !== null ? (
-            <div className="mb-3 rounded-2xl bg-white/10 px-4 py-3">
-              <div className="mb-1.5 flex justify-between text-sm text-white/80"><span>Nalaganje medija</span><span>{Math.round(uploadProgress)}%</span></div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-white/20"><div className="h-full bg-primary transition-[width]" style={{ width: `${uploadProgress}%` }} /></div>
-            </div>
-          ) : null}
           <button type="button" onClick={publish} disabled={isPublishing} className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3.5 font-semibold text-primary-foreground disabled:opacity-50">
-            {isPublishing ? <><Loader2 className="size-4 animate-spin" /> Objavljam …</> : <><Check className="size-4" /> Objavi v feed</>}
+            {isPublishing ? <><Loader2 className="size-4 animate-spin" /> Dodajam …</> : <><Check className="size-4" /> Dodaj v objavo</>}
           </button>
         </div>
       ) : (

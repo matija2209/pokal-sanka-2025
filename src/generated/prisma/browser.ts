@@ -38,6 +38,11 @@ export type DrinkLog = Prisma.DrinkLogModel
  */
 export type Post = Prisma.PostModel
 /**
+ * Model PostAsset
+ * 
+ */
+export type PostAsset = Prisma.PostAssetModel
+/**
  * Model Like
  * 
  */

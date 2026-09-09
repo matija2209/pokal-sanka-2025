@@ -7,6 +7,7 @@ interface ImagePost {
   id: string
   message: string
   image_url: string | null
+  assets: Array<{ url: string; mediaType: string }>
   createdAt: Date
   user: {
     id: string
@@ -61,10 +62,11 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
   const allImages: UnifiedImage[] = [
     // Posts with images
     ...posts
-      .filter(post => post.image_url)
-      .map(post => ({
+      .map(post => ({ post, url: post.assets[0]?.url ?? post.image_url }))
+      .filter((entry): entry is { post: ImagePost; url: string } => Boolean(entry.url))
+      .map(({ post, url }) => ({
         id: `post-${post.id}`,
-        imageUrl: post.image_url!,
+        imageUrl: url,
         userName: post.user.name,
         userAvatar: post.user.profile_image_url,
         timestamp: post.createdAt,

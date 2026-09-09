@@ -5,6 +5,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { Card, CardContent } from '@/components/ui/card'
 import Image from 'next/image'
 import { isVideoUrl } from '@/lib/utils/media'
+import PostMedia from './post-media'
 
 interface TimelineDisplayProps {
   limit?: number
@@ -50,7 +51,9 @@ export default async function TimelineDisplay({ limit = 10, posts: suppliedPosts
                 
                 <p className=" mb-3 whitespace-pre-wrap">{post.message}</p>
                 
-                {post.image_url && (
+                {post.assets.length > 0 ? (
+                  <PostMedia assets={post.assets} alt={`Objava uporabnika ${post.user.name}`} />
+                ) : post.image_url ? (
                   <div className="rounded-lg overflow-hidden max-w-sm">
                     {isVideoUrl(post.image_url) ? (
                       <video
@@ -70,7 +73,7 @@ export default async function TimelineDisplay({ limit = 10, posts: suppliedPosts
                       />
                     )}
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
           </CardContent>

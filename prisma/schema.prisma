@@ -80,10 +80,26 @@ model Post {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes    Like[]
   comments Comment[]
+  assets   PostAsset[]
 
   @@index([eventId])
 
   @@map("posts")
+}
+
+model PostAsset {
+  id        String   @id @default(cuid())
+  postId    String
+  url       String
+  mediaType String
+  sortOrder Int
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, sortOrder])
+  @@index([postId, sortOrder])
+  @@map("post_assets")
 }
 
 model Like {

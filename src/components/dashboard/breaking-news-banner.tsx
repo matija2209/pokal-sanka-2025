@@ -8,6 +8,7 @@ interface PostWithUser {
   id: string
   message: string
   image_url: string | null
+  assets: Array<{ id: string }>
   createdAt: Date
   user: {
     id: string
@@ -83,7 +84,7 @@ export default function BreakingNewsBanner({ posts }: BreakingNewsBannerProps) {
                     <div key={`${post.id}-${index}`} className="flex items-center gap-2 flex-shrink-0">
                       <span className="text-yellow-300 font-medium text-sm">{userDisplay}:</span>
                       <span className="text-white font-bold text-xl">{post.message}</span>
-                      {post.image_url && <span className="text-lg">📸</span>}
+                      {(post.image_url || post.assets.length > 0) && <span className="text-lg">📸</span>}
                       <span className="text-yellow-200 text-xs font-light">pred {timeAgo}</span>
                       <span className="text-yellow-400 text-lg font-bold mx-2">•••</span>
                     </div>

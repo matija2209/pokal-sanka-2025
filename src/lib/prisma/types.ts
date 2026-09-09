@@ -1,7 +1,7 @@
-import { Prisma, User, Team, DrinkLog, Event, Person, Post, Commentary, PublicSighting, HypeVote, HypeEvent } from '@/generated/prisma/client'
+import { Prisma, User, Team, DrinkLog, Event, Person, Post, PostAsset, Commentary, PublicSighting, HypeVote, HypeEvent } from '@/generated/prisma/client'
 
 // Re-export base types
-export type { User, Team, DrinkLog, Event, Person, Post, Commentary, PublicSighting, HypeVote, HypeEvent, Prisma }
+export type { User, Team, DrinkLog, Event, Person, Post, PostAsset, Commentary, PublicSighting, HypeVote, HypeEvent, Prisma }
 
 // Drink type constants
 export const DRINK_TYPES = {

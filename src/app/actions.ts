@@ -1070,9 +1070,10 @@ export async function createPostAction(
     
     const message = (formData.get('message') as string | null)?.trim() ?? ''
     const imageUrl = (formData.get('imageUrl') as string | null)?.trim() || null
-    const isPrivateValue = formData.get('isPrivate') as string | null
+    const rawAssets = formData.get('assets')
+    const assets = parsePostAssets(rawAssets)
     
-    if (!message && !imageUrl) {
+    if (!message && !imageUrl && assets.length === 0) {
       return {
         success: false,
         message: 'Message or media is required',
@@ -1096,7 +1097,19 @@ export async function createPostAction(
         userId: currentUser.id,
         message,
         image_url: imageUrl,
-        isPrivate: isPrivateValue !== 'false'
+        // New event posts are private by product decision. Legacy callers can still use imageUrl.
+        isPrivate: true,
+        ...(assets.length > 0
+          ? {
+              assets: {
+                create: assets.map((asset, sortOrder) => ({
+                  url: asset.url,
+                  mediaType: asset.mediaType,
+                  sortOrder,
+                })),
+              },
+            }
+          : {}),
       }
     })
     invalidateEventReadCache(post.eventId)
@@ -1123,6 +1136,57 @@ export async function createPostAction(
       type: 'error'
     }
   }
+}
+
+const MAX_POST_ASSETS = 10
+const MAX_POST_ASSET_BYTES = 100 * 1024 * 1024
+const MAX_POST_TOTAL_BYTES = 500 * 1024 * 1024
+
+type SubmittedPostAsset = {
+  url: string
+  mediaType: 'image' | 'video'
+  size: number
+}
+
+function parsePostAssets(value: FormDataEntryValue | null): SubmittedPostAsset[] {
+  if (typeof value !== 'string' || !value) return []
+
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(value)
+  } catch {
+    throw new Error('Invalid media payload')
+  }
+
+  if (!Array.isArray(parsed) || parsed.length > MAX_POST_ASSETS) {
+    throw new Error(`A post can contain at most ${MAX_POST_ASSETS} media files.`)
+  }
+
+  const assets = parsed.map((asset): SubmittedPostAsset => {
+    if (!asset || typeof asset !== 'object') throw new Error('Invalid media payload')
+    const candidate = asset as Record<string, unknown>
+    if (typeof candidate.url !== 'string' || !candidate.url.trim()) throw new Error('Invalid media URL')
+    try {
+      const url = new URL(candidate.url)
+      if (url.protocol !== 'https:') throw new Error('Invalid media URL')
+    } catch {
+      throw new Error('Invalid media URL')
+    }
+    if (candidate.mediaType !== 'image' && candidate.mediaType !== 'video') {
+      throw new Error('Invalid media type')
+    }
+    const size = candidate.size
+    if (typeof size !== 'number' || !Number.isSafeInteger(size) || size <= 0 || size > MAX_POST_ASSET_BYTES) {
+      throw new Error('A media file exceeds the 100 MB limit.')
+    }
+    return { url: candidate.url, mediaType: candidate.mediaType, size }
+  })
+
+  if (assets.reduce((total, asset) => total + asset.size, 0) > MAX_POST_TOTAL_BYTES) {
+    throw new Error('Post media exceeds the 500 MB total limit.')
+  }
+
+  return assets
 }
 
 // Like Actions

@@ -401,6 +401,7 @@ export const ModelName = {
   Team: 'Team',
   DrinkLog: 'DrinkLog',
   Post: 'Post',
+  PostAsset: 'PostAsset',
   Like: 'Like',
   Comment: 'Comment',
   Commentary: 'Commentary',
@@ -433,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "team" | "drinkLog" | "post" | "like" | "comment" | "commentary" | "event" | "eventLandingPage" | "triviaCategory" | "triviaQuestion" | "triviaCategoryResult" | "triviaPowerUsage" | "person" | "publicSighting" | "hypeVote" | "authUser" | "authSession" | "authAccount" | "verification" | "hypeEvent"
+    modelProps: "user" | "team" | "drinkLog" | "post" | "postAsset" | "like" | "comment" | "commentary" | "event" | "eventLandingPage" | "triviaCategory" | "triviaQuestion" | "triviaCategoryResult" | "triviaPowerUsage" | "person" | "publicSighting" | "hypeVote" | "authUser" | "authSession" | "authAccount" | "verification" | "hypeEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -730,6 +731,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PostCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PostCountAggregateOutputType> | number
+        }
+      }
+    }
+    PostAsset: {
+      payload: Prisma.$PostAssetPayload<ExtArgs>
+      fields: Prisma.PostAssetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PostAssetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PostAssetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>
+        }
+        findFirst: {
+          args: Prisma.PostAssetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PostAssetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>
+        }
+        findMany: {
+          args: Prisma.PostAssetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>[]
+        }
+        create: {
+          args: Prisma.PostAssetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>
+        }
+        createMany: {
+          args: Prisma.PostAssetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PostAssetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>[]
+        }
+        delete: {
+          args: Prisma.PostAssetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>
+        }
+        update: {
+          args: Prisma.PostAssetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>
+        }
+        deleteMany: {
+          args: Prisma.PostAssetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PostAssetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PostAssetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>[]
+        }
+        upsert: {
+          args: Prisma.PostAssetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostAssetPayload>
+        }
+        aggregate: {
+          args: Prisma.PostAssetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePostAsset>
+        }
+        groupBy: {
+          args: Prisma.PostAssetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PostAssetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PostAssetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PostAssetCountAggregateOutputType> | number
         }
       }
     }
@@ -2081,6 +2156,18 @@ export const PostScalarFieldEnum = {
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
 
 
+export const PostAssetScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  url: 'url',
+  mediaType: 'mediaType',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type PostAssetScalarFieldEnum = (typeof PostAssetScalarFieldEnum)[keyof typeof PostAssetScalarFieldEnum]
+
+
 export const LikeScalarFieldEnum = {
   id: 'id',
   eventId: 'eventId',
@@ -2627,6 +2714,7 @@ export type GlobalOmitConfig = {
   team?: Prisma.TeamOmit
   drinkLog?: Prisma.DrinkLogOmit
   post?: Prisma.PostOmit
+  postAsset?: Prisma.PostAssetOmit
   like?: Prisma.LikeOmit
   comment?: Prisma.CommentOmit
   commentary?: Prisma.CommentaryOmit

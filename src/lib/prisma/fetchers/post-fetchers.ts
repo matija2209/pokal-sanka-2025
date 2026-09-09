@@ -8,6 +8,7 @@ export async function getRecentPosts(limit: number = 10, eventIdOverride?: strin
       take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
+        assets: { orderBy: { sortOrder: 'asc' } },
         user: {
           include: {
             team: true,
@@ -24,6 +25,7 @@ export async function getRecentPosts(limit: number = 10, eventIdOverride?: strin
     take: limit,
     orderBy: { createdAt: 'desc' },
     include: {
+      assets: { orderBy: { sortOrder: 'asc' } },
       event: true,
       user: {
         include: {
@@ -45,6 +47,7 @@ export async function getPublicPosts(limit: number = 10, eventIdOverride?: strin
       take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
+        assets: { orderBy: { sortOrder: 'asc' } },
         user: {
           include: {
             team: true,
@@ -64,6 +67,7 @@ export async function getPublicPosts(limit: number = 10, eventIdOverride?: strin
     take: limit,
     orderBy: { createdAt: 'desc' },
     include: {
+      assets: { orderBy: { sortOrder: 'asc' } },
       event: true,
       user: {
         include: {
@@ -82,6 +86,7 @@ export async function getPostsForSuperadmin(limit: number = 100) {
       take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
+        assets: { orderBy: { sortOrder: 'asc' } },
         user: {
           include: {
             team: true,
@@ -98,6 +103,7 @@ export async function getPostsForSuperadmin(limit: number = 100) {
     take: limit,
     orderBy: { createdAt: 'desc' },
     include: {
+      assets: { orderBy: { sortOrder: 'asc' } },
       event: true,
       user: {
         include: {
@@ -140,6 +146,7 @@ export async function deletePostForSuperadmin(postId: string) {
 
 export async function getPostsWithUsers(limit: number = 20, eventIdOverride?: string) {
   const withInteractions = {
+    assets: { orderBy: { sortOrder: 'asc' as const } },
     _count: { select: { likes: true, comments: true } },
     comments: {
       orderBy: { createdAt: 'asc' as const },
@@ -200,11 +207,13 @@ export async function getRecentPostsWithImages(limit: number = 5, eventIdOverrid
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.post.findMany({
       where: {
-        image_url: {
-          not: null,
-        },
+        OR: [
+          { image_url: { not: null } },
+          { assets: { some: {} } },
+        ],
       },
       include: {
+        assets: { orderBy: { sortOrder: 'asc' } },
         user: {
           include: {
             team: true,
@@ -221,11 +230,13 @@ export async function getRecentPostsWithImages(limit: number = 5, eventIdOverrid
   return await prisma.post.findMany({
     where: {
       eventId,
-      image_url: {
-        not: null,
-      },
+      OR: [
+        { image_url: { not: null } },
+        { assets: { some: {} } },
+      ],
     },
     include: {
+      assets: { orderBy: { sortOrder: 'asc' } },
       event: true,
       user: {
         include: {
