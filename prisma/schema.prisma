@@ -73,6 +73,7 @@ model Post {
   userId    String
   message   String
   image_url String?
+  kind      PostKind  @default(post)
   isPrivate Boolean  @default(true)
   createdAt DateTime @default(now())
 
@@ -85,6 +86,11 @@ model Post {
   @@index([eventId])
 
   @@map("posts")
+}
+
+enum PostKind {
+  post
+  reel
 }
 
 model PostAsset {

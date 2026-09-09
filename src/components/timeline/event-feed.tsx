@@ -7,11 +7,6 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from '@/components/ui/carousel'
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -24,7 +19,6 @@ import {
   Lock,
   MapPin,
   MoreHorizontal,
-  Plus,
   Unlock,
 } from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
@@ -36,7 +30,7 @@ import PostActions from './post-actions'
 import PostMedia from './post-media'
 import { ACTION_LABELS } from '@/lib/utils/bachelor-points'
 import type { ActionType } from '@/lib/utils/bachelor-points'
-import { isVideoUrl } from '@/lib/utils/media'
+import { ReelProvider, ReelStoryStrip } from './reel-experience'
 
 import type { Event } from '@/lib/prisma/types'
 import { getActiveEvent } from '@/lib/events'
@@ -182,13 +176,6 @@ function getPostPoints(drinkLogs: Array<{ points: number }>) {
   return drinkLogs.reduce((sum, log) => sum + log.points, 0)
 }
 
-function getPostCover(post: { assets: Array<{ url: string; mediaType: string }>; image_url: string | null }) {
-  const asset = post.assets[0]
-  if (asset) return { url: asset.url, isVideo: asset.mediaType === 'video' }
-  if (post.image_url) return { url: post.image_url, isVideo: isVideoUrl(post.image_url) }
-  return null
-}
-
 function getFeedItems(
   posts: FeedPost[],
   highlightGroups: FeedHighlightGroup[],
@@ -240,7 +227,7 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
   const {
     posts,
     commentaries: recentCommentaries,
-    imagePosts: recentImagePosts,
+    reels,
     sightings: recentSightings,
     hypeEvents,
     hypeVoteCount,
@@ -251,93 +238,10 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
   const likedPostIds = await getLikedPostIds(currentUser.id, posts.map(post => post.id))
 
   return (
+    <ReelProvider reels={reels}>
     <div className="w-full">
-      <div className="w-full space-y-2">
-          {/* Stories Section */}
-          <section className="bg-background py-4 border-b border-border/50">
-            <Carousel opts={{ align: 'start', dragFree: true }} className="w-full">
-              <CarouselContent className="-ml-2 px-4">
-                <CarouselItem className="basis-auto pl-2">
-                  <div className="flex flex-col items-center gap-1.5 w-[72px]">
-                    <div className="relative">
-                      <div className="h-[66px] w-[66px] rounded-full p-[2px] bg-background border border-border/60">
-                        <UserAvatar
-                          user={{
-                            name: currentUser.name,
-                            profile_image_url: currentUser.profile_image_url,
-                          }}
-                          size="xl"
-                          className="h-full w-full border-0"
-                        />
-                      </div>
-                      <div className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary p-0.5 text-white ring-2 ring-background">
-                        <Plus className="h-3.5 w-3.5" strokeWidth={3} />
-                      </div>
-                    </div>
-                    <span className="text-[11px] text-muted-foreground font-medium truncate w-full text-center">Tvoja zgodba</span>
-                  </div>
-                </CarouselItem>
-                
-                {recentImagePosts.map(post => {
-                  const cover = getPostCover(post)
-                  if (!cover) return null
-                  return (
-                  <CarouselItem key={post.id} className="basis-auto pl-2">
-                    <div className="flex flex-col items-center gap-1.5 w-[72px]">
-                      <div className="h-[66px] w-[66px] rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] p-[2.5px]">
-                        <div className="h-full w-full rounded-full bg-background p-[2px]">
-                          <div className="relative h-full w-full overflow-hidden rounded-full bg-muted">
-                            {cover.isVideo ? (
-                              <video
-                                src={cover.url}
-                                className="h-full w-full object-cover"
-                                muted
-                                playsInline
-                                preload="metadata"
-                              />
-                            ) : (
-                              <Image
-                                src={cover.url}
-                                alt={`Story ${post.user.name}`}
-                                fill
-                                sizes="66px"
-                                className="object-cover"
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <span className="text-[11px] font-medium truncate w-full text-center">{post.user.name.split(' ')[0]}</span>
-                    </div>
-                  </CarouselItem>
-                  )
-                })}
-
-                {recentSightings.map(sighting => (
-                  <CarouselItem key={sighting.id} className="basis-auto pl-2">
-                    <div className="flex flex-col items-center gap-1.5 w-[72px]">
-                      <div className="h-[66px] w-[66px] rounded-full bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 p-[2.5px]">
-                        <div className="h-full w-full rounded-full bg-background p-[2px]">
-                          <div className="relative h-full w-full overflow-hidden rounded-full bg-muted">
-                            <Image
-                              src={sighting.photoUrl}
-                              alt={`${activeEvent?.name ?? 'Bachelor'} sighting ${sighting.submitterName ?? ''}`.trim()}
-                              fill
-                              sizes="66px"
-                              className="object-cover"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <span className="text-[11px] font-medium truncate w-full text-center">
-                        {activeEvent?.name ? activeEvent.name.split(' ')[0] : 'Bachelor'}
-                      </span>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
-          </section>
+      <div className="w-full space-y-0">
+          <ReelStoryStrip reels={reels} currentUser={currentUser} />
 
           {/* Create Post Section */}
           <section
@@ -558,6 +462,7 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
                             <Link href={`/app/players/${post.user.id}`} className="text-sm font-bold hover:text-muted-foreground transition-colors">
                               {post.user.name}
                             </Link>
+                            {post.kind === 'reel' ? <Badge variant="secondary" className="text-[10px]">REEL</Badge> : null}
                             {post.user.team && (
                               <div className="flex items-center gap-1">
                                 <span className="text-muted-foreground/50">•</span>
@@ -590,6 +495,8 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
                         legacyUrl={post.image_url}
                         alt={`Objava uporabnika ${post.user.name}`}
                         priority={index < 2}
+                        postId={post.id}
+                        postKind={post.kind}
                       />
                     ) : (
                       <div className="flex min-h-[300px] items-center justify-center bg-gradient-to-br from-secondary/30 via-card to-accent/10 p-10 border-y border-border/30">
@@ -644,5 +551,6 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
           </section>
       </div>
     </div>
+    </ReelProvider>
   )
 }

@@ -6,6 +6,7 @@ import { X } from 'lucide-react'
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel'
 import { cn } from '@/lib/utils'
 import { isVideoUrl } from '@/lib/utils/media'
+import { useReels } from './reel-experience'
 
 export type PostMediaAsset = {
   id: string
@@ -18,6 +19,8 @@ type Props = {
   legacyUrl?: string | null
   alt: string
   priority?: boolean
+  postId?: string
+  postKind?: 'post' | 'reel'
 }
 
 function isVideo(asset: PostMediaAsset) {
@@ -58,10 +61,11 @@ function ReelViewer({ asset, alt, onClose }: { asset: PostMediaAsset; alt: strin
   )
 }
 
-export default function PostMedia({ assets, legacyUrl, alt, priority = false }: Props) {
+export default function PostMedia({ assets, legacyUrl, alt, priority = false, postId, postKind = 'post' }: Props) {
   const [api, setApi] = useState<CarouselApi>()
   const [activeIndex, setActiveIndex] = useState(0)
   const [viewerOpen, setViewerOpen] = useState(false)
+  const reels = useReels()
   const slides = assets.length > 0
     ? assets
     : legacyUrl
@@ -82,9 +86,9 @@ export default function PostMedia({ assets, legacyUrl, alt, priority = false }: 
     const asset = slides[0]!
     return (
       <>
-        <button type="button" onClick={() => setViewerOpen(true)} className="relative block aspect-square w-full overflow-hidden bg-muted text-left" aria-label="Odpri celozaslonski prikaz">
+        <button type="button" onClick={() => postKind === 'reel' && postId ? reels?.openReel(postId) : setViewerOpen(true)} className="relative block aspect-square w-full overflow-hidden bg-muted text-left" aria-label="Odpri celozaslonski prikaz">
           <Media asset={asset} alt={alt} priority={priority} controls={false} />
-          {isVideo(asset) ? <span className="absolute bottom-3 left-3 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">Odpri reel</span> : null}
+          {postKind === 'reel' ? <span className="absolute bottom-3 left-3 rounded-full bg-black/55 px-3 py-1 text-xs font-semibold text-white">Odpri reel</span> : null}
         </button>
         {viewerOpen ? <ReelViewer asset={asset} alt={alt} onClose={() => setViewerOpen(false)} /> : null}
       </>

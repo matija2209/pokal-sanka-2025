@@ -135,6 +135,7 @@ export const PostScalarFieldEnum = {
   userId: 'userId',
   message: 'message',
   image_url: 'image_url',
+  kind: 'kind',
   isPrivate: 'isPrivate',
   createdAt: 'createdAt'
 } as const

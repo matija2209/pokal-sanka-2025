@@ -15,6 +15,7 @@ import {
   getRecentDrinkLogsWithTeam,
   getRecentPosts,
   getRecentPostsWithImages,
+  getRecentReels,
   getRecentTeamLogos,
   getRecentUserProfileImages,
   getPostsWithUsers,
@@ -49,16 +50,16 @@ export async function getEventFeedSnapshot(eventId: string, isBachelor: boolean)
   cacheLife('eventLive')
   cacheTag(eventReadTag(eventId))
 
-  const [posts, commentaries, imagePosts, sightings, hypeEvents, hypeVoteCount] = await Promise.all([
+  const [posts, commentaries, reels, sightings, hypeEvents, hypeVoteCount] = await Promise.all([
     getPostsWithUsers(24, eventId),
     getRecentCommentaries(30, eventId),
-    getRecentPostsWithImages(10, eventId),
+    getRecentReels(24, eventId),
     isBachelor ? getApprovedSightings(10, 0, eventId) : Promise.resolve([]),
     isBachelor ? getHypeEvents(eventId) : Promise.resolve([]),
     isBachelor ? getHypeVoteCount(eventId) : Promise.resolve(0),
   ])
 
-  return { posts, commentaries, imagePosts, sightings, hypeEvents, hypeVoteCount }
+  return { posts, commentaries, reels, sightings, hypeEvents, hypeVoteCount }
 }
 
 export async function getEventDashboardSnapshot(eventId: string) {

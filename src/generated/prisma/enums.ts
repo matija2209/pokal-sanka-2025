@@ -9,7 +9,9 @@
 * 🟢 You can import this file directly.
 */
 
+export const PostKind = {
+  post: 'post',
+  reel: 'reel'
+} as const
 
-
-// This file is empty because there are no enums in the schema.
-export {}
+export type PostKind = (typeof PostKind)[keyof typeof PostKind]

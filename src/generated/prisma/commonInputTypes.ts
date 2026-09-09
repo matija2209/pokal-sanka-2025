@@ -137,9 +137,26 @@ export type IntWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
+export type EnumPostKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.PostKind | Prisma.EnumPostKindFieldRefInput<$PrismaModel>
+  in?: $Enums.PostKind[] | Prisma.ListEnumPostKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PostKind[] | Prisma.ListEnumPostKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPostKindFilter<$PrismaModel> | $Enums.PostKind
+}
+
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type EnumPostKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PostKind | Prisma.EnumPostKindFieldRefInput<$PrismaModel>
+  in?: $Enums.PostKind[] | Prisma.ListEnumPostKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PostKind[] | Prisma.ListEnumPostKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPostKindWithAggregatesFilter<$PrismaModel> | $Enums.PostKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPostKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPostKindFilter<$PrismaModel>
 }
 
 export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -480,9 +497,26 @@ export type NestedFloatFilter<$PrismaModel = never> = {
   not?: Prisma.NestedFloatFilter<$PrismaModel> | number
 }
 
+export type NestedEnumPostKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.PostKind | Prisma.EnumPostKindFieldRefInput<$PrismaModel>
+  in?: $Enums.PostKind[] | Prisma.ListEnumPostKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PostKind[] | Prisma.ListEnumPostKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPostKindFilter<$PrismaModel> | $Enums.PostKind
+}
+
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type NestedEnumPostKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PostKind | Prisma.EnumPostKindFieldRefInput<$PrismaModel>
+  in?: $Enums.PostKind[] | Prisma.ListEnumPostKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PostKind[] | Prisma.ListEnumPostKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPostKindWithAggregatesFilter<$PrismaModel> | $Enums.PostKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPostKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPostKindFilter<$PrismaModel>
 }
 
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {

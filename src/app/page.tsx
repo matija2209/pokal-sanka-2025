@@ -9,6 +9,7 @@ import type { Metadata } from 'next'
 import { getActiveEvent, getAllEvents, getSiteBrandParts } from '@/lib/events'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 import { prisma } from '@/lib/prisma/client'
+import { Container } from '@/components/layout/container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const { brand, eventName } = await getSiteBrandParts()
@@ -137,7 +138,7 @@ export default async function HomePage() {
       
       {/* Login section at bottom */}
       <div className="relative z-10 min-h-screen flex flex-col justify-end">
-        <div className="w-full px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+        <Container size="mobile" className="pb-12 pt-6">
           {/* Welcome text */}
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
@@ -162,7 +163,7 @@ export default async function HomePage() {
               Trenutno ni aktivnih dogodkov.
             </p>
           )}
-        </div>
+        </Container>
       </div>
     </div>
   )

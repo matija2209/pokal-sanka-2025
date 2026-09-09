@@ -2149,6 +2149,7 @@ export const PostScalarFieldEnum = {
   userId: 'userId',
   message: 'message',
   image_url: 'image_url',
+  kind: 'kind',
   isPrivate: 'isPrivate',
   createdAt: 'createdAt'
 } as const
@@ -2526,6 +2527,20 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'PostKind'
+ */
+export type EnumPostKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PostKind'>
+
+
+
+/**
+ * Reference to a field of type 'PostKind[]'
+ */
+export type ListEnumPostKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PostKind[]'>
+
+
+
+/**
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -2794,4 +2809,3 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
-

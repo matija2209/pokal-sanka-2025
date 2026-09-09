@@ -30,6 +30,7 @@ export type PostMinAggregateOutputType = {
   userId: string | null
   message: string | null
   image_url: string | null
+  kind: $Enums.PostKind | null
   isPrivate: boolean | null
   createdAt: Date | null
 }
@@ -40,6 +41,7 @@ export type PostMaxAggregateOutputType = {
   userId: string | null
   message: string | null
   image_url: string | null
+  kind: $Enums.PostKind | null
   isPrivate: boolean | null
   createdAt: Date | null
 }
@@ -50,6 +52,7 @@ export type PostCountAggregateOutputType = {
   userId: number
   message: number
   image_url: number
+  kind: number
   isPrivate: number
   createdAt: number
   _all: number
@@ -62,6 +65,7 @@ export type PostMinAggregateInputType = {
   userId?: true
   message?: true
   image_url?: true
+  kind?: true
   isPrivate?: true
   createdAt?: true
 }
@@ -72,6 +76,7 @@ export type PostMaxAggregateInputType = {
   userId?: true
   message?: true
   image_url?: true
+  kind?: true
   isPrivate?: true
   createdAt?: true
 }
@@ -82,6 +87,7 @@ export type PostCountAggregateInputType = {
   userId?: true
   message?: true
   image_url?: true
+  kind?: true
   isPrivate?: true
   createdAt?: true
   _all?: true
@@ -165,6 +171,7 @@ export type PostGroupByOutputType = {
   userId: string
   message: string
   image_url: string | null
+  kind: $Enums.PostKind
   isPrivate: boolean
   createdAt: Date
   _count: PostCountAggregateOutputType | null
@@ -196,6 +203,7 @@ export type PostWhereInput = {
   userId?: Prisma.StringFilter<"Post"> | string
   message?: Prisma.StringFilter<"Post"> | string
   image_url?: Prisma.StringNullableFilter<"Post"> | string | null
+  kind?: Prisma.EnumPostKindFilter<"Post"> | $Enums.PostKind
   isPrivate?: Prisma.BoolFilter<"Post"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   event?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
@@ -211,6 +219,7 @@ export type PostOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   message?: Prisma.SortOrder
   image_url?: Prisma.SortOrderInput | Prisma.SortOrder
+  kind?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   event?: Prisma.EventOrderByWithRelationInput
@@ -229,6 +238,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"Post"> | string
   message?: Prisma.StringFilter<"Post"> | string
   image_url?: Prisma.StringNullableFilter<"Post"> | string | null
+  kind?: Prisma.EnumPostKindFilter<"Post"> | $Enums.PostKind
   isPrivate?: Prisma.BoolFilter<"Post"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   event?: Prisma.XOR<Prisma.EventNullableScalarRelationFilter, Prisma.EventWhereInput> | null
@@ -244,6 +254,7 @@ export type PostOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   message?: Prisma.SortOrder
   image_url?: Prisma.SortOrderInput | Prisma.SortOrder
+  kind?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PostCountOrderByAggregateInput
@@ -260,6 +271,7 @@ export type PostScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"Post"> | string
   message?: Prisma.StringWithAggregatesFilter<"Post"> | string
   image_url?: Prisma.StringNullableWithAggregatesFilter<"Post"> | string | null
+  kind?: Prisma.EnumPostKindWithAggregatesFilter<"Post"> | $Enums.PostKind
   isPrivate?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
 }
@@ -268,6 +280,7 @@ export type PostCreateInput = {
   id?: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   event?: Prisma.EventCreateNestedOneWithoutPostsInput
@@ -283,6 +296,7 @@ export type PostUncheckedCreateInput = {
   userId: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
@@ -294,6 +308,7 @@ export type PostUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   event?: Prisma.EventUpdateOneWithoutPostsNestedInput
@@ -309,6 +324,7 @@ export type PostUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
@@ -322,6 +338,7 @@ export type PostCreateManyInput = {
   userId: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
 }
@@ -330,6 +347,7 @@ export type PostUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -340,6 +358,7 @@ export type PostUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -360,6 +379,7 @@ export type PostCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   message?: Prisma.SortOrder
   image_url?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -370,6 +390,7 @@ export type PostMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   message?: Prisma.SortOrder
   image_url?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -380,6 +401,7 @@ export type PostMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   message?: Prisma.SortOrder
   image_url?: Prisma.SortOrder
+  kind?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -429,6 +451,10 @@ export type PostUncheckedUpdateManyWithoutUserNestedInput = {
   update?: Prisma.PostUpdateWithWhereUniqueWithoutUserInput | Prisma.PostUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.PostUpdateManyWithWhereWithoutUserInput | Prisma.PostUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
+}
+
+export type EnumPostKindFieldUpdateOperationsInput = {
+  set?: $Enums.PostKind
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -523,6 +549,7 @@ export type PostCreateWithoutUserInput = {
   id?: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   event?: Prisma.EventCreateNestedOneWithoutPostsInput
@@ -536,6 +563,7 @@ export type PostUncheckedCreateWithoutUserInput = {
   eventId?: string | null
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
@@ -578,6 +606,7 @@ export type PostScalarWhereInput = {
   userId?: Prisma.StringFilter<"Post"> | string
   message?: Prisma.StringFilter<"Post"> | string
   image_url?: Prisma.StringNullableFilter<"Post"> | string | null
+  kind?: Prisma.EnumPostKindFilter<"Post"> | $Enums.PostKind
   isPrivate?: Prisma.BoolFilter<"Post"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
 }
@@ -586,6 +615,7 @@ export type PostCreateWithoutAssetsInput = {
   id?: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   event?: Prisma.EventCreateNestedOneWithoutPostsInput
@@ -600,6 +630,7 @@ export type PostUncheckedCreateWithoutAssetsInput = {
   userId: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
@@ -626,6 +657,7 @@ export type PostUpdateWithoutAssetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   event?: Prisma.EventUpdateOneWithoutPostsNestedInput
@@ -640,6 +672,7 @@ export type PostUncheckedUpdateWithoutAssetsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
@@ -650,6 +683,7 @@ export type PostCreateWithoutLikesInput = {
   id?: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   event?: Prisma.EventCreateNestedOneWithoutPostsInput
@@ -664,6 +698,7 @@ export type PostUncheckedCreateWithoutLikesInput = {
   userId: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput
@@ -690,6 +725,7 @@ export type PostUpdateWithoutLikesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   event?: Prisma.EventUpdateOneWithoutPostsNestedInput
@@ -704,6 +740,7 @@ export type PostUncheckedUpdateWithoutLikesInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput
@@ -714,6 +751,7 @@ export type PostCreateWithoutCommentsInput = {
   id?: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   event?: Prisma.EventCreateNestedOneWithoutPostsInput
@@ -728,6 +766,7 @@ export type PostUncheckedCreateWithoutCommentsInput = {
   userId: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
@@ -754,6 +793,7 @@ export type PostUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   event?: Prisma.EventUpdateOneWithoutPostsNestedInput
@@ -768,6 +808,7 @@ export type PostUncheckedUpdateWithoutCommentsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
@@ -778,6 +819,7 @@ export type PostCreateWithoutEventInput = {
   id?: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPostsInput
@@ -791,6 +833,7 @@ export type PostUncheckedCreateWithoutEventInput = {
   userId: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutPostInput
@@ -829,6 +872,7 @@ export type PostCreateManyUserInput = {
   eventId?: string | null
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
 }
@@ -837,6 +881,7 @@ export type PostUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   event?: Prisma.EventUpdateOneWithoutPostsNestedInput
@@ -850,6 +895,7 @@ export type PostUncheckedUpdateWithoutUserInput = {
   eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
@@ -862,6 +908,7 @@ export type PostUncheckedUpdateManyWithoutUserInput = {
   eventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -871,6 +918,7 @@ export type PostCreateManyEventInput = {
   userId: string
   message: string
   image_url?: string | null
+  kind?: $Enums.PostKind
   isPrivate?: boolean
   createdAt?: Date | string
 }
@@ -879,6 +927,7 @@ export type PostUpdateWithoutEventInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput
@@ -892,6 +941,7 @@ export type PostUncheckedUpdateWithoutEventInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikeUncheckedUpdateManyWithoutPostNestedInput
@@ -904,6 +954,7 @@ export type PostUncheckedUpdateManyWithoutEventInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  kind?: Prisma.EnumPostKindFieldUpdateOperationsInput | $Enums.PostKind
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -963,6 +1014,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   userId?: boolean
   message?: boolean
   image_url?: boolean
+  kind?: boolean
   isPrivate?: boolean
   createdAt?: boolean
   event?: boolean | Prisma.Post$eventArgs<ExtArgs>
@@ -979,6 +1031,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   userId?: boolean
   message?: boolean
   image_url?: boolean
+  kind?: boolean
   isPrivate?: boolean
   createdAt?: boolean
   event?: boolean | Prisma.Post$eventArgs<ExtArgs>
@@ -991,6 +1044,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   userId?: boolean
   message?: boolean
   image_url?: boolean
+  kind?: boolean
   isPrivate?: boolean
   createdAt?: boolean
   event?: boolean | Prisma.Post$eventArgs<ExtArgs>
@@ -1003,11 +1057,12 @@ export type PostSelectScalar = {
   userId?: boolean
   message?: boolean
   image_url?: boolean
+  kind?: boolean
   isPrivate?: boolean
   createdAt?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "userId" | "message" | "image_url" | "isPrivate" | "createdAt", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "userId" | "message" | "image_url" | "kind" | "isPrivate" | "createdAt", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   event?: boolean | Prisma.Post$eventArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1040,6 +1095,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     userId: string
     message: string
     image_url: string | null
+    kind: $Enums.PostKind
     isPrivate: boolean
     createdAt: Date
   }, ExtArgs["result"]["post"]>
@@ -1475,6 +1531,7 @@ export interface PostFieldRefs {
   readonly userId: Prisma.FieldRef<"Post", 'String'>
   readonly message: Prisma.FieldRef<"Post", 'String'>
   readonly image_url: Prisma.FieldRef<"Post", 'String'>
+  readonly kind: Prisma.FieldRef<"Post", 'PostKind'>
   readonly isPrivate: Prisma.FieldRef<"Post", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
 }

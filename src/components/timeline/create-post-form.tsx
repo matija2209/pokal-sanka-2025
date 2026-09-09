@@ -131,13 +131,13 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
 
   return (
     <>
-      <div className="px-4 py-3">
-        <form onSubmit={(event) => { event.preventDefault(); void publishPost() }} className="space-y-4">
+      <div className="px-4 py-2">
+        <form onSubmit={(event) => { event.preventDefault(); void publishPost() }} className="space-y-2">
           <div className="flex items-start gap-3">
-            <UserAvatar user={{ name: currentUser?.name || 'Uporabnik', profile_image_url: currentUser?.profile_image_url }} size="md" className="mt-1" />
+            <UserAvatar user={{ name: currentUser?.name || 'Uporabnik', profile_image_url: currentUser?.profile_image_url }} size="md" />
             <div className="min-w-0 flex-1">
-              <Textarea placeholder={`Kaj se dogaja, ${currentUser?.name?.split(' ')[0] || 'ti'}?`} value={message} onChange={(event) => setMessage(event.target.value)} className="min-h-[60px] w-full resize-none border-0 bg-transparent p-0 text-base shadow-none placeholder:text-muted-foreground/60 focus-visible:ring-0" />
-              {files.length > 0 ? <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
+              <Textarea placeholder={`Kaj se dogaja, ${currentUser?.name?.split(' ')[0] || 'ti'}?`} value={message} onChange={(event) => setMessage(event.target.value)} rows={1} className="max-h-36 min-h-10 w-full resize-none overflow-y-auto border-0 bg-transparent px-0 py-2 text-base shadow-none placeholder:text-muted-foreground/60 focus-visible:ring-0" />
+              {files.length > 0 ? <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5">
                 {files.map((file, index) => {
                   return <div key={fileKey(file)} className="group relative aspect-square overflow-hidden rounded-xl bg-muted">
                     <MediaPreview file={file} alt={`Medij ${index + 1}`} />
@@ -150,7 +150,7 @@ export default function CreatePostForm({ currentUser }: CreatePostFormProps) {
                   </div>
                 })}
               </div> : null}
-              <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-t border-border/40 pt-3">
+              <div className="mt-1 flex flex-wrap items-center justify-between gap-2 border-t border-border/40 pt-2">
                 <div className="flex items-center gap-2">
                   <Button type="button" variant="outline" size="sm" onClick={() => setShowCapture(true)} disabled={isPosting || files.length >= MAX_ASSETS} className="gap-2 rounded-full"><Camera className="size-4" /> Kamera</Button>
                   <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={isPosting || files.length >= MAX_ASSETS} className="gap-2 rounded-full"><ImagePlus className="size-4" /> Galerija</Button>

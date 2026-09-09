@@ -1070,6 +1070,7 @@ export async function createPostAction(
     
     const message = (formData.get('message') as string | null)?.trim() ?? ''
     const imageUrl = (formData.get('imageUrl') as string | null)?.trim() || null
+    const kind = formData.get('kind') === 'reel' ? 'reel' : 'post'
     const rawAssets = formData.get('assets')
     const assets = parsePostAssets(rawAssets)
     
@@ -1078,6 +1079,16 @@ export async function createPostAction(
         success: false,
         message: 'Message or media is required',
         type: 'error'
+      }
+    }
+
+    if (kind === 'reel') {
+      if (imageUrl || assets.length !== 1 || assets[0]?.mediaType !== 'video') {
+        return {
+          success: false,
+          message: 'Reel mora vsebovati natanko en video.',
+          type: 'error',
+        }
       }
     }
     
@@ -1097,6 +1108,7 @@ export async function createPostAction(
         userId: currentUser.id,
         message,
         image_url: imageUrl,
+        kind,
         // New event posts are private by product decision. Legacy callers can still use imageUrl.
         isPrivate: true,
         ...(assets.length > 0

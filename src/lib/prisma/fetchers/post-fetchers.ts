@@ -2,6 +2,30 @@ import { prisma } from '@/lib/prisma/client'
 import { requireActiveEventId } from '@/lib/events'
 import { isMultiEventSchemaAvailable } from '@/lib/prisma/schema-capabilities'
 
+export async function getRecentReels(limit: number = 24, eventIdOverride?: string) {
+  const include = {
+    assets: { orderBy: { sortOrder: 'asc' as const } },
+    user: { include: { team: true } },
+  }
+
+  if (!(await isMultiEventSchemaAvailable())) {
+    return prisma.post.findMany({
+      where: { kind: 'reel' },
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      include,
+    })
+  }
+
+  const eventId = eventIdOverride ?? (await requireActiveEventId())
+  return prisma.post.findMany({
+    where: { eventId, kind: 'reel' },
+    take: limit,
+    orderBy: { createdAt: 'desc' },
+    include,
+  })
+}
+
 export async function getRecentPosts(limit: number = 10, eventIdOverride?: string) {
   if (!(await isMultiEventSchemaAvailable())) {
     return await prisma.post.findMany({
