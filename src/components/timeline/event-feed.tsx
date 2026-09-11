@@ -5,7 +5,6 @@ import { UserAvatar } from '@/components/users'
 import { TeamLogo } from '@/components/teams'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,7 +17,6 @@ import {
   ImageIcon,
   Lock,
   MapPin,
-  MoreHorizontal,
   Unlock,
 } from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
@@ -26,7 +24,7 @@ import { sl } from 'date-fns/locale'
 import Image from 'next/image'
 import Link from 'next/link'
 import CreatePostForm from './create-post-form'
-import PostActions from './post-actions'
+import PostActions, { PostMenu } from './post-actions'
 import PostMedia from './post-media'
 import { ACTION_LABELS } from '@/lib/utils/bachelor-points'
 import type { ActionType } from '@/lib/utils/bachelor-points'
@@ -483,9 +481,7 @@ export default async function EventFeed({ currentUser, currentEvent }: EventFeed
                           </span>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
+                      {post.user.id === currentUser.id && <PostMenu postId={post.id} />}
                     </div>
 
                     {/* Post Image/Content */}

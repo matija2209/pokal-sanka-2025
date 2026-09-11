@@ -1,18 +1,94 @@
 'use client'
 
 import { useActionState, useOptimistic, useState, useTransition, useEffect, useRef } from 'react'
-import { Heart, MessageCircle, Send, Bookmark } from 'lucide-react'
+import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import { UserAvatar } from '@/components/users'
-import { toggleLikeAction, addCommentAction } from '@/app/actions'
+import { toggleLikeAction, addCommentAction, deleteOwnPostAction } from '@/app/actions'
 import { initialPostInteractionActionState } from '@/lib/types/action-states'
 import { formatDistanceToNow } from 'date-fns'
 import { sl } from 'date-fns/locale'
+
+export function PostMenu({ postId }: { postId: string }) {
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [isPending, startTransition] = useTransition()
+
+  const handleDelete = () => {
+    startTransition(async () => {
+      const result = await deleteOwnPostAction(postId)
+      if (!result.success) {
+        toast.error(result.message === 'Not authorized'
+          ? 'Lahko izbrišeš samo svoje objave.'
+          : 'Objave ni bilo mogoče izbrisati.')
+      } else {
+        toast.success('Objava izbrisana.')
+      }
+      setConfirmOpen(false)
+    })
+  }
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            variant="destructive"
+            onSelect={(event) => {
+              event.preventDefault()
+              setConfirmOpen(true)
+            }}
+          >
+            Izbriši objavo
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Izbrišem to objavo?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tega dejanja ni mogoče razveljaviti.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending}>Prekliči</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" disabled={isPending} onClick={handleDelete}>
+              Izbriši
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  )
+}
 
 interface PostComment {
   id: string

@@ -1243,6 +1243,39 @@ export async function toggleLikeAction(
   }
 }
 
+export async function deleteOwnPostAction(
+  postId: string
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return { success: false, message: 'Not authenticated' }
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { id: true, userId: true, eventId: true },
+    })
+
+    if (!post) {
+      return { success: false, message: 'Post not found' }
+    }
+    if (post.userId !== currentUser.id) {
+      return { success: false, message: 'Not authorized' }
+    }
+
+    await prisma.post.delete({ where: { id: postId } })
+
+    invalidateEventReadCache(post.eventId)
+    revalidatePath('/app/feed')
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error deleting own post:', error)
+    return { success: false, message: 'An unexpected error occurred' }
+  }
+}
+
 // Comment Actions
 export async function addCommentAction(
   prevState: PostInteractionActionState,
