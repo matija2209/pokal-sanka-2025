@@ -11,6 +11,7 @@ import { logDrinkAction, logMultipleDrinksAction } from '@/app/actions'
 import { initialDrinkLogActionState, initialMultiDrinkLogActionState } from '@/lib/types/action-states'
 import { getDrinkLabel, getDrinkPoints } from '@/lib/utils/drinks'
 import { TeamBadge } from '@/components/teams/team-badge'
+import { getContrastTextColor } from '@/lib/utils/colors'
 import { toast } from 'sonner'
 
 interface DrinkLogFormProps {
@@ -23,12 +24,13 @@ interface DrinkLogFormProps {
       color: string
     } | null
   }>
+  forceMultiMode?: boolean
 }
 
-export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormProps) {
+export default function DrinkLogForm({ currentUserId, allUsers, forceMultiMode = false }: DrinkLogFormProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [isMultiMode, setIsMultiMode] = useState(false)
+  const [isMultiMode, setIsMultiMode] = useState(forceMultiMode)
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
   const [selectedDrink, setSelectedDrink] = useState<string>('')
   
@@ -48,12 +50,12 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
       setSelectedDrink(drinkType)
     }
 
-    setIsMultiMode(multi)
+    setIsMultiMode(forceMultiMode || multi)
 
     if (userIds) {
       setSelectedUserIds(userIds.split(',').filter(Boolean))
     }
-  }, [searchParams])
+  }, [searchParams, forceMultiMode])
 
   const handleModeToggle = (checked: boolean) => {
     setIsMultiMode(checked)
@@ -66,6 +68,26 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
     } else {
       setSelectedUserIds(prev => prev.filter(id => id !== userId))
     }
+  }
+
+  const teams = allUsers.reduce<Array<{ name: string; color: string; userIds: string[] }>>((acc, user) => {
+    if (!user.team) return acc
+    const existing = acc.find(t => t.name === user.team!.name)
+    if (existing) {
+      existing.userIds.push(user.id)
+    } else {
+      acc.push({ name: user.team.name, color: user.team.color, userIds: [user.id] })
+    }
+    return acc
+  }, [])
+
+  const handleTeamToggle = (teamUserIds: string[]) => {
+    const allSelected = teamUserIds.every(id => selectedUserIds.includes(id))
+    setSelectedUserIds(prev =>
+      allSelected
+        ? prev.filter(id => !teamUserIds.includes(id))
+        : [...prev, ...teamUserIds.filter(id => !prev.includes(id))]
+    )
   }
 
   useEffect(() => {
@@ -85,16 +107,18 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="multi-mode"
-              checked={isMultiMode}
-              onCheckedChange={handleModeToggle}
-              disabled={isPending}
-            />
-            <Label htmlFor="multi-mode" className='font-bold'>Beleži za več ljudi</Label>
-          </div>
-          
+          {!forceMultiMode && (
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="multi-mode"
+                checked={isMultiMode}
+                onCheckedChange={handleModeToggle}
+                disabled={isPending}
+              />
+              <Label htmlFor="multi-mode" className='font-bold'>Beleži za več ljudi</Label>
+            </div>
+          )}
+
           <div>
             
             {!isMultiMode && (
@@ -113,6 +137,30 @@ export default function DrinkLogForm({ currentUserId, allUsers }: DrinkLogFormPr
                   ))}
                 </SelectContent>
               </Select>
+            )}
+
+            {isMultiMode && teams.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {teams.map(team => {
+                  const allSelected = team.userIds.every(id => selectedUserIds.includes(id))
+                  return (
+                    <button
+                      key={team.name}
+                      type="button"
+                      onClick={() => handleTeamToggle(team.userIds)}
+                      disabled={isPending}
+                      className="rounded-full border-transparent px-3 py-1 text-xs font-medium transition-opacity disabled:pointer-events-none disabled:opacity-50"
+                      style={{
+                        backgroundColor: team.color,
+                        color: getContrastTextColor(team.color),
+                        opacity: allSelected ? 1 : 0.6,
+                      }}
+                    >
+                      {allSelected ? `✓ ${team.name}` : `Izberi ekipo ${team.name}`}
+                    </button>
+                  )
+                })}
+              </div>
             )}
 
             {isMultiMode && (
