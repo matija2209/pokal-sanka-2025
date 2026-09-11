@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useEffect, useMemo, useTransition, type ComponentProps } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { TeamBadge } from '@/components/teams/team-badge'
-import { Trophy, Users, Activity, Clock, CloudRain } from 'lucide-react'
+import { Trophy, Users, Activity, Clock, CloudRain, Images } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import UserAvatar from '@/components/users/user-avatar'
 import TeamLogo from '@/components/teams/team-logo'
@@ -13,6 +13,9 @@ import type { UserWithTeamAndDrinks, DrinkLogWithUserAndTeam, TeamWithStats } fr
 import type { Commentary } from '@/lib/prisma/fetchers/commentary-fetchers'
 import { refreshDashboardAction } from '@/app/actions'
 import { getDrinkLabel, getDrinkPoints } from '@/lib/utils/drinks'
+import LatestImagesDisplay from './latest-images-display'
+
+type LatestImagesDisplayProps = ComponentProps<typeof LatestImagesDisplay>
 
 interface DashboardDisplayProps {
   teams: TeamWithStats[]
@@ -20,9 +23,12 @@ interface DashboardDisplayProps {
   recentActivity: DrinkLogWithUserAndTeam[]
   commentaries: Commentary[]
   refreshPath?: string
+  recentImages?: LatestImagesDisplayProps['posts']
+  userImages?: LatestImagesDisplayProps['userImages']
+  teamLogos?: LatestImagesDisplayProps['teamLogos']
 }
 
-type DisplayMode = 'teams' | 'players' | 'activity' | 'commentary' | 'radar'
+type DisplayMode = 'teams' | 'players' | 'activity' | 'media' | 'commentary' | 'radar'
 
 interface SlideHeaderProps {
   title: string
@@ -43,7 +49,16 @@ function SlideHeader({ title, icon }: SlideHeaderProps) {
   )
 }
 
-export default function DashboardDisplay({ teams, topPlayers, recentActivity, commentaries, refreshPath = '/dashboard' }: DashboardDisplayProps) {
+export default function DashboardDisplay({
+  teams,
+  topPlayers,
+  recentActivity,
+  commentaries,
+  refreshPath = '/dashboard',
+  recentImages = [],
+  userImages = [],
+  teamLogos = [],
+}: DashboardDisplayProps) {
   const [currentMode, setCurrentMode] = useState<DisplayMode>('teams')
   const [currentTime, setCurrentTime] = useState(new Date())
   const [countdown, setCountdown] = useState(15)
@@ -51,11 +66,19 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   const [isFirstCycle, setIsFirstCycle] = useState(true)
   const [isPending, startTransition] = useTransition()
 
+  const hasMedia = recentImages.length > 0 || userImages.length > 0 || teamLogos.length > 0
+
+  const modes = useMemo<DisplayMode[]>(() => [
+    'teams',
+    'players',
+    'activity',
+    ...(hasMedia ? (['media'] as const) : []),
+    ...(commentaries.length > 0 ? (['commentary'] as const) : []),
+    'radar',
+  ], [hasMedia, commentaries.length])
+
   // Auto-rotate between different views every 15 seconds
   useEffect(() => {
-    const modes: DisplayMode[] = commentaries.length > 0
-      ? ['teams', 'players', 'activity', 'commentary', 'radar']
-      : ['teams', 'players', 'activity', 'radar']
     let modeIndex = 0
 
     const rotateMode = () => {
@@ -74,7 +97,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
 
     const interval = setInterval(rotateMode, 15000) // 15 seconds
     return () => clearInterval(interval)
-  }, [commentaries.length, isFirstCycle])
+  }, [modes, isFirstCycle])
 
   // Update time and countdown every second
   useEffect(() => {
@@ -120,12 +143,25 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
   }
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
       minute: '2-digit',
       second: '2-digit'
     })
   }
+
+  const modeLabels: Record<DisplayMode, string> = {
+    teams: 'Ekipe',
+    players: 'Igralci',
+    activity: 'Aktivnost',
+    media: 'Mediji',
+    commentary: 'Komentarji',
+    radar: 'Vremenska Slika',
+  }
+
+  const currentModeIndex = modes.indexOf(currentMode)
+  const nextMode = modes[(currentModeIndex + 1) % modes.length]
+  const nextModeLabel = modeLabels[nextMode]
 
   return (
     <div className="min-h-screen p-8 relative  overflow-hidden">
@@ -385,6 +421,22 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
         </div>
       )}
 
+      {/* Media (Images/Videos) View */}
+      {currentMode === 'media' && (
+        <div className="space-y-6">
+          <SlideHeader
+            title="Zadnji Mediji"
+            icon={<Images className="h-12 w-12 text-pink-400" />}
+          />
+
+          <LatestImagesDisplay
+            posts={recentImages}
+            userImages={userImages}
+            teamLogos={teamLogos}
+          />
+        </div>
+      )}
+
       {/* Weather Radar View */}
       {currentMode === 'radar' && (
         <div className="space-y-6">
@@ -415,13 +467,7 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
         <div className="flex items-center gap-3">
           <div className="text-lg font-bold">{countdown}s</div>
           <div>
-            Naslednji: <span className="font-semibold">
-              {currentMode === 'teams' ? 'Igralci' :
-               currentMode === 'players' ? 'Aktivnost' :
-               currentMode === 'activity' ? (commentaries.length > 0 ? 'Komentarji' : 'Vremenska Slika') :
-               currentMode === 'commentary' ? 'Vremenska Slika' :
-               'Ekipe'}
-            </span>
+            Naslednji: <span className="font-semibold">{nextModeLabel}</span>
           </div>
         </div>
       </div>

@@ -5,7 +5,6 @@ import { getEventDashboardSnapshot } from '@/lib/cache/event-read-models'
 import { sortUsersByScore, getTeamsWithStats, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import { DashboardDisplay } from '@/components/dashboard'
 import BreakingNewsBanner from '@/components/dashboard/breaking-news-banner'
-import LatestImagesDisplay from '@/components/dashboard/latest-images-display'
 import type { Metadata } from 'next'
 import { getEventBySlug } from '@/lib/events'
 
@@ -105,13 +104,13 @@ export default async function EventDashboardPage({ params }: EventDashboardPageP
         recentActivity={recentDrinks}
         commentaries={unreadCommentaries}
         refreshPath={`/dashboard/${eventSlug}`}
+        recentImages={imageData.posts}
+        userImages={imageData.userImages}
+        teamLogos={imageData.teamLogos}
       />
 
       {/* Breaking News Banner */}
       <BreakingNewsBanner posts={allRecentPosts as any} />
-
-      {/* Latest Images Display */}
-      <LatestImagesDisplay {...imageData} />
     </div>
   )
 }

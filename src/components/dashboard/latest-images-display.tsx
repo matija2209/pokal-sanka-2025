@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { formatDistanceToNow } from 'date-fns'
+import { isVideoUrl } from '@/lib/utils/media'
 
 interface ImagePost {
   id: string
@@ -47,6 +48,7 @@ interface LatestImagesDisplayProps {
 interface UnifiedImage {
   id: string
   imageUrl: string
+  isVideo: boolean
   userName: string
   userAvatar?: string | null
   timestamp: Date
@@ -60,20 +62,23 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
 
   // Combine all images into one unified array
   const allImages: UnifiedImage[] = [
-    // Posts with images
-    ...posts
-      .map(post => ({ post, url: post.assets[0]?.url ?? post.image_url }))
-      .filter((entry): entry is { post: ImagePost; url: string } => Boolean(entry.url))
-      .map(({ post, url }) => ({
+    // Posts with images or videos
+    ...posts.flatMap(post => {
+      const url = post.assets[0]?.url ?? post.image_url
+      if (!url) return []
+      const mediaType = post.assets[0]?.mediaType
+      return [{
         id: `post-${post.id}`,
         imageUrl: url,
+        isVideo: mediaType === 'video' || isVideoUrl(url),
         userName: post.user.name,
         userAvatar: post.user.profile_image_url,
         timestamp: post.createdAt,
         type: 'post' as const,
         message: post.message,
         teamColor: post.user.team?.color
-      })),
+      }]
+    }),
     
     // Profile images
     ...userImages
@@ -81,19 +86,21 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
       .map(user => ({
         id: `profile-${user.userId}`,
         imageUrl: user.imageUrl!,
+        isVideo: false,
         userName: user.userName,
         userAvatar: user.imageUrl,
         timestamp: user.updatedAt,
         type: 'profile' as const,
         teamColor: user.team?.color
       })),
-    
+
     // Team logos
     ...teamLogos
       .filter(team => team.logoUrl)
       .map(team => ({
         id: `logo-${team.teamId}`,
         imageUrl: team.logoUrl!,
+        isVideo: false,
         userName: team.teamName,
         timestamp: team.updatedAt,
         type: 'logo' as const,
@@ -128,8 +135,8 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
 
   if (allImages.length === 0) {
     return (
-      <div className="fixed top-0 right-0 w-96 h-screen p-6 bg-slate-900/95 backdrop-blur-sm flex items-center justify-center">
-        <p className=" text-lg">Še ni objavljenih slik...</p>
+      <div className="w-full h-[70vh] rounded-lg bg-slate-900/60 flex items-center justify-center">
+        <p className="text-lg">Še ni objavljenih slik ali videov...</p>
       </div>
     )
   }
@@ -153,16 +160,16 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
   }
 
   return (
-    <div className="fixed top-0 right-0 w-96 h-screen bg-slate-900/95 backdrop-blur-sm overflow-hidden">
-      <div 
+    <div className="w-full max-w-2xl mx-auto h-[70vh] rounded-lg bg-slate-900/60 overflow-hidden">
+      <div
         className="flex flex-col transition-transform duration-75 ease-linear"
-        style={{ 
+        style={{
           transform: `translateY(-${scrollPosition}px)`
         }}
       >
         {duplicatedImages.map((image, index) => (
-          <div 
-            key={`${image.id}-${Math.floor(index / allImages.length)}`} 
+          <div
+            key={`${image.id}-${Math.floor(index / allImages.length)}`}
             className="flex-shrink-0 p-4 border-b border-slate-700/50"
             style={{ minHeight: '520px' }}
           >
@@ -170,8 +177,8 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
               {/* User info */}
               <div className="flex items-center gap-3 flex-shrink-0" style={{ height: '50px' }}>
                 {image.userAvatar && (
-                  <img 
-                    src={image.userAvatar} 
+                  <img
+                    src={image.userAvatar}
                     alt={image.userName}
                     className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
                   />
@@ -183,20 +190,31 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
                   </p>
                 </div>
                 {image.teamColor && (
-                  <div 
+                  <div
                     className="w-4 h-4 rounded-full border border-white/30"
                     style={{ backgroundColor: image.teamColor }}
                   />
                 )}
               </div>
 
-              {/* Main image */}
+              {/* Main image or video */}
               <div className="relative" style={{ height: '420px' }}>
-                <img 
-                  src={image.imageUrl} 
-                  alt={`${image.userName} ${image.type}`}
-                  className="w-full h-full object-cover rounded-lg shadow-lg"
-                />
+                {image.isVideo ? (
+                  <video
+                    src={image.imageUrl}
+                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={image.imageUrl}
+                    alt={`${image.userName} ${image.type}`}
+                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                  />
+                )}
                 <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-white text-xs font-medium ${getTypeColor(image.type)}`}>
                   {getTypeLabel(image.type)}
                 </div>

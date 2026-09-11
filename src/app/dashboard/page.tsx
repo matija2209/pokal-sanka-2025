@@ -4,7 +4,6 @@ import { getEventDashboardSnapshot } from '@/lib/cache/event-read-models'
 import { sortUsersByScore, getTeamsWithStats, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import { DashboardDisplay } from '@/components/dashboard'
 import BreakingNewsBanner from '@/components/dashboard/breaking-news-banner'
-import LatestImagesDisplay from '@/components/dashboard/latest-images-display'
 import type { Metadata } from 'next'
 import { getActiveEvent, getSiteBrandParts } from '@/lib/events'
 
@@ -88,18 +87,18 @@ export default async function DashboardPage() {
   
   return (
     <div className="min-h-screen">
-      <DashboardDisplay 
+      <DashboardDisplay
         teams={teamsWithStats}
         topPlayers={sortedUsers}
         recentActivity={recentDrinks}
         commentaries={unreadCommentaries}
+        recentImages={imageData.posts}
+        userImages={imageData.userImages}
+        teamLogos={imageData.teamLogos}
       />
-      
+
       {/* Breaking News Banner */}
       <BreakingNewsBanner posts={allRecentPosts as any} />
-      
-      {/* Latest Images Display */}
-      <LatestImagesDisplay {...imageData} />
     </div>
   )
 }
