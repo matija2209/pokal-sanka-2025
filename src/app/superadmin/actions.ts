@@ -25,6 +25,7 @@ function revalidateAdminAndAppPaths() {
   revalidatePath('/superadmin')
   revalidatePath('/superadmin/posts')
   revalidatePath('/superadmin/drink-logs')
+  revalidatePath('/superadmin/highlights')
   revalidatePath('/superadmin/trivia')
   revalidatePath('/superadmin/bachelor')
   revalidatePath('/')
@@ -730,6 +731,42 @@ export async function deleteDrinkLogAction(formData: FormData) {
   }
 
   redirectManage('drink-log-deleted', manageEventId)
+}
+
+export async function deleteCommentaryAction(formData: FormData) {
+  const manageEventId = resolveManageEventId(formData)
+  if (!(await isMultiEventSchemaAvailable())) {
+    redirectManageError('schema-required', manageEventId)
+  }
+
+  const commentaryId = typeof formData.get('commentaryId') === 'string' ? formData.get('commentaryId') as string : ''
+  if (!commentaryId) {
+    redirectManageError('missing-commentary', manageEventId)
+  }
+
+  const managedEvent = await requireSuperadminManagedEvent(formData)
+
+  const commentary = await prisma.commentary.findFirst({
+    where: { id: commentaryId, eventId: managedEvent.id },
+    select: { id: true },
+  })
+
+  if (!commentary) {
+    redirectManageError('missing-commentary', manageEventId)
+  }
+
+  try {
+    await prisma.commentary.delete({
+      where: { id: commentaryId },
+    })
+
+    revalidateAdminAndAppPaths()
+  } catch (error) {
+    console.error('Error deleting commentary:', error)
+    redirectManageError('delete-commentary-failed', manageEventId)
+  }
+
+  redirectManage('commentary-deleted', manageEventId)
 }
 
 export async function deletePostAction(formData: FormData) {
