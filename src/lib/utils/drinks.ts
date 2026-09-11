@@ -47,6 +47,16 @@ export const DRINK_CONFIG: Record<string, DrinkConfig> = {
     points: 2,
     category: 'spirits'
   },
+  [DRINK_TYPES.AMARO_MONTENEGRO]: {
+    label: 'Amaro Montenegro',
+    points: 2,
+    category: 'spirits'
+  },
+  [DRINK_TYPES.AMARO_DEL_CAPO]: {
+    label: 'Amaro del Capo',
+    points: 2,
+    category: 'spirits'
+  },
   [DRINK_TYPES.PELINKOVAC]: {
     label: 'Pelinkovac',
     points: 2,
@@ -119,7 +129,12 @@ export const DRINK_CONFIG: Record<string, DrinkConfig> = {
     points: 3,
     category: 'premium'
   },
-  
+  [DRINK_TYPES.NEGRONI]: {
+    label: 'Negroni',
+    points: 3,
+    category: 'premium'
+  },
+
   // Legacy types (for backwards compatibility)
   [DRINK_TYPES.REGULAR]: {
     label: 'Navadno',
