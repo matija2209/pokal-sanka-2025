@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { isVideoUrl } from '@/lib/utils/media'
 
@@ -58,8 +57,6 @@ interface UnifiedImage {
 }
 
 export default function LatestImagesDisplay({ posts, userImages, teamLogos }: LatestImagesDisplayProps) {
-  const [scrollPosition, setScrollPosition] = useState(0)
-
   // Combine all images into one unified array
   const allImages: UnifiedImage[] = [
     // Posts with images or videos
@@ -108,34 +105,12 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
       }))
   ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
-  // Duplicate the array multiple times for seamless infinite scroll
-  const duplicatedImages = [...allImages, ...allImages, ...allImages, ...allImages, ...allImages]
+  // Cap to a grid that comfortably fills one slide without scrolling
+  const gridImages = allImages.slice(0, 9)
 
-  // Auto-scroll effect
-  useEffect(() => {
-    if (allImages.length === 0) return
-
-    const interval = setInterval(() => {
-      setScrollPosition(prev => {
-        const itemHeight = 520
-        const totalHeight = allImages.length * itemHeight
-        const newPosition = prev + 1
-        
-        // Reset to 0 when we've scrolled through one complete cycle
-        // This ensures we never get stuck
-        if (newPosition >= totalHeight) {
-          return 0
-        }
-        return newPosition
-      })
-    }, 25) // Slightly faster for smoother motion
-
-    return () => clearInterval(interval)
-  }, [allImages.length])
-
-  if (allImages.length === 0) {
+  if (gridImages.length === 0) {
     return (
-      <div className="w-full h-[70vh] rounded-lg bg-slate-900/60 flex items-center justify-center">
+      <div className="w-full max-w-6xl mx-auto h-[60vh] rounded-lg bg-slate-900/60 flex items-center justify-center">
         <p className="text-lg">Še ni objavljenih slik ali videov...</p>
       </div>
     )
@@ -160,73 +135,62 @@ export default function LatestImagesDisplay({ posts, userImages, teamLogos }: La
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto h-[70vh] rounded-lg bg-slate-900/60 overflow-hidden">
-      <div
-        className="flex flex-col transition-transform duration-75 ease-linear"
-        style={{
-          transform: `translateY(-${scrollPosition}px)`
-        }}
-      >
-        {duplicatedImages.map((image, index) => (
-          <div
-            key={`${image.id}-${Math.floor(index / allImages.length)}`}
-            className="flex-shrink-0 p-4 border-b border-slate-700/50"
-            style={{ minHeight: '520px' }}
-          >
-            <div className="flex flex-col space-y-3 h-full">
-              {/* User info */}
-              <div className="flex items-center gap-3 flex-shrink-0" style={{ height: '50px' }}>
-                {image.userAvatar && (
-                  <img
-                    src={image.userAvatar}
-                    alt={image.userName}
-                    className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
-                  />
-                )}
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-white text-sm truncate">{image.userName}</h3>
-                  <p className=" text-xs">
-                    pred {formatDistanceToNow(new Date(image.timestamp)).replace('about ', '').replace('minutes', 'min')}
-                  </p>
-                </div>
-                {image.teamColor && (
-                  <div
-                    className="w-4 h-4 rounded-full border border-white/30"
-                    style={{ backgroundColor: image.teamColor }}
-                  />
-                )}
+    <div className="max-w-6xl mx-auto">
+      <div className="grid grid-cols-3 gap-4">
+        {gridImages.map((image) => (
+          <div key={image.id} className="flex flex-col space-y-2 bg-slate-900/60 rounded-lg p-3">
+            {/* User info */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {image.userAvatar && (
+                <img
+                  src={image.userAvatar}
+                  alt={image.userName}
+                  className="w-8 h-8 rounded-full object-cover border-2 border-white/20"
+                />
+              )}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-white text-sm truncate">{image.userName}</h3>
+                <p className="text-xs">
+                  pred {formatDistanceToNow(new Date(image.timestamp)).replace('about ', '').replace('minutes', 'min')}
+                </p>
               </div>
-
-              {/* Main image or video */}
-              <div className="relative" style={{ height: '420px' }}>
-                {image.isVideo ? (
-                  <video
-                    src={image.imageUrl}
-                    className="w-full h-full object-cover rounded-lg shadow-lg"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                  />
-                ) : (
-                  <img
-                    src={image.imageUrl}
-                    alt={`${image.userName} ${image.type}`}
-                    className="w-full h-full object-cover rounded-lg shadow-lg"
-                  />
-                )}
-                <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-white text-xs font-medium ${getTypeColor(image.type)}`}>
-                  {getTypeLabel(image.type)}
-                </div>
-              </div>
-
-              {/* Message for posts */}
-              {image.message && (
-                <div className="bg-slate-800/70 p-2 rounded text-xs  line-clamp-2 flex-shrink-0" style={{ maxHeight: '40px' }}>
-                  "{image.message}"
-                </div>
+              {image.teamColor && (
+                <div
+                  className="w-3 h-3 rounded-full border border-white/30 flex-shrink-0"
+                  style={{ backgroundColor: image.teamColor }}
+                />
               )}
             </div>
+
+            {/* Main image or video */}
+            <div className="relative aspect-square">
+              {image.isVideo ? (
+                <video
+                  src={image.imageUrl}
+                  className="w-full h-full object-cover rounded-lg shadow-lg"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={image.imageUrl}
+                  alt={`${image.userName} ${image.type}`}
+                  className="w-full h-full object-cover rounded-lg shadow-lg"
+                />
+              )}
+              <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-white text-xs font-medium ${getTypeColor(image.type)}`}>
+                {getTypeLabel(image.type)}
+              </div>
+            </div>
+
+            {/* Message for posts */}
+            {image.message && (
+              <div className="bg-slate-800/70 p-2 rounded text-xs line-clamp-2 flex-shrink-0">
+                "{image.message}"
+              </div>
+            )}
           </div>
         ))}
       </div>
