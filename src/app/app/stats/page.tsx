@@ -1,14 +1,14 @@
 export const instant = false
 import { connection } from 'next/server'
 import { getCurrentUser } from '@/lib/utils/cookies'
-// import { getUserWithTeamAndDrinksById } from '@/lib/prisma/fetchers'
-import { getEventActivitySnapshot, /* getEventFeedSnapshot, */ getEventRankingSnapshot } from '@/lib/cache/event-read-models'
+import { getEventActivitySnapshot, /* getEventFeedSnapshot, */ getEventLeaderboardSnapshot } from '@/lib/cache/event-read-models'
 import { redirect } from 'next/navigation'
 import { /* UserHistory, */ Leaderboard } from '@/components/users'
+import type { LeaderboardUser, LeaderboardTeam } from '@/components/users/leaderboard'
 import { RecentActivity } from '@/components/drinks'
 // import { CommentaryDisplay } from '@/components/commentary'
 // import { TimelineDisplay } from '@/components/timeline'
-import { getUserRanking, sortUsersByScore, getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
+import { getAllUsersTriviaPointsMap } from '@/lib/utils/calculations'
 import type { Metadata } from 'next'
 import { getSiteBrandParts, getActiveEvent } from '@/lib/events'
 import { Container } from '@/components/layout/container'
@@ -33,9 +33,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function StatsPage() {
   await connection()
 
-  const activeEvent = await getActiveEvent()
-  const currentUser = await getCurrentUser(activeEvent?.id)
-  
+  const [activeEvent, currentUser] = await Promise.all([
+    getActiveEvent(),
+    getCurrentUser(),
+  ])
+
   if (!currentUser) {
     redirect('/')
   }
@@ -44,41 +46,65 @@ export default async function StatsPage() {
     redirect('/')
   }
 
-  const [rankingSnapshot, activitySnapshot /*, feedSnapshot, currentUserWithDrinks*/] = await Promise.all([
-    getEventRankingSnapshot(activeEvent.id),
+  const [leaderboardSnapshot, activitySnapshot /*, feedSnapshot, currentUserWithDrinks*/] = await Promise.all([
+    getEventLeaderboardSnapshot(activeEvent.id),
     getEventActivitySnapshot(activeEvent.id),
     // getEventFeedSnapshot(activeEvent.id, false),
     // getUserWithTeamAndDrinksById(currentUser.id, activeEvent.id),
   ])
-  const { users: allUsers, teams: allTeams, triviaResults } = rankingSnapshot
+  const { users, teams, drinkStats, triviaResults } = leaderboardSnapshot
   const { recentDrinks /*, recentCommentaries*/ } = activitySnapshot
 
   // Trivia score integration
-  const triviaAvailable = rankingSnapshot.triviaAvailable && activeEvent.isTriviaEnabled
-  let triviaPointsMap = new Map<string, number>()
-  if (triviaAvailable) {
-    triviaPointsMap = getAllUsersTriviaPointsMap(triviaResults)
-  }
+  const triviaAvailable = leaderboardSnapshot.triviaAvailable && activeEvent.isTriviaEnabled
+  const triviaPointsMap = triviaAvailable ? getAllUsersTriviaPointsMap(triviaResults) : new Map<string, number>()
 
-  const userRank = getUserRanking(currentUser.id, allUsers, triviaPointsMap)
-  const sortedUsers = sortUsersByScore(allUsers, triviaPointsMap)
-  
+  const scoreForUser = (userId: string) =>
+    (drinkStats.get(userId)?.totalPoints || 0) + (triviaPointsMap.get(userId) || 0)
+
+  const sortedUsers: LeaderboardUser[] = users
+    .map(user => {
+      const stats = drinkStats.get(user.id)
+      return {
+        id: user.id,
+        name: user.name,
+        profile_image_url: user.profile_image_url,
+        team: user.team,
+        score: scoreForUser(user.id),
+        regularDrinks: stats?.regularCount || 0,
+        shotDrinks: stats?.shotCount || 0,
+      }
+    })
+    .sort((a, b) => b.score - a.score)
+
+  const sortedTeams: LeaderboardTeam[] = teams
+    .map(team => {
+      const members = users.filter(user => user.teamId === team.id)
+      return {
+        id: team.id,
+        name: team.name,
+        color: team.color,
+        score: members.reduce((total, member) => total + scoreForUser(member.id), 0),
+        memberCount: members.length,
+      }
+    })
+    .sort((a, b) => b.score - a.score)
+
   return (
     <Container size="mobile" className="px-0 text-foreground">
-      <div className="text-center mb-6 border-b border-border pb-6">
+      {/* <div className="text-center mb-6 border-b border-border pb-6">
         <h1 className="text-2xl font-bold leading-tight mb-2 text-foreground">Statistike in Lestvice</h1>
         <p className="text-sm text-muted-foreground">
           Poglejte svojo uvrstitev, dosežke in sledite aktivnosti turnirja.
         </p>
-      </div>
+      </div> */}
 
       <div className="space-y-5">
         <Leaderboard
           users={sortedUsers}
-          teams={allTeams}
+          teams={sortedTeams}
           currentUserId={currentUser.id}
           currentUserTeamId={currentUser.teamId}
-          triviaPointsMap={triviaPointsMap}
         />
 
         {/* <CommentaryDisplay commentaries={recentCommentaries} limit={8} showTitle={true} /> */}

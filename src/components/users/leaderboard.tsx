@@ -6,22 +6,37 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Trophy, Medal, Award, TrendingUp, Users } from 'lucide-react'
-import { calculateUserScore, getUserTriviaPoints, calculateTeamScore, sortTeamsByScore } from '@/lib/utils/calculations'
 import UserAvatar from './user-avatar'
 import { TeamBadge } from '@/components/teams/team-badge'
-import type { UserWithTeamAndDrinks, TeamWithUsersAndDrinks } from '@/lib/prisma/types'
 
-interface LeaderboardProps {
-  users: UserWithTeamAndDrinks[]
-  teams: TeamWithUsersAndDrinks[]
-  currentUserId: string
-  currentUserTeamId?: string | null
-  triviaPointsMap?: Map<string, number>
+export interface LeaderboardUser {
+  id: string
+  name: string
+  profile_image_url: string | null
+  team: { name: string; color: string } | null
+  score: number
+  regularDrinks: number
+  shotDrinks: number
 }
 
-export default function Leaderboard({ users, teams, currentUserId, currentUserTeamId, triviaPointsMap }: LeaderboardProps) {
+export interface LeaderboardTeam {
+  id: string
+  name: string
+  color: string
+  score: number
+  memberCount: number
+}
+
+interface LeaderboardProps {
+  users: LeaderboardUser[]
+  teams: LeaderboardTeam[]
+  currentUserId: string
+  currentUserTeamId?: string | null
+}
+
+export default function Leaderboard({ users, teams, currentUserId, currentUserTeamId }: LeaderboardProps) {
   const [viewMode, setViewMode] = useState<'players' | 'teams'>('players')
-  const sortedTeams = sortTeamsByScore(teams)
+  const sortedTeams = teams
 
   const getRankIcon = (position: number) => {
     switch (position) {
@@ -71,12 +86,12 @@ export default function Leaderboard({ users, teams, currentUserId, currentUserTe
               </div>
             ) : (
               users.map((user, index) => {
-                const score = calculateUserScore(user.drinkLogs, getUserTriviaPoints(user.id, triviaPointsMap))
+                const score = user.score
                 const isCurrentUser = user.id === currentUserId
                 const position = index + 1
-                const regularDrinks = user.drinkLogs.filter(log => log.drinkType === 'REGULAR').length
-                const shotDrinks = user.drinkLogs.filter(log => log.drinkType === 'SHOT').length
-                
+                const regularDrinks = user.regularDrinks
+                const shotDrinks = user.shotDrinks
+
                 return (
                   <Link 
                     key={user.id} 
@@ -147,10 +162,10 @@ export default function Leaderboard({ users, teams, currentUserId, currentUserTe
               </div>
             ) : (
               sortedTeams.map((team, index) => {
-                const teamScore = calculateTeamScore(team.users)
+                const teamScore = team.score
                 const isCurrentUserTeam = currentUserTeamId ? team.id === currentUserTeamId : false
                 const position = index + 1
-                const memberCount = team.users.length
+                const memberCount = team.memberCount
 
                 return (
                   <Link 

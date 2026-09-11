@@ -21,9 +21,9 @@ const NAV_ITEMS: Array<{
   label: string
   matchPrefix?: string
 }> = [
+  { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
   { href: '/app/feed', icon: Images, label: 'Feed' },
   { href: '/app/teams', icon: Trophy, label: 'Ekipe' },
-  { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
   { href: '/app/profile', icon: User, label: 'Profil' },
 ]
 

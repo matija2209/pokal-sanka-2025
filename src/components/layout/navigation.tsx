@@ -39,9 +39,9 @@ export default function Navigation({ currentUser, currentEvent, availableEvents,
 
   const navItems = useMemo(() => {
     const items: NavItem[] = [
+      { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
       { href: '/app/feed', icon: Images, label: 'Feed' },
       ...(isBachelor ? [{ href: '/the-bachelor', icon: HelpCircle, label: 'The Bachelor' }] : []),
-      { href: '/app/stats', icon: TrendingUp, label: 'Statistike' },
       ...(isTriviaEnabled ? [{ href: '/app/trivia/rules', icon: HelpCircle, label: 'Trivia', matchPrefix: '/app/trivia' }] : []),
       { href: '/app/profile', icon: User, label: 'Profil' },
     ]

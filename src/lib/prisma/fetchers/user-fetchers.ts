@@ -296,6 +296,39 @@ export async function getAllUsersWithTeamAndDrinks(eventIdOverride?: string): Pr
   }
 }
 
+/** Like getAllUsersWithTeamAndDrinks but without the (potentially large, unbounded) drinkLogs include. */
+export async function getAllUsersWithTeam(eventIdOverride?: string): Promise<UserWithTeam[]> {
+  try {
+    if (!(await isMultiEventSchemaAvailable())) {
+      const users = await prisma.user.findMany({
+        include: {
+          team: true,
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      })
+
+      return users.map(user => withLegacyRelations(user) as UserWithTeam)
+    }
+    const eventId = eventIdOverride ?? (await requireActiveEventId())
+    return await prisma.user.findMany({
+      where: { eventId },
+      include: {
+        team: true,
+        event: true,
+        person: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    })
+  } catch (error) {
+    console.error('Error fetching all users with team:', error)
+    return []
+  }
+}
+
 export async function getQuickLogUsers(eventIdOverride?: string): Promise<QuickLogUser[]> {
   try {
     if (!(await isMultiEventSchemaAvailable())) {

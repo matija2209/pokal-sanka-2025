@@ -501,3 +501,39 @@ export async function getTopTeamsByPoints(limit: number, eventIdOverride?: strin
     return []
   }
 }
+
+export type UserDrinkStats = { totalPoints: number; regularCount: number; shotCount: number }
+
+/**
+ * Per-user point totals and REGULAR/SHOT counts, aggregated in Postgres via `groupBy`
+ * instead of loading every drink-log row (see getTopUsersByPoints for the same pattern).
+ */
+export async function getDrinkStatsByUser(eventIdOverride?: string): Promise<Map<string, UserDrinkStats>> {
+  try {
+    const rows = !(await isMultiEventSchemaAvailable())
+      ? await prisma.drinkLog.groupBy({
+          by: ['userId', 'drinkType'],
+          _sum: { points: true },
+          _count: { _all: true },
+        })
+      : await prisma.drinkLog.groupBy({
+          by: ['userId', 'drinkType'],
+          where: { eventId: eventIdOverride ?? (await requireActiveEventId()) },
+          _sum: { points: true },
+          _count: { _all: true },
+        })
+
+    const stats = new Map<string, UserDrinkStats>()
+    for (const row of rows) {
+      const entry = stats.get(row.userId) ?? { totalPoints: 0, regularCount: 0, shotCount: 0 }
+      entry.totalPoints += row._sum.points || 0
+      if (row.drinkType === 'REGULAR') entry.regularCount += row._count._all
+      if (row.drinkType === 'SHOT') entry.shotCount += row._count._all
+      stats.set(row.userId, entry)
+    }
+    return stats
+  } catch (error) {
+    console.error('Error fetching drink stats by user:', error)
+    return new Map()
+  }
+}
