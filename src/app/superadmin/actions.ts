@@ -24,6 +24,7 @@ function revalidateAdminAndAppPaths() {
   revalidatePath('/app/profile')
   revalidatePath('/superadmin')
   revalidatePath('/superadmin/posts')
+  revalidatePath('/superadmin/drink-logs')
   revalidatePath('/superadmin/trivia')
   revalidatePath('/superadmin/bachelor')
   revalidatePath('/')
@@ -285,25 +286,25 @@ export async function deleteTeamAction(formData: FormData) {
 
   const managedEvent = await requireSuperadminManagedEvent(formData)
 
-  try {
-    const team = await prisma.team.findFirst({
-      where: { id: teamId, eventId: managedEvent.id },
-      select: {
-        id: true,
-        _count: {
-          select: { users: true },
-        },
+  const team = await prisma.team.findFirst({
+    where: { id: teamId, eventId: managedEvent.id },
+    select: {
+      id: true,
+      _count: {
+        select: { users: true },
       },
-    })
+    },
+  })
 
-    if (!team) {
-      redirectManageError('missing-team', manageEventId)
-    }
+  if (!team) {
+    redirectManageError('missing-team', manageEventId)
+  }
 
-    if (team._count.users > 0) {
-      redirectManageError('team-has-players', manageEventId)
-    }
+  if (team._count.users > 0) {
+    redirectManageError('team-has-players', manageEventId)
+  }
 
+  try {
     await prisma.team.delete({
       where: { id: teamId },
     })
@@ -693,6 +694,42 @@ export async function deletePlayerAction(formData: FormData) {
   }
 
   redirectManage('player-deleted', manageEventId)
+}
+
+export async function deleteDrinkLogAction(formData: FormData) {
+  const manageEventId = resolveManageEventId(formData)
+  if (!(await isMultiEventSchemaAvailable())) {
+    redirectManageError('schema-required', manageEventId)
+  }
+
+  const drinkLogId = typeof formData.get('drinkLogId') === 'string' ? formData.get('drinkLogId') as string : ''
+  if (!drinkLogId) {
+    redirectManageError('missing-drink-log', manageEventId)
+  }
+
+  const managedEvent = await requireSuperadminManagedEvent(formData)
+
+  const drinkLog = await prisma.drinkLog.findFirst({
+    where: { id: drinkLogId, eventId: managedEvent.id },
+    select: { id: true },
+  })
+
+  if (!drinkLog) {
+    redirectManageError('missing-drink-log', manageEventId)
+  }
+
+  try {
+    await prisma.drinkLog.delete({
+      where: { id: drinkLogId },
+    })
+
+    revalidateAdminAndAppPaths()
+  } catch (error) {
+    console.error('Error deleting drink log:', error)
+    redirectManageError('delete-drink-log-failed', manageEventId)
+  }
+
+  redirectManage('drink-log-deleted', manageEventId)
 }
 
 export async function deletePostAction(formData: FormData) {

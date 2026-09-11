@@ -73,6 +73,14 @@ export default async function SuperAdminPage({ searchParams }: SuperAdminPagePro
         </Link>
 
         <Link
+          href="/superadmin/drink-logs"
+          className="bg-card text-card-foreground border-2 border-border rounded-xl p-6 hover:border-primary/40 hover:shadow-md transition-all group shadow-sm"
+        >
+          <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Drink Logs</h2>
+          <p className="text-muted-foreground font-medium">View and remove individual logged drinks/points.</p>
+        </Link>
+
+        <Link
           href="/the-bachelor/timeline"
           className="bg-card text-card-foreground border-2 border-border rounded-xl p-6 hover:border-primary/40 hover:shadow-md transition-all group shadow-sm"
         >
