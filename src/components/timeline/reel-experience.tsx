@@ -85,7 +85,9 @@ function ReelComposer({ onClose }: { onClose: () => void }) {
   </div>
 }
 
-function ReelViewer({ reels, initialId, onClose }: { reels: Reel[]; initialId: string; onClose: () => void }) {
+function ReelViewer({ reels: allReels, initialId, onClose }: { reels: Reel[]; initialId: string; onClose: () => void }) {
+  const authorId = allReels.find((reel) => reel.id === initialId)?.user.id
+  const reels = useMemo(() => allReels.filter((reel) => reel.user.id === authorId), [allReels, authorId])
   const start = Math.max(0, reels.findIndex((reel) => reel.id === initialId))
   const [index, setIndex] = useState(start)
   const [paused, setPaused] = useState(false)
@@ -148,5 +150,15 @@ export function ReelProvider({ reels, children }: { reels: Reel[]; children: Rea
 
 export function ReelStoryStrip({ reels, currentUser }: { reels: Reel[]; currentUser: { name: string; profile_image_url?: string | null } }) {
   const context = useReels()
-  return <section className="border-b border-border/50 bg-background py-2.5"><div className="flex gap-3 overflow-x-auto px-4 scrollbar-none"><button type="button" onClick={context?.openComposer} className="flex w-[72px] shrink-0 flex-col items-center gap-1"><span className="relative grid size-[66px] place-items-center rounded-full border border-border bg-muted text-lg font-semibold">{currentUser.name.slice(0, 1).toUpperCase()}<span className="absolute bottom-0 right-0 grid size-5 place-items-center rounded-full bg-primary text-white ring-2 ring-background"><Plus className="size-3.5" /></span></span><span className="w-full truncate text-center text-[11px] font-medium text-muted-foreground">Tvoja zgodba</span></button>{reels.slice(0, 10).map((reel) => { const asset = reel.assets[0]; return asset ? <button key={reel.id} type="button" onClick={() => context?.openReel(reel.id)} className="flex w-[72px] shrink-0 flex-col items-center gap-1" aria-label={`Odpri reel uporabnika ${reel.user.name}`}><span className="rounded-full bg-gradient-to-tr from-fuchsia-500 via-orange-400 to-amber-300 p-[2.5px]"><span className="relative block size-[61px] overflow-hidden rounded-full border-2 border-background bg-black">{asset.mediaType === 'video' ? <><video src={asset.url} muted playsInline preload="metadata" className="size-full object-cover" /><span className="absolute inset-0 grid place-items-center bg-black/20"><Play className="size-4 fill-white text-white" /></span></> : <img src={asset.url} alt="" className="size-full object-cover" />}</span></span><span className="w-full truncate text-center text-[11px] font-medium">{reel.user.name.split(' ')[0]}</span></button> : null })}</div></section>
+  const authorReels = useMemo(() => {
+    const seen = new Set<string>()
+    const result: Reel[] = []
+    for (const reel of reels) {
+      if (seen.has(reel.user.id)) continue
+      seen.add(reel.user.id)
+      result.push(reel)
+    }
+    return result
+  }, [reels])
+  return <section className="border-b border-border/50 bg-background py-2.5"><div className="flex gap-3 overflow-x-auto px-4 scrollbar-none"><button type="button" onClick={context?.openComposer} className="flex w-[72px] shrink-0 flex-col items-center gap-1"><span className="relative grid size-[66px] place-items-center rounded-full border border-border bg-muted text-lg font-semibold">{currentUser.name.slice(0, 1).toUpperCase()}<span className="absolute bottom-0 right-0 grid size-5 place-items-center rounded-full bg-primary text-white ring-2 ring-background"><Plus className="size-3.5" /></span></span><span className="w-full truncate text-center text-[11px] font-medium text-muted-foreground">Tvoja zgodba</span></button>{authorReels.slice(0, 10).map((reel) => { const asset = reel.assets[0]; return asset ? <button key={reel.id} type="button" onClick={() => context?.openReel(reel.id)} className="flex w-[72px] shrink-0 flex-col items-center gap-1" aria-label={`Odpri reel uporabnika ${reel.user.name}`}><span className="rounded-full bg-gradient-to-tr from-fuchsia-500 via-orange-400 to-amber-300 p-[2.5px]"><span className="relative block size-[61px] overflow-hidden rounded-full border-2 border-background bg-black">{asset.mediaType === 'video' ? <><video src={asset.url} muted playsInline preload="metadata" className="size-full object-cover" /><span className="absolute inset-0 grid place-items-center bg-black/20"><Play className="size-4 fill-white text-white" /></span></> : <img src={asset.url} alt="" className="size-full object-cover" />}</span></span><span className="w-full truncate text-center text-[11px] font-medium">{reel.user.name.split(' ')[0]}</span></button> : null })}</div></section>
 }
