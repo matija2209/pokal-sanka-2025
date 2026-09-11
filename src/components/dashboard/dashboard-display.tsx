@@ -4,7 +4,7 @@ import { useState, useEffect, useTransition } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { TeamBadge } from '@/components/teams/team-badge'
-import { Trophy, Users, Activity, Clock } from 'lucide-react'
+import { Trophy, Users, Activity, Clock, CloudRain } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import UserAvatar from '@/components/users/user-avatar'
 import TeamLogo from '@/components/teams/team-logo'
@@ -22,7 +22,7 @@ interface DashboardDisplayProps {
   refreshPath?: string
 }
 
-type DisplayMode = 'teams' | 'players' | 'activity' | 'commentary'
+type DisplayMode = 'teams' | 'players' | 'activity' | 'commentary' | 'radar'
 
 interface SlideHeaderProps {
   title: string
@@ -53,9 +53,9 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
 
   // Auto-rotate between different views every 15 seconds
   useEffect(() => {
-    const modes: DisplayMode[] = commentaries.length > 0 
-      ? ['teams', 'players', 'activity', 'commentary']
-      : ['teams', 'players', 'activity']
+    const modes: DisplayMode[] = commentaries.length > 0
+      ? ['teams', 'players', 'activity', 'commentary', 'radar']
+      : ['teams', 'players', 'activity', 'radar']
     let modeIndex = 0
 
     const rotateMode = () => {
@@ -385,6 +385,24 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
         </div>
       )}
 
+      {/* Weather Radar View */}
+      {currentMode === 'radar' && (
+        <div className="space-y-6">
+          <SlideHeader
+            title="Vremenska Slika"
+            icon={<CloudRain className="h-12 w-12 text-blue-300" />}
+          />
+
+          <div className="max-w-4xl mx-auto flex justify-center">
+            <img
+              src="https://meteo.arso.gov.si/uploads/probase/www/observ/radar/si0-rm-anim.gif"
+              alt="ARSO vremenski radar"
+              className="rounded-lg shadow-2xl max-w-full"
+            />
+          </div>
+        </div>
+      )}
+
       {/* Loading indicator for refresh */}
       {isPending && (
         <div className="fixed top-4 right-20 text-sm bg-blue-600 px-3 py-2 rounded-lg z-20">
@@ -398,9 +416,10 @@ export default function DashboardDisplay({ teams, topPlayers, recentActivity, co
           <div className="text-lg font-bold">{countdown}s</div>
           <div>
             Naslednji: <span className="font-semibold">
-              {currentMode === 'teams' ? 'Igralci' : 
-               currentMode === 'players' ? 'Aktivnost' : 
-               currentMode === 'activity' ? (commentaries.length > 0 ? 'Komentarji' : 'Ekipe') :
+              {currentMode === 'teams' ? 'Igralci' :
+               currentMode === 'players' ? 'Aktivnost' :
+               currentMode === 'activity' ? (commentaries.length > 0 ? 'Komentarji' : 'Vremenska Slika') :
+               currentMode === 'commentary' ? 'Vremenska Slika' :
                'Ekipe'}
             </span>
           </div>
